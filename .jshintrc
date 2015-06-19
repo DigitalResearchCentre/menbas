@@ -1,0 +1,13 @@
+{
+  "globalstrict": true, 
+  "laxcomma": true,
+  "laxbreak": true,
+  "globals": {
+    "document": false,
+    "console": false,
+    "angular": false,
+    "require": false,
+    "module": false,
+    "console": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "menbas",
+  "version": "0.0.1",
+  "description": "Manager of Energy & Nutrient Balances of Agricultural Systems",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preinstall": "npm link webpack webpack-dev-server"
+  },
+  "author": "xiaohan.zhang@usask.ca",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^3.5.5"
+  },
+  "devDependencies": {
+    "stdio": "^0.2.7",
+    "webpack-dev-server": "^1.9.0"
+  }
+}
