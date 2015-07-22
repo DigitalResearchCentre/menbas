@@ -10,9 +10,12 @@
   "author": "xiaohan.zhang@usask.ca",
   "license": "ISC",
   "dependencies": {
-    "d3": "^3.5.5"
+    "d3": "^3.5.5",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "expose-loader": "^0.7.0",
+    "jsx-loader": "^0.13.2",
     "stdio": "^0.2.7",
     "webpack-dev-server": "^1.9.0"
   }

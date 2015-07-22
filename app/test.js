@@ -1,7 +1,5 @@
 'use strict';
 
-
-require('app.jsx');
 var d3 = require('d3');
 var _ = require('underscore');
 

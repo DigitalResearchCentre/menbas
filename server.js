@@ -4,19 +4,20 @@ var WebpackDevServer = require('webpack-dev-server')
   , webpack = require('webpack')
   , path = require('path')
   , stdio = require('stdio')
+  , ops, config, compiler, server
 ;
 
-var ops = stdio.getopt({
-  config: false
+ops = stdio.getopt({
+  env: {args: 1, description: 'ex. dev, prod, test'}
 });
 
-var config = require('./make-webpack-config')({
-  config: ops.config,
+config = require('./make-webpack-config')({
+  env: (ops.env || 'dev'),
 });
 
-var compiler = webpack(config);
+compiler = webpack(config);
 
-var server = new WebpackDevServer(compiler, {
+server = new WebpackDevServer(compiler, {
   contentBase: path.resolve('.'),
   filename: config.output.filename,
   publicPath: '/app/',
