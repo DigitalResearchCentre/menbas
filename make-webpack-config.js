@@ -7,7 +7,6 @@ var webpack = require('webpack')
   , appRoot = path.resolve('app')
   , bowerRoot = path.resolve('bower_components')
   , nodeRoot = path.resolve('node_modules')
-  , reactPath = path.resolve(nodeRoot, 'react/dist')
 ;
 
 module.exports = function(options) {
@@ -20,13 +19,17 @@ module.exports = function(options) {
       app: [path.join(appRoot, 'app.js')],
     },
     output: {
-      path: path.join(appRoot, '..'),
+      path: path.join(appRoot, '..', 'build'),
       filename: '[name].bundle.js',
     },
     module: {
       loaders: [
         {test: require.resolve('react'), loader: 'expose?React'},
-        {text: /\.jsx?$/, loader: 'babel-loader'},
+        {
+          text: /\.jsx?$/, 
+          exclude: /min.js$/,
+          loader: 'babel-loader'
+        },
         {test: /\.css$/, loader: "style!css"},
         {test: /\.less$/, loader: "style!css!less?sourceMap"},
         {
@@ -47,8 +50,9 @@ module.exports = function(options) {
         },
       ],
       noParse: [
-        path.join(reactPath, 'react.min.js'),
-        path.join(reactPath, 'react-with-addons.min.js'),
+        path.join(nodeRoot, 'react/dist/react-with-addons.min.js'),
+        path.join(nodeRoot, 'd3/d3.min.js'),
+        path.join(nodeRoot, 'jquery/dist/jquery.min.js'),
       ]
     },
     resolve: {
@@ -56,7 +60,9 @@ module.exports = function(options) {
       modulesDirectories: ['web_modules', 'bower_components', 'node_modules', ],
       alias: {
         bower: bowerRoot,
-        react: path.join(reactPath, 'react-with-addons.min.js'),
+        react: path.join(nodeRoot, 'react/dist/react-with-addons.min.js'),
+        d3: path.join(nodeRoot, 'd3/d3.min.js'),
+        jquery: path.join(nodeRoot, 'jquery/dist/jquery.min.js'),
       },
     },
     plugins: [

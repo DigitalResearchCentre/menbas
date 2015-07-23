@@ -1,32 +1,43 @@
 'use strict';
 
-var WebpackDevServer = require('webpack-dev-server')
+var server = require('http-server')
   , webpack = require('webpack')
   , path = require('path')
   , stdio = require('stdio')
-  , ops, config, compiler, server
+  , ops, config, compiler, server, env
 ;
 
 ops = stdio.getopt({
-  env: {args: 1, description: 'ex. dev, prod, test'}
+  env: {args: 1, description: 'ex. dev, prod, test'},
 });
 
+env = (ops.env || 'dev');
+
 config = require('./make-webpack-config')({
-  env: (ops.env || 'dev'),
+  env: env,
 });
 
 compiler = webpack(config);
 
-server = new WebpackDevServer(compiler, {
-  contentBase: path.resolve('.'),
-  filename: config.output.filename,
-  publicPath: '/app/',
-  hot: true,
-  stats: {
-    colors: true,
-    progress: true,
+if (env == 'dev') {
+  compiler.watch({
+    aggregateTimeout: 300,
+    poll: 1000,
+  }, handleError);
+
+  server.createServer({
+    root: path.join(__dirname),
+  }).listen(8888)
+
+} else {
+  compiler.run(handleError);
+}
+
+function handleError(err, stats) {
+  if (err) {
+    return console.log(err);
   }
-});
-
-server.listen(8888, 'localhost', function(){});
-
+  console.log(stats.toString({
+    colors: true,
+  }));
+}

@@ -1,0 +1,29 @@
+{
+  "width": 960,
+  "height": 640,
+  "energies": {
+    "UPH": "Unharvested phytomass (UPH)",
+    "LP": "Land produce (LP)",
+    "LBP": "Livestock-barnyard produce (LBP)",
+    "TP": "Total produce (TP)",
+    "BR": "Biomass reused (BR)",
+    "FW": "Farmland waste (FW)",
+    "FP": "Final produce (FP)",
+    "LBS": "Livestock-barnyard services (LBS)",
+    "LBW": "Livestock-barnyard waste (LBW)",
+    "FCSI": "Farming community societal inputs (FCSI)",
+    "ASI": "Agroecosystem societal inputs (ASI)",
+    "L": "Labour (L)",
+    "FCI": "Farming community inputs (FCI)",
+    "EI": "External inputs (EI)",
+    "TIC": "Total inputs consumed (TIC)"
+  },
+  "charts": {
+    "all": "",
+    "EROI": "this.FP / this.TIC"
+  }
+}
+
+
+
+
