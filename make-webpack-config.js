@@ -7,7 +7,7 @@ var webpack = require('webpack')
   , appRoot = path.resolve('app')
   , bowerRoot = path.resolve('bower_components')
   , nodeRoot = path.resolve('node_modules')
-  , reactPath = path.resolve(nodeRoot, 'react/dist/react.min.js')
+  , reactPath = path.resolve(nodeRoot, 'react/dist')
 ;
 
 module.exports = function(options) {
@@ -26,13 +26,29 @@ module.exports = function(options) {
     module: {
       loaders: [
         {test: require.resolve('react'), loader: 'expose?React'},
-        {text: /\.jsx$/, loader: 'jsx-loader?insertPragma=React.DOM&harmony'},
+        {text: /\.jsx?$/, loader: 'babel-loader'},
         {test: /\.css$/, loader: "style!css"},
-        {test: /\.less$/, loader: "style!raw!less?sourceMap"},
+        {test: /\.less$/, loader: "style!css!less?sourceMap"},
+        {
+          test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+          loader: "url?limit=10000&minetype=application/font-woff"
+        }, {
+          test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+          loader: "url?limit=10000&minetype=application/font-woff"
+        }, {
+          test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+          loader: "url?limit=10000&minetype=application/octet-stream"
+        }, {
+          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+          loader: "file"
+        }, {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          loader: "url?limit=10000&minetype=image/svg+xml"
+        },
       ],
       noParse: [
-        /\.eot|woff|ttf|svg$/,
-        reactPath,
+        path.join(reactPath, 'react.min.js'),
+        path.join(reactPath, 'react-with-addons.min.js'),
       ]
     },
     resolve: {
@@ -40,7 +56,7 @@ module.exports = function(options) {
       modulesDirectories: ['web_modules', 'bower_components', 'node_modules', ],
       alias: {
         bower: bowerRoot,
-        react: reactPath,
+        react: path.join(reactPath, 'react-with-addons.min.js'),
       },
     },
     plugins: [

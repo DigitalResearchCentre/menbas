@@ -1,7 +1,28 @@
 'use strict';
 
+require('./app.less');
+var config = require('./config')
+  , React = require('react')
+  , LineChart = require('./linechart')
+;
 
-require('app.jsx');
+var App = React.createClass({
+  render: function() {
+    return (
+      <div className="app">
+        <LineChart/>
+      </div>
+    );
+  },
+});
+
+React.render(
+  <App></App>,
+  document.body
+);
+
+
+
 var d3 = require('d3');
 var _ = require('underscore');
 
