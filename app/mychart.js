@@ -116,7 +116,8 @@ var d3MyChart= {
         var found = _.find(data[dict[d.name]], function(v) {
           return parseInt(v[0]) === myChartData.year;
         });
-        return found[1];
+        var r = (found[1] / 1.5);
+        return r < 0.5 ? 0.5 : r;
       });
       line.exit().remove();
     }

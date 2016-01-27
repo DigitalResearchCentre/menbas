@@ -27,7 +27,7 @@ if (env == 'dev') {
 
   server.createServer({
     root: path.join(__dirname),
-  }).listen(8888)
+  }).listen(8888);
 
 } else {
   compiler.run(handleError);

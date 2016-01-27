@@ -6,7 +6,7 @@ var rectWidth = 150
 
 module.exports = {
   place: 'Vall�s',
-  year: 1999,
+  year: 1860,
   rect: {
     width: rectWidth,
     height: rectHeight,
@@ -53,6 +53,25 @@ module.exports = {
       {name: 'TP', path: [
         {x: 335, y: 505}, {x: 350, y: 560}, {x: 550, y: 560}
       ]},
+      {name: 'BR', path: [
+        {x: 550, y: 560}, {x: 600, y: 500}, {x: 610, y: 380},
+        {x: 400, y: 200}, {x: 310, y: 260},
+      ]},
+      {name: 'FP', path: [
+        {x: 550, y: 560}, {x: 800, y: 540}, {x: 850, y: 380},
+        {x: 800, y: 180},
+      ]},
+      {name: 'ASI', path: [
+        {x: 780, y: 160}, {x: 650, y: 80}, {x: 400, y: 100},
+        {x: 310, y: 260},
+      ]},
+      {name: 'L', path: [
+        {x: 740, y: 170}, {x: 400, y: 170},
+      ]},
+      {name: 'FCI', path: [
+        {x: 740, y: 200}, {x: 400, y: 200},
+      ]},
+
     ]
   }
 };

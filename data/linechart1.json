@@ -20,7 +20,7 @@
   },
   "charts": {
     "all": "",
-    "EROI": "this.FP / this.TIC"
+    "EROI": "FP / TIC"
   }
 }
 
