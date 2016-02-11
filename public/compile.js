@@ -1,20 +1,17 @@
-'use strict';
-
-var server = require('http-server')
-  , webpack = require('webpack')
-  , path = require('path')
+var webpack = require('webpack')
   , stdio = require('stdio')
-  , ops, config, compiler, server, env
+  , config, compiler, ops, env
 ;
+console.log('hello');
 
 ops = stdio.getopt({
-  env: {args: 1, description: 'ex. dev, prod, test'},
+  env: {args: 1, description: 'ex. dev, prod, test'}
 });
 
-env = (ops.env || 'dev');
+env = (ops.env || process.env.TC_ENV || 'dev');
 
 config = require('./make-webpack-config')({
-  env: env,
+  env: env
 });
 
 compiler = webpack(config);
@@ -24,22 +21,14 @@ if (env == 'dev') {
     aggregateTimeout: 300,
     poll: 1000,
   }, handleError);
-
-  server.createServer({
-    root: path.join(__dirname),
-  }).listen(8888);
-
 } else {
   compiler.run(handleError);
 }
 
 function handleError(err, stats) {
-  if (err) {
-    return console.log(err);
-  }
   console.log(stats.toString({
     colors: true,
+    cached: false,
   }));
 }
-
 

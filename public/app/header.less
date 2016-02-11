@@ -1,0 +1,28 @@
+x-header {
+    .flex(0, 0, 40px);
+
+    .flex-row;
+    align-items: center;
+    align-content: flex-start;
+    border-bottom: 2px solid gray;
+
+    >.left {
+        .flex(1, 1, auto);
+        .flex-row;
+
+        >.item {
+            padding: 0 10px;
+        }
+    }
+
+    >.right {
+        .flex(1, 1, auto);
+        .flex-row;
+        justify-content: flex-end;
+
+        >.item {
+            padding: 0 10px;
+        }
+    }
+}
+

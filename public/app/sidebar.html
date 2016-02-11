@@ -1,0 +1,6 @@
+<ul>
+  <li *ngFor="#file of files" class="item" (click)="onClick($event, file)">
+    <a>{{file.name}}</a>
+  </li>
+</ul>
+
