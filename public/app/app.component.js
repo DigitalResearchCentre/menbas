@@ -1,3 +1,4 @@
+
 var AppComponent = ng.core.Component({
   selector: 'x-app',
   templateUrl: '/app/app.html',

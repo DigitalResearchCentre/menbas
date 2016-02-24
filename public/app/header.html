@@ -1,8 +1,44 @@
 <div class="left">
-  <div class="item" (click)="uploadFile()">Upload File</div>
+  <div class="item" (click)="openModal(modal, 'upload-csv')">
+    Upload CSV
+  </div>
   <div class="item">Edit Formula</div>
 </div>
 <div class="right">
-  <div class="item">Test User A</div>
+  <div *ngIf="authService.authUser" class="item">
+    {{authService.authUser.username}}
+  </div>
+  <div *ngIf="!authService.authUser" (click)="openModal(modal, 'sign-in')" 
+    class="item">
+    Sign In
+  </div>
 </div>
 
+
+<x-modal #modal [ngSwitch]="modalId">
+  <template [ngSwitchWhen]="'upload-csv'">
+    <x-modal-header>
+      Upload CSV File:
+    </x-modal-header>
+    <x-modal-body>
+      <x-filereader (filechange)="filechange($event)"></x-filereader>
+    </x-modal-body>
+  </template>
+  <template [ngSwitchWhen]="'sign-in'">
+    <x-modal-header>
+      Sign In
+    </x-modal-header>
+    <x-modal-body>
+      <div>
+        <label>Username: </label>
+        <input type="text" [(ngModel)]="username"/>
+      </div>
+      <div>
+        <label>Password: </label>
+        <input type="password" [(ngModel)]="password"/>
+      </div>
+    </x-modal-body>
+    <x-modal-footer saveText="Sign In" (save)="onSave()">
+    </x-modal-footer>
+  </template>
+</x-modal>
