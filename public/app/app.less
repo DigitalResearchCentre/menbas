@@ -41,38 +41,36 @@ html, body {
         .flex-column;
 
         @import './header.less';
-    }
 
+        x-home {
+            .flex(1, 1, 0);
 
-    x-content {
-        flex-grow: 1;
-        flex-shrink: 1;
-        flex-basis: 0px;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+            align-items: stretch;
+            align-content: stretch;
 
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: flex-start;
-        align-items: stretch;
-        align-content: stretch;
+            x-sidebar {
+                flex: 1 1 20%;
 
-        x-sidebar {
-            flex: 1 1 20%;
+                border-right: 2px solid gray;
+                overflow: auto;
 
-            border-right: 2px solid gray;
-            overflow: auto;
-
-            .item {
-                cursor: pointer;
+                .item {
+                    cursor: pointer;
+                }
             }
+
+            x-viewer {
+                flex: 1 1 80%;
+
+                overflow: auto;
+            }
+
         }
-
-        x-viewer {
-            flex: 1 1 80%;
-
-            overflow: auto;
-        }
-
     }
+
 
 }
 

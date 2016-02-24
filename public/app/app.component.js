@@ -5,6 +5,7 @@ var AppComponent = ng.core.Component({
   directives: [
     ng.router.ROUTER_DIRECTIVES,
     require('./header.component'),
+    require('./sidebar.component'),
   ],
 }).Class({
   constructor: [function() {
@@ -27,10 +28,7 @@ var AppComponent = ng.core.Component({
 });
 
 ng.router.RouteConfig([{
-  path: '/app/', name: 'Home', component: require('./home.component'),
-}, {
-  path: '/app/upload', name: 'Upload', 
-  component: require('./upload.component'), 
+  path: '/app', name: 'Home', component: require('./home.component'),
 }])(AppComponent);
 
 module.exports = AppComponent;
