@@ -1,6 +1,6 @@
 var HomeComponent = ng.core.Component({
   selector: 'x-home',
-  template: '<x-sidebar></x-sidebar><x-viewer></x-viewer>',
+  templateUrl: '/app/home.html',
   directives: [
     require('./sidebar.component'),
     require('./viewer.component'),
@@ -8,6 +8,9 @@ var HomeComponent = ng.core.Component({
 }).Class({
   constructor: [function() {
   }],
+  onSelect: function(file) {
+    this.file = file;
+  }
 });
 
 module.exports = HomeComponent;

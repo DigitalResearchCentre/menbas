@@ -22,11 +22,16 @@ var FileReaderComponent = ng.core.Component({
       , self = this
     ;
     $el.bind('change', function(event) {
-      var reader = new FileReader();
+      var reader = new FileReader()
+        , file = event.target.files[0]
+      ;
       reader.onload = function(evt) {
-        self.filechange.emit(evt.target.result);
+        self.filechange.emit({
+          name: file.name,
+          content: evt.target.result,
+        });
       };
-      reader.readAsText(event.target.files[0]);
+      reader.readAsText(file);
     });
   },
 });

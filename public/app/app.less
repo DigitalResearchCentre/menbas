@@ -63,9 +63,12 @@ html, body {
             }
 
             x-viewer {
-                flex: 1 1 80%;
-
+                .flex(1, 1, 80%);
                 overflow: auto;
+
+                .flex-row;
+
+                @import './chart.less';
             }
 
         }

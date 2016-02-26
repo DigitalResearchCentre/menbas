@@ -1,10 +1,9 @@
-'use strict';
-
-require('./chart.less');
-var React = require('react');
-var $ = require('jquery');
-var d3 = require('d3');
-var _ = require('underscore');
+var _ = require('lodash')
+  , $ = require('jquery')
+  , d3 = require('d3')
+  , ElementRef = ng.core.ElementRef
+  , AuthService = require('./services/auth')
+;
 
 var d3LineChart = {
   _setProps: function(el, props) {
@@ -142,84 +141,99 @@ var d3LineChart = {
   },
 };
 
-var LineChart = React.createClass({
-  mixins: [React.addons.LinkedStateMixin,],
-  getInitialState: function() {
-    return {
-      places: [],
-      curPlace: {},
-      charts: ['all', 'EROI'],
-      chart: 'all',
-      props: {},
-    };
-  },
-  componentDidUpdate: function() {
-    var el = React.findDOMNode(this)
-      , state = this.state
-      , curPlace = state.curPlace
-      , chart = state.chart
-    ;
-    if (chart === 'all') {
-      if (curPlace) {
-        d3LineChart.update(el, {
-          chart: state.chart,
-          props: state.props
-        }, state.places[state.curPlace]);
-      }
-    } else {
-      d3LineChart.update(el, {
-        chart: state.chart,
-        props: state.props
-      }, state.places);
-    }
-  },
-  componentDidMount: function() {
-    var el = React.findDOMNode(this)
-      , $props = $.get('../data/linechart1.json')
-      , $data = $.get('../data/energy.json')
+var LineChartComponent = ng.core.Component({
+  selector: 'x-line-chart',
+  templateUrl: '/app/linechart.html',
+  directives: [
+  ],
+  inputs: ['file']
+}).Class({
+  constructor: [ElementRef, AuthService, function(elementRef, authService) { 
+    this._elementRef = elementRef;
+    this.authService = authService;
+  }],
+  ngOnInit: function() {
+    var el = this._elementRef.nativeElement
+      , $el = $(this._elementRef.nativeElement)
       , self = this
     ;
-    $.when($props, $data).done(function($props, $data) {
-      d3LineChart.create(el, {props: $props[0]}, {});
-      self.setState({
-        places: $data[0].places,
-        curPlace: _.keys($data[0].places)[0],
-        props: $props[0],
-      });
-    });
+    this.el = el;
+    this.curPlace = _.keys(this.file.places)[0];
+    this.charts = ['all', 'EROI'];
+    this.chart = 'all';
+    this.places = this.file.places;
+    this.file.props = {
+      width: 800,
+      height: 600,
+    };
+    console.log(this.file);
+
+    d3LineChart.create(el, {props: this.file.props}, {});
   },
   onPlaceChange: function(event) {
-    this.setState({curPlace: event.target.value});
+    this.curPlace = event.target.value;
   },
   onChartChange: function(event) {
-    this.setState({chart: event.target.value});
-  },
-  render: function() {
-    var places = _.map(this.state.places, function(data, place) {
-      return (
-        <option value={place}>{place}</option>
-      );
-    });
-    var charts = _.map(this.state.charts, function(chart) {
-      return (
-        <option value={chart}>{chart}</option>
-      );
-    });
-    return (
-      <div className="lineChart">
-        <div className="form row">
-          <div className="form-group">
-            <select onChange={this.onChartChange}>{charts}</select>
-            {(this.state.chart === 'all') &&
-              <select onChange={this.onPlaceChange}>{places}</select>
-            }
-          </div>
-        </div>
-      </div>
-    );
+    var chart = this.chart = event.target.value;
+    if (chart === 'all') {
+      if (this.curPlace) {
+        d3LineChart.update(this.el, {
+          chart: chart,
+          props: this.file.props
+        }, state.places[this.curPlace]);
+      }
+    } else {
+      d3LineChart.update(this.el, {
+        chart: chart,
+        props: this.file.props
+      }, this.file.places);
+    }
   },
 });
 
-module.exports = LineChart;
+var TmpComponent = ng.core.Component({
+  selector: 'x-line-chart',
+  templateUrl: '/app/tmp.html',
+  directives: [
+  ],
+  inputs: ['file']
+}).Class({
+  constructor: [ElementRef, AuthService, function(elementRef, authService) { 
+    this._elementRef = elementRef;
+    this.authService = authService;
+  }],
+  ngOnInit: function() {
+    this.energies = _.map(this.file._energies, function(energy, key) {
+      return {
+        abbreviation: energy.abbreviation,
+        energy: key,
+        unit: energy.unit,
+        formula: energy.abbreviation || '',
+      };
+    });
+    this.places = _.map(this.file.places, function(place, key) {
+      place.energies = _.map(place, function(value, energy) {
+        return {
+          value: value,
+          energy: energy,
+        }
+      });
+      place.key = key;
+      return place;
+    });
+    console.log(this.file);
+  },
+  onPlaceChange: function(event) {
+  },
+  onChartChange: function(event) {
+  },
+});
+
+
+
+
+module.exports = TmpComponent;
+
+
 
 // Bar chart

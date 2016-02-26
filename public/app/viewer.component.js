@@ -2,14 +2,18 @@ var ViewerComponent = ng.core.Component({
   selector: 'x-viewer',
   templateUrl: '/app/viewer.html',
   directives: [
+    require('./linechart.component'),
+    //require('./energychart.component'),
   ],
+  inputs: ['file']
 }).Class({
   constructor: [function() {
-  //, LineChart = require('./linechart')
-  //, MyChart = require('./mychart')
-  //, d3 = require('d3')
-
+    this.types = ['linechart', 'energy'];
+    this.type = 'linechart';
   }],
+  onTypeChange: function(event) {
+    this.type = event.target.value;
+  },
 });
 
 module.exports = ViewerComponent;

@@ -1,0 +1,11 @@
+<div class="form row">
+  <div class="form-group">
+    <select (change)="onChartChange($event)">
+      <option *ngFor="#chart of charts" [value]="chart">{{chart}}</option>
+    </select>
+    <select *ngIf="chart === 'all'" (change)="onPlaceChange($event)">
+      <option *ngFor="#place of ['USA']" [value]="place">{{place}}</option>
+    </select>
+  </div>
+</div>
+

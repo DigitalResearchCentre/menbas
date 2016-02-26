@@ -22,6 +22,8 @@
     <x-modal-body>
       <x-filereader (filechange)="filechange($event)"></x-filereader>
     </x-modal-body>
+    <x-modal-footer saveText="Upload" (save)="onUpload()">
+    </x-modal-footer>
   </template>
   <template [ngSwitchWhen]="'sign-in'">
     <x-modal-header>
@@ -37,7 +39,7 @@
         <input type="password" [(ngModel)]="password"/>
       </div>
     </x-modal-body>
-    <x-modal-footer saveText="Sign In" (save)="onSave()">
+    <x-modal-footer saveText="Sign In" (save)="onSignIn()">
     </x-modal-footer>
   </template>
 </x-modal>

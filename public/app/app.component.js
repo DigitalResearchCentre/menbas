@@ -1,3 +1,4 @@
+var AuthService = require('./services/auth');
 
 var AppComponent = ng.core.Component({
   selector: 'x-app',
@@ -5,10 +6,12 @@ var AppComponent = ng.core.Component({
   directives: [
     ng.router.ROUTER_DIRECTIVES,
     require('./header.component'),
-    require('./sidebar.component'),
+    require('./home.component'),
   ],
 }).Class({
-  constructor: [function() {
+  constructor: [AuthService, function(authService) {
+
+    this.authService = authService;
     var a = {
       files: [{
         name: 'energydata_2016_6.csv',
@@ -27,9 +30,6 @@ var AppComponent = ng.core.Component({
   }],
 });
 
-ng.router.RouteConfig([{
-  path: '/app', name: 'Home', component: require('./home.component'),
-}])(AppComponent);
 
 module.exports = AppComponent;
 

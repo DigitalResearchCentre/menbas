@@ -1,0 +1,12 @@
+<div *ngFor="#energy of energies">
+  <label>{{energy.abbreviation}}</label>
+  <input type="text" [value]="energy.formula" style="width: 600px;"/>
+</div>
+
+<table>
+  <tr>
+    <td *ngFor="#p of places">
+      <div>{{p.key}}</div>
+    </td>
+  </tr>
+</table>
