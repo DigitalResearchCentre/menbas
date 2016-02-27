@@ -1,7 +1,8 @@
-var express = require('express');
-var session = require('express-session');
+var express = require('express')
+  , session = require('express-session')
+  , path = require('path')
+;
 
-var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
