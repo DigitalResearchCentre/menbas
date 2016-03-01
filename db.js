@@ -1,23 +1,28 @@
 var mongodb = require('mongodb')
+  , _ = require('lodash')
   , MongoClient = mongodb.MongoClient
-  , db = null
+  , _db = null
 ;
 
-
-
-'mongodb://localhost:27017/menbas'
-
-module.exports = {
+var db = {
   connect: function(url, callback) {
     MongoClient.connect(url, function(err, db) {
-      state.db = db;
-      callback(err);
+      _db = db;
+      if (_.isFunction(callback)) {
+        callback(err);
+      }
     });
   },
   close: function(callback) {
-    if (state.db) {
-      state.db.close(callback);
+    if (_db) {
+      _db.close(callback);
     }
   },
-  db: null,
-}
+  collections: function() {
+    return _db.collections.apply(_db, arguments);
+  }
+};
+
+module.exports = db;
+
+

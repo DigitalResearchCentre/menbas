@@ -1,7 +1,10 @@
 var express = require('express')
   , session = require('express-session')
   , path = require('path')
+  , db = require('./db')
 ;
+
+db.connect('mongodb://localhost:27017/menbas');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -9,9 +12,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 
+
+
 var routes = require('./routes/index');
 
 var app = express();
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

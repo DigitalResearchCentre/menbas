@@ -1,0 +1,17 @@
+<x-modal #modal [show]="true">
+  <x-modal-header>
+    Sign In
+  </x-modal-header>
+  <x-modal-body>
+    <div>
+      <label>Username: </label>
+      <input type="text" [(ngModel)]="username"/>
+    </div>
+    <div>
+      <label>Password: </label>
+      <input type="password" [(ngModel)]="password"/>
+    </div>
+  </x-modal-body>
+  <x-modal-footer saveText="Sign In" (save)="onLoginClick()">
+  </x-modal-footer>
+</x-modal>

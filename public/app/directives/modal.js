@@ -77,6 +77,9 @@ var ModalComponent = ng.core.Component({
   ].join(' '),
   directives: [
   ],
+  inputs: [
+    'show',
+  ]
 }).Class({
   constructor: [function() {
     this.id = 'modal-' + counter;
@@ -87,7 +90,7 @@ var ModalComponent = ng.core.Component({
     this.$modal.modal({
       backdrop: true,
       keyboard: true,
-      show: false,
+      show: this.show || false,
     });
   },
   open: function() {

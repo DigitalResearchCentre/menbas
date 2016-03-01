@@ -11,7 +11,7 @@
   </x-modal-footer>
 </x-modal>
 <ul>
-  <li *ngFor="#file of authService.authUser.files" 
+  <li *ngFor="#file of store.authUser.files" 
     (click)="onClick($event, file)"class="item" >
     <a>{{file.name}}</a>
     <!--><button (click)="edit(modal, file)">edit</button><-->

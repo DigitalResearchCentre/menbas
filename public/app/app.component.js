@@ -1,4 +1,4 @@
-var AuthService = require('./services/auth');
+var APIService = require('./services/api');
 
 var AppComponent = ng.core.Component({
   selector: 'x-app',
@@ -9,9 +9,16 @@ var AppComponent = ng.core.Component({
     require('./home.component'),
   ],
 }).Class({
-  constructor: [AuthService, function(authService) {
+  constructor: [APIService, function(api) {
+    api.auth();
+    this.store = api.store;
+  }],
+});
 
-    this.authService = authService;
+module.exports = AppComponent;
+
+
+/*
     var a = {
       files: [{
         name: 'energydata_2016_6.csv',
@@ -27,14 +34,7 @@ var AppComponent = ng.core.Component({
         },
       }],
     };
-  }],
-});
 
-
-module.exports = AppComponent;
-
-
-/*
 d3.xhr('../data/energydata_2016_6.csv').get(function(err, resp) {
   var data = {}
     , places = data.places = {}

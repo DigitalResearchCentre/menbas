@@ -1,4 +1,4 @@
-var AuthService = require('./services/auth')
+var APIService = require('./services/api')
   , EventEmitter = ng.core.EventEmitter
 ;
 
@@ -12,9 +12,9 @@ var SidebarComponent = ng.core.Component({
     'select',
   ]
 }).Class({
-  constructor: [AuthService, function(authService) {
+  constructor: [APIService, function(api) {
 
-    this.authService = authService;
+    this.store = api.store;
     this.select = new EventEmitter();
   }],
   onClick: function(evt, file) {

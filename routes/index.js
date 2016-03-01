@@ -5,37 +5,21 @@ var express = require('express')
   , _ = require('lodash')
   , fs = require('fs')
   , path = require('path')
+  , db = require('../db')
 ;
 
-
-var DB = function(path) {
-  var self = this;
-  this._path = path;
-  this.collections = {};
-  fs.readFile(path, 'utf8', function(err, content) {
-    if (content) {
-      self.collections = JSON.parse(content);
+passport.use(new LocalStrategy(function(username, password, done) {
+  var users = db.collections('users');
+  users.findOne({username: username}, function(err, user) {
+    if (err) {
+      return done(err);
+    }
+    if (user && user.password === password) {
+      return done(null, user);
+    } else {
+      return done({message: 'Incorrect username or password'});
     }
   });
-};
-DB.prototype.save = function(data, callback) {
-  _.assign(this.collections, data);
-  fs.writeFile(this._path, JSON.stringify(this.collections), callback);
-};
-
-var db = new DB(path.join(__dirname, '..', 'data', 'db.json'));
-
-passport.use(new LocalStrategy(function(username, password, done) {
-  var users = db.collections.users
-    , user = users[username]
-  ;
-  if (user && user.password === password) {
-    user = _.clone(user);
-    delete user.password;
-    return done(null, user);
-  } else {
-    return done({message: 'Incorrect username or password'});
-  }
 }));
 
 passport.serializeUser(function(user, done) {
@@ -43,7 +27,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(username, done) {
-  done(null, db.collections.users[username]);
+  users.findOne({username: username}, done);
 });
 
 var auth = function(req, res, next) {
@@ -70,20 +54,24 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 });
 
 router.post('/users', auth, function(req, res, next) {
-  var data = req.body
-    , users = db.collections.users
-    , user = users[data.username]
-  ;
-  _.assign(user, data);
-  db.save({
-    users: users,
-  }, function(err) {
+  var data = req.body;
+  db.collections('users').insert(req.body, function(err, user) {
     if (err) {
       next(err);
     } else {
+      user = _.clone(user);
+      delete user.password;
       res.json(user);
     }
-  })
+  });
+});
+
+router.patch('/users/:id', auth, function(req, res, next) {
+  var data = req.body
+    , id = req.params.id
+  ;
+  console.log(id);
+  console.log(data);
 });
 
 module.exports = router;
