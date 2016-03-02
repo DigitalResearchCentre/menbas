@@ -9,12 +9,11 @@ var SidebarComponent = ng.core.Component({
     require('./directives/modal').MODAL_DIRECTIVES,
   ],
   outputs: [
-    'select',
+    'files', 'select',
   ]
 }).Class({
   constructor: [APIService, function(api) {
 
-    this.store = api.store;
     this.select = new EventEmitter();
   }],
   onClick: function(evt, file) {

@@ -1,19 +1,13 @@
 <div class="left">
-  <div class="item" (click)="showUploadCSVModal = true">
+  <div class="item" (click)="onUploadCSVClick()">
     Upload CSV
   </div>
 </div>
 <div class="right">
-  <div *ngIf="store.authUser" class="item">
-    {{store.authUser.username}}
-  </div>
-  <div *ngIf="!store.authUser" (click)="showLoginModal = true" 
-    class="item">
-    Sign In
-    <x-login-modal *ngIf="showLoginModal" login="login($event)"></x-login-modal>
+  <div class="item">
+    {{state.user?.username}}
   </div>
 </div>
 
-<x-upload-csv-modal *ngIf="showUploadCSVModal" ></x-upload-csv-modal>
 
 

@@ -10,16 +10,23 @@ var redux = require('redux')
   , thunk = require('redux-thunk')
   , createStore = redux.createStore
   , applyMiddleware = redux.applyMiddleware
-  , store = applyMiddleware(thunk)(createStore)()
+  , Actions = require('./actions')
 ;
+var store = createStore(
+  require('./reducers'), 
+  require('./initialState'), 
+  applyMiddleware(thunk)
+);
+window.store = store;
 
 var AppComponent = require('./app.component');
 
 document.addEventListener('DOMContentLoaded', function() {
   ng.platform.browser.bootstrap(AppComponent, [
+    ng.core.provide('Store', {useValue: store}),
     ng.http.HTTP_PROVIDERS,
     ng.router.ROUTER_PROVIDERS,
-    require('ng2-redux')(store),
+    require('./actions'),
     require('./services/api'),
   ]).catch(function(err) {
     console.error(err);

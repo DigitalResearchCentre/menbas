@@ -34,13 +34,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-db.connect('mongodb://localhost:27017/menbas', function(err, _db) {
+db.connect('mongodb://localhost:27017/menbas', function(err, dbInstance) {
   var routes = require('./routes/index');
+  if (err) {
+    console.log(err);
+    return;
+  }
 
   app.use(session({
     key: 'session',
     secret: 'mynewrandsecretfoobar',
-    store: new MongoStore({db: _db}),
+    store: new MongoStore({db: dbInstance}),
     resave: false,
     saveUninitialized: false,
   }));

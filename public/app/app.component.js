@@ -1,4 +1,4 @@
-var APIService = require('./services/api');
+var Actions = require('./actions');
 
 var AppComponent = ng.core.Component({
   selector: 'x-app',
@@ -7,12 +7,30 @@ var AppComponent = ng.core.Component({
     ng.router.ROUTER_DIRECTIVES,
     require('./header.component'),
     require('./home.component'),
+    require('./directives/loginmodal'),
+    require('./directives/uploadcsvmodal'),
   ],
 }).Class({
-  constructor: [APIService, function(api) {
-    api.auth();
-    this.store = api.store;
+  constructor: [new ng.core.Inject('Store'), Actions, function(store, actions) {
+    this.store = store;
+
+    this.unsubscribe = store.subscribe(this.onStateChange.bind(this));
+    this.onStateChange();
+
+    store.dispatch(actions.checkAuth());
   }],
+  onStateChange: function() {
+    var state = this.state = this.store.getState()
+      , user = state.auth.user
+    ;
+    this.headerState = {
+      user: user,
+    };
+    this.files = user ? user.files : [];
+  },
+  ngOnDestroy: function() {
+    this.unsubscribe();
+  }
 });
 
 module.exports = AppComponent;

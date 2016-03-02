@@ -1,26 +1,26 @@
-var EventEmitter = ng.core.EventEmitter;
+var Actions = require('../actions');
 
 var UploadCSVModal = ng.core.Component({
   selector: 'x-upload-csv-modal',
   templateUrl: '/app/directives/uploadcsvmodal.html',
   directives: [
     require('./modal').MODAL_DIRECTIVES,
+    require('./filereader'),
   ],
-  outputs: [
-    'login'
-  ]
 }).Class({
-  constructor: [function() {
-    this.login = new EventEmitter();
+  constructor: [Actions, function(actions) {
+    this.actions = actions;
   }],
-  onLoginClick: function() {
-    this.login.emit({
-      type: 'login',
-      payload: {
-        username: this.username,
-        password: this.password,
-      },
-    });
+  filechange: function(event) {
+    this.file = event;
+  },
+  onHide: function() {
+    var actions = this.actions;
+    actions.dispatch(actions.showUploadCSVModal(false));
+  },
+  onUpload: function() {
+    var actions = this.actions;
+    actions.dispatch(actions.uploadCSV(this.file));
   },
 });
 

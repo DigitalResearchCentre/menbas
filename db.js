@@ -1,28 +1,28 @@
 var mongodb = require('mongodb')
   , _ = require('lodash')
   , MongoClient = mongodb.MongoClient
-  , _db = null
+  , db = null
 ;
 
-var db = {
+var database = {
   connect: function(url, callback) {
-    MongoClient.connect(url, function(err, db) {
-      _db = db;
+    MongoClient.connect(url, function(err, _db) {
+      db = _db;
       if (_.isFunction(callback)) {
-        callback(err);
+        callback(err, db);
       }
     });
   },
   close: function(callback) {
-    if (_db) {
-      _db.close(callback);
+    if (db) {
+      db.close(callback);
     }
   },
-  collections: function() {
-    return _db.collections.apply(_db, arguments);
+  collection: function() {
+    return db.collection.apply(db, arguments);
   }
 };
 
-module.exports = db;
+module.exports = database;
 
 

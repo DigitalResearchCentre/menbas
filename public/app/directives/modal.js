@@ -2,8 +2,6 @@ var $ = require('jquery')
   , EventEmitter = ng.core.EventEmitter
 ;
 
-window.$$  = $;
-   
 var ModalHeaderComponent = ng.core.Component({
   selector: 'x-modal-header',
   template: [
@@ -79,18 +77,33 @@ var ModalComponent = ng.core.Component({
   ],
   inputs: [
     'show',
+  ],
+  outputs: [
+    'onShow', 'onHide',
   ]
 }).Class({
   constructor: [function() {
     this.id = 'modal-' + counter;
+    counter += 1;
+    this.onShow = new EventEmitter();
+    this.onHide = new EventEmitter();
   }],
   ngAfterViewInit: function() {
-    this.$modal = $('#' + this.id);
-    console.log(this.$modal);
-    this.$modal.modal({
+    var onShow = this.onShow
+      , onHide = this.onHide
+      , $modal = $('#' + this.id)
+    ;
+    this.$modal = $modal;
+    $modal.modal({
       backdrop: true,
       keyboard: true,
       show: this.show || false,
+    });
+    $modal.on('show.bs.modal', function(e) {
+      onShow.emit(e);
+    });
+    $modal.on('hide.bs.modal', function(e) {
+      onHide.emit(e);
     });
   },
   open: function() {
@@ -98,8 +111,10 @@ var ModalComponent = ng.core.Component({
   },
   close: function() {
     this.$modal.modal('hide');
+  },
+  ngOnDestroy: function() {
+    this.close();
   }
-
 });
 
 module.exports = {

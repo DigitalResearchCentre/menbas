@@ -1,4 +1,6 @@
-var EventEmitter = ng.core.EventEmitter;
+var EventEmitter = ng.core.EventEmitter
+  , Actions = require('../actions')
+;
 
 var LoginModal = ng.core.Component({
   selector: 'x-login-modal',
@@ -6,21 +8,12 @@ var LoginModal = ng.core.Component({
   directives: [
     require('./modal').MODAL_DIRECTIVES,
   ],
-  outputs: [
-    'login'
-  ]
 }).Class({
-  constructor: [function() {
-    this.login = new EventEmitter();
+  constructor: [Actions, function(actions) {
+    this.actions = actions;
   }],
   onLoginClick: function() {
-    this.login.emit({
-      type: 'login',
-      payload: {
-        username: this.username,
-        password: this.password,
-      },
-    });
+    this.actions.dispatch(this.actions.login(this.username, this.password));
   },
 });
 

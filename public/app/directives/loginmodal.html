@@ -1,7 +1,5 @@
-<x-modal #modal [show]="true">
-  <x-modal-header>
-    Sign In
-  </x-modal-header>
+<x-modal [show]="true" (onHide)="onHide($event)">
+  <x-modal-header><span>Sign In</span></x-modal-header>
   <x-modal-body>
     <div>
       <label>Username: </label>

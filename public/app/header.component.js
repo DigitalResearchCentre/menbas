@@ -1,5 +1,5 @@
 var csv = require('csv')
-  , APIService = require('./services/api')
+  , Actions = require('./actions')
   , _ = require('lodash')
 ;
 
@@ -7,21 +7,17 @@ var HeaderComponent = ng.core.Component({
   selector: 'x-header',
   templateUrl: '/app/header.html',
   directives: [
-    require('./directives/loginmodal'),
-    require('./directives/uploadcsvmodal'),
-    require('./directives/filereader'),
   ],
+  inputs: ['state']
 }).Class({
-  constructor: [APIService, function(api) {
-
-    this.store = api.store;
-    this.showLoginModal = !this.store.authUser;
-    this.showUploadCSVModal = false;
-    api.login('testuser', 'pass');
+  constructor: [Actions, function(actions) {
+    this.actions = actions;
   }],
-  onUpload: function() {
-    var user = this.authService.authUser
-      , self = this
+  onUploadCSVClick: function() {
+    var actions = this.actions;
+    actions.dispatch(actions.showUploadCSVModal(true));
+    /*
+    var user = this.state.user
       , file = this.file
     ;
     if (file) {
@@ -74,12 +70,9 @@ var HeaderComponent = ng.core.Component({
           self.$modal.close();
         });
       });
-
     }
+      */
   },
-  filechange: function(file) {
-    this.file = file;
-  }
 });
 
 module.exports = HeaderComponent;

@@ -1,2 +1,7 @@
-<x-header></x-header>
-<x-home *ngIf="store.authUser"></x-home>
+<x-header [state]="headerState"></x-header>
+<div class="x-container">
+  <x-sidebar [files]="files" (select)="onSelect($event)"></x-sidebar>
+  <x-viewer *ngIf="file" [file]="file"></x-viewer>
+</div>
+<x-login-modal *ngIf="!state.auth.user"></x-login-modal>
+<x-upload-csv-modal *ngIf="state.ui.showUploadCSVModal"></x-upload-csv-modal>

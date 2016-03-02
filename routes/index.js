@@ -9,8 +9,7 @@ var express = require('express')
 ;
 
 passport.use(new LocalStrategy(function(username, password, done) {
-  var users = db.collections('users');
-  users.findOne({username: username}, function(err, user) {
+  db.collection('users').findOne({username: username}, function(err, user) {
     if (err) {
       return done(err);
     }
@@ -27,7 +26,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(username, done) {
-  users.findOne({username: username}, done);
+  db.collection('users').findOne({username: username}, done);
 });
 
 var auth = function(req, res, next) {
@@ -53,9 +52,33 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
   res.redirect('/auth');
 });
 
+router.post('/uploadCSV', auth, function(req, res, next) {
+  var user = req.user
+    , file = req.body
+  ;
+  if (_.isEmpty(user.files)) {
+    user.files = [];
+  }
+  var found = _.find(user.files, function(f) {
+    return f.name === file.name;
+  });
+  if (found) {
+    found = _.assign(found, file);
+  } else {
+    user.files.push(file);
+  }
+  db.collection('users').updateOne({_id: user._id}, user, function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(user);
+    }
+  });
+});
+
 router.post('/users', auth, function(req, res, next) {
   var data = req.body;
-  db.collections('users').insert(req.body, function(err, user) {
+  db.collection('users').insert(req.body, function(err, user) {
     if (err) {
       next(err);
     } else {

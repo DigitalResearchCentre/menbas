@@ -34,25 +34,28 @@ var APIService = ng.core.Injectable().Class({
   },
   auth: function() {
     var store = this.store;
-    this.get('/auth').subscribe(function(res) {
-      store.authUser = res.json();
-    }, function(err) {
-      store.authUser = null;
-    });
+    return this.get('/auth')
+      .map(function(res) {
+        return res.json();
+      })
+      .toPromise();
   },
   login: function(username, password) {
-    var store = this.store;
-    return this.post('/login', {
-      username: username,
-      password: password,
-    }).map(function(res) {
-      return res.json();
-    }).do(function(user) {
-      store.authUser = user;
-    }, function(err) {
-      store.authUser = null;
-    }).subscribe();
+    return this
+      .post('/login', {
+        username: username,
+        password: password,
+      })
+      .map(function(res) {
+        return res.json();
+      })
+      .toPromise();
   },
+  uploadCSV: function(file) {
+    return this
+      .post('/uploadCSV', file)
+      .toPromise();
+  }
 });
 
 module.exports = APIService;

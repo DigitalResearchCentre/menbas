@@ -1,6 +1,6 @@
-<x-modal #modal>
+<x-modal [show]="true" (onHide)="onHide($event)">
     <x-modal-header>
-      Upload CSV File:
+      <span>Upload CSV File: </span>
     </x-modal-header>
     <x-modal-body>
       <x-filereader (filechange)="filechange($event)"></x-filereader>

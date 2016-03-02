@@ -10,8 +10,9 @@
   <x-modal-footer saveText="Save" (save)="onSave()">
   </x-modal-footer>
 </x-modal>
+
 <ul>
-  <li *ngFor="#file of store.authUser.files" 
+  <li *ngFor="#file of files" 
     (click)="onClick($event, file)"class="item" >
     <a>{{file.name}}</a>
     <!--><button (click)="edit(modal, file)">edit</button><-->
