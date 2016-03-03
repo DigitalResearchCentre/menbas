@@ -99,11 +99,13 @@ var ModalComponent = ng.core.Component({
       keyboard: true,
       show: this.show || false,
     });
-    $modal.on('show.bs.modal', function(e) {
-      onShow.emit(e);
-    });
-    $modal.on('hide.bs.modal', function(e) {
-      onHide.emit(e);
+    setTimeout(function() {
+      $modal.on('show.bs.modal', function(e) {
+        onShow.emit(e);
+      });
+      $modal.on('hide.bs.modal', function(e) {
+        onHide.emit(e);
+      });
     });
   },
   open: function() {

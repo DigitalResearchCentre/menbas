@@ -1,6 +1,0 @@
-<select (change)="onTypeChange($event)">
-  <option *ngFor="#type of types" [value]="type">{{type}}</option>
-</select>
-<x-line-chart *ngIf="type === 'linechart'" [file]="file"></x-line-chart>
-<x-energy-chart *ngIf="type === 'energy'"></x-energy-chart>
-

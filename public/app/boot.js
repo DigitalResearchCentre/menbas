@@ -4,7 +4,7 @@ require('script!angular2/bundles/angular2-all.umd');
 
 require('jquery');
 require('bootstrap');
-require('./app.less');
+require('./components/app.less');
 
 var redux = require('redux')
   , thunk = require('redux-thunk')
@@ -19,7 +19,7 @@ var store = createStore(
 );
 window.store = store;
 
-var AppComponent = require('./app.component');
+var AppComponent = require('./components/app');
 
 document.addEventListener('DOMContentLoaded', function() {
   ng.platform.browser.bootstrap(AppComponent, [

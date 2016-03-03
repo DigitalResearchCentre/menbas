@@ -15,12 +15,17 @@ module.exports = function(options) {
   console.log(env);
 
   if (env == 'dev') {
-    devtool = '#eval';
-  }else{
+    devtool = '#inline-source-map';
+    debug = true;
+  } else{
     devtool = '#source-map';
+    debug = false;
   }
 
   return {
+    devtool: devtool,
+    debug: debug,
+
     context: clientRoot,
     entry: {
       //vendor: path.join(clientRoot, 'vendor.js'),
@@ -86,7 +91,6 @@ module.exports = function(options) {
         }
       }),
     ],
-    devtool: devtool,
   };
 };
 

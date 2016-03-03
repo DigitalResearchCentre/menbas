@@ -14,6 +14,8 @@ var Types = {
   auth: 'auth',
   showUploadCSVModal: 'show-upload-csv-modal',
   uploadCSV: 'upload-csv',
+  selectFile: 'select-file',
+  showEditCSVModal: 'show-edit-csv-modal',
 };
 
 var Actions = ng.core.Injectable().Class({
@@ -61,7 +63,25 @@ var Actions = ng.core.Injectable().Class({
   showUploadCSVModal: function(show) {
     return {
       type: Types.showUploadCSVModal,
-      payload: show,
+      payload: {
+        show: show,
+      },
+    };
+  },
+  showEditCSVModal: function(show) {
+    return {
+      type: Types.showEditCSVModal,
+      payload: {
+        show: show,
+      },
+    };
+  },
+  selectFile: function(file) {
+    return {
+      type: Types.selectFile,
+      payload: {
+        file: file,
+      },
     };
   },
   uploadCSV: function(file) {
@@ -69,14 +89,16 @@ var Actions = ng.core.Injectable().Class({
     return function(dispatch, getState) {
       dispatch({
         type: Types.uploadCSV,
-        payload: file,
+        payload: {
+          file: file,
+        },
       });
       return api.uploadCSV(file)
         .catch(function(err) {
           dispatch(handleError(err, Types.uploadCSV));
         });
     };
-  }
+  },
 });
 
 Actions.Types = Types;
