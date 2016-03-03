@@ -10,6 +10,7 @@ var AppComponent = ng.core.Component({
     require('./viewer'),
     require('../directives/loginmodal'),
     require('../directives/uploadcsvmodal'),
+    require('../directives/editcsvmodal'),
   ],
 }).Class({
   constructor: [new ng.core.Inject('Store'), Actions, function(store, actions) {

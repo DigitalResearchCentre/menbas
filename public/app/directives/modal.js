@@ -64,19 +64,11 @@ var ModalFooterComponent = ng.core.Component({
 var counter = 0;
 var ModalComponent = ng.core.Component({
   selector: 'x-modal',
-  template: [
-    '<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog">',
-      '<div class="modal-dialog">',
-        '<div class="modal-content">',
-          '<ng-content></ng-content>',
-        '</div>',
-      '</div>',
-    '</div>',
-  ].join(' '),
+  templateUrl: '/app/directives/modal.html',
   directives: [
   ],
   inputs: [
-    'show',
+    'show', 'modalSize',
   ],
   outputs: [
     'onShow', 'onHide',
@@ -87,6 +79,7 @@ var ModalComponent = ng.core.Component({
     counter += 1;
     this.onShow = new EventEmitter();
     this.onHide = new EventEmitter();
+    this.modalLg = true;
   }],
   ngAfterViewInit: function() {
     var onShow = this.onShow
