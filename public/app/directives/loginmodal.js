@@ -1,5 +1,5 @@
 var EventEmitter = ng.core.EventEmitter
-  , Actions = require('../actions')
+  , API = require('../services/api')
 ;
 
 var LoginModal = ng.core.Component({
@@ -9,11 +9,11 @@ var LoginModal = ng.core.Component({
     require('./modal').MODAL_DIRECTIVES,
   ],
 }).Class({
-  constructor: [Actions, function(actions) {
-    this.actions = actions;
+  constructor: [API, function(api) {
+    this.api = api;
   }],
   onLoginClick: function() {
-    this.actions.dispatch(this.actions.login(this.username, this.password));
+    this.api.login(this.username, this.password);
   },
 });
 

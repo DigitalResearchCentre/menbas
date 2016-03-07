@@ -41,6 +41,20 @@ db.connect('mongodb://localhost:27017/menbas', function(err, dbInstance) {
     return;
   }
 
+  dbInstance.collection('users').find({
+    username: 'test'
+  }).toArray(function(err, users) {
+    console.log(err);
+    console.log(users);
+    if (users.length === 0) {
+      dbInstance.collection('users').insertOne({
+        username: 'test', password: 'test',
+      }, function(err, user) {
+        console.log(user);
+      });
+    }
+  });
+
   app.use(session({
     key: 'session',
     secret: 'mynewrandsecretfoobar',

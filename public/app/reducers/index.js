@@ -1,7 +1,6 @@
 var redux = require('redux')
   , _ = require('lodash')
-  , Actions = require('../actions')
-  , Types = Actions.Types
+  , Types = require('../actions').Types
 ;
 
 function createReducer(handlers, defaultState) {
@@ -23,7 +22,6 @@ function createReducer(handlers, defaultState) {
 function reduceReducer(reducers) {
   return function(state, action) {
     return _.reduce(reducers, function(_state, reducer) {
-      console.log(_state);
       return reducer(_state, action);
     }, state);
   };
@@ -41,8 +39,6 @@ var globalHandlers = _.mapKeys({
     });
   },
   uploadCSV: function(state, action) {
-    console.log(state);
-    console.log(action);
     return state;
   },
   selectFile: function(state, action) {

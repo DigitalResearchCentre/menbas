@@ -1,4 +1,4 @@
-var Actions = require('../actions');
+var API = require('../services/api');
 
 var SidebarComponent = ng.core.Component({
   selector: 'x-sidebar',
@@ -10,8 +10,8 @@ var SidebarComponent = ng.core.Component({
     'files', 'selectedFile',
   ],
 }).Class({
-  constructor: [Actions, function(actions) {
-    this.actions = actions;
+  constructor: [API, function(api) {
+    this.api = api;
   }],
   onSelect: function(file) {
     var actions = this.actions;

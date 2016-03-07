@@ -6,31 +6,24 @@ require('jquery');
 require('bootstrap');
 require('./components/app.less');
 
-var redux = require('redux')
-  , thunk = require('redux-thunk')
-  , createStore = redux.createStore
-  , applyMiddleware = redux.applyMiddleware
-  , Actions = require('./actions')
-;
-var store = createStore(
-  require('./reducers'), 
-  require('./initialState'), 
-  applyMiddleware(thunk)
-);
-window.store = store;
+
 
 var AppComponent = require('./components/app');
 
 document.addEventListener('DOMContentLoaded', function() {
   ng.platform.browser.bootstrap(AppComponent, [
-    ng.core.provide('Store', {useValue: store}),
     ng.http.HTTP_PROVIDERS,
     ng.router.ROUTER_PROVIDERS,
-    require('./actions'),
+    require('./services/store'),
     require('./services/api'),
+    require('./services/auth'),
   ]).catch(function(err) {
     console.error(err);
   });
 });
+
+window.API = require('./services/api');
+
+
 
 

@@ -1,6 +1,6 @@
 var csv = require('csv')
-  , Actions = require('../actions')
   , _ = require('lodash')
+  , API = require('../services/api')
 ;
 
 var HeaderComponent = ng.core.Component({
@@ -10,16 +10,15 @@ var HeaderComponent = ng.core.Component({
   ],
   inputs: ['user']
 }).Class({
-  constructor: [Actions, function(actions) {
-    this.actions = actions;
+  constructor: [API, function(api) {
+    this.api = api;
   }],
   ngOnInit: function() {
     console.log(this.user);
     
   },
   onUploadCSVClick: function() {
-    var actions = this.actions;
-    actions.dispatch(actions.showUploadCSVModal(true));
+    this.api.showUploadCSVModal(true);
     /*
     var user = this.state.user
       , file = this.file

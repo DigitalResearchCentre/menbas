@@ -1,4 +1,4 @@
-var Actions = require('../actions');
+var API = require('../services/api');
 
 var EditCSVModal = ng.core.Component({
   selector: 'x-edit-csv-modal',
@@ -7,19 +7,17 @@ var EditCSVModal = ng.core.Component({
     require('./modal').MODAL_DIRECTIVES,
   ],
 }).Class({
-  constructor: [Actions, function(actions) {
-    this.actions = actions;
+  constructor: [API, function(api) {
+    this.api = api;
   }],
   filechange: function(event) {
     this.file = event;
   },
   onHide: function() {
-    var actions = this.actions;
-    actions.dispatch(actions.showUploadCSVModal(false));
+    this.api.showUploadCSVModal(false);
   },
   onUpload: function() {
-    var actions = this.actions;
-    actions.dispatch(actions.uploadCSV(this.file));
+    this.api.uploadCSV(this.file);
   },
 });
 

@@ -1,14 +1,18 @@
-<x-header [user]="state.user"></x-header>
-<div class="x-container">
-  <x-sidebar 
-    [files]="state.files" 
-    [selectedFile]="state.selectedFile" 
-    (select)="onSelect($event)"></x-sidebar>
-  <x-viewer *ngIf="state.selectedFile" [file]="state.selectedFile"></x-viewer>
-</div>
-<x-login-modal *ngIf="!state.user"></x-login-modal>
-<x-upload-csv-modal *ngIf="state.ui.showUploadCSVModal"></x-upload-csv-modal>
-<x-edit-csv-modal 
-  *ngIf="state.ui.showEditCSVModal"
-  [file]="state.selectedFile" 
-  ></x-edit-csv-modal>
+<template [ngIf]="state">
+  <x-header [user]="state.user"></x-header>
+  <!-->
+  <div class="x-container">
+    <x-sidebar 
+      [files]="state.files" 
+      [selectedFile]="state.selectedFile" 
+      (select)="onSelect($event)"></x-sidebar>
+    <x-viewer *ngIf="state.selectedFile" [file]="state.selectedFile"></x-viewer>
+  </div>
+    <-->
+  <x-login-modal *ngIf="!state.user"></x-login-modal>
+  <x-upload-csv-modal *ngIf="state.ui.showUploadCSVModal"></x-upload-csv-modal>
+  <x-edit-csv-modal 
+    *ngIf="state.ui.showEditCSVModal"
+    [file]="state.selectedFile" 
+    ></x-edit-csv-modal>
+</template>

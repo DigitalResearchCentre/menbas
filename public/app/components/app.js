@@ -1,4 +1,7 @@
-var Actions = require('../actions');
+var APIService = require('../services/api')
+  , StoreService = require('../services/store')
+  , redux = require('redux')
+;
 
 var AppComponent = ng.core.Component({
   selector: 'x-app',
@@ -13,20 +16,18 @@ var AppComponent = ng.core.Component({
     require('../directives/editcsvmodal'),
   ],
 }).Class({
-  constructor: [new ng.core.Inject('Store'), Actions, function(store, actions) {
-    this.store = store;
+  constructor: [StoreService, APIService, function(storeService, api) {
+    this.unsubscribe = storeService.subscribe(this.onStateChange.bind(this));
 
-    this.unsubscribe = store.subscribe(this.onStateChange.bind(this));
-    this.onStateChange();
-
-    store.dispatch(actions.checkAuth());
+    api.checkAuth();
   }],
-  onStateChange: function() {
-    this.state = this.store.getState();
-  },
   ngOnDestroy: function() {
     this.unsubscribe();
-  }
+  },
+  onStateChange: function(state) {
+    this.state = state;
+    console.log(state);
+  },
 });
 
 module.exports = AppComponent;
