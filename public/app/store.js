@@ -1,7 +1,7 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-//import api from './middleware/api';
 import rootReducer from './reducers';
+import Actions from './actions';
 
 const _initialState = {
   user: null,
@@ -14,7 +14,7 @@ const _initialState = {
 };
 
 export default function configureStore(initialState=_initialState) {
-  return createStore(
+  const store = createStore(
     rootReducer,
     initialState,
     compose(
@@ -24,5 +24,9 @@ export default function configureStore(initialState=_initialState) {
         function(f) {return f;}
     )
   );
+
+  store.dispatch(Actions.auth());
+
+  return store;
 };
 

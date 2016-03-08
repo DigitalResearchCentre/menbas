@@ -32,7 +32,7 @@ var globalHandlers = _.mapKeys({
   auth: function(state, action) {
     var user = null;
     if (!action.error) {
-      user = action.payload.user;
+      user = action.payload;
     }
     return _.assign({}, state, {
       user: user,

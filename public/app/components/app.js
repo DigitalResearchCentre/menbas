@@ -1,20 +1,20 @@
 import React from 'react';
 import Header from '../containers/Header';
+import LoginModal from '../containers/LoginModal';
 
 const Sidebar = () => (<div/>);
 const Viewer = () => (<div/>);
 
-const App = function() {
-  return (
-    <div>
-      <Header/>
-      <div className="container">
-        <Sidebar/>
-        <Viewer/>
-      </div>
+const App = () => (
+  <div>
+    <Header/>
+    <div className="container">
+      <Sidebar/>
+      <Viewer/>
     </div>
-  );
-};
+    <LoginModal/>
+  </div>
+);
 
 export default App;
 
