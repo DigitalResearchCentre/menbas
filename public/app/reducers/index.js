@@ -1,9 +1,10 @@
-var redux = require('redux')
-  , _ = require('lodash')
-  , Types = require('../actions').Types
-;
+import { combineReducers } from 'redux';
+import { handleActions } from 'redux-actions';
+import _ from 'lodash';
+import { Types } from '../actions';
 
 function createReducer(handlers, defaultState) {
+  console.log(handlers);
   if (defaultState === void(0)) {
     defaultState = {};
   }
@@ -50,25 +51,22 @@ var globalHandlers = _.mapKeys({
   return Types[key];
 });
 
-var uiHandlers  = _.mapKeys({
-  showUploadCSVModal: function(state, action) {
+var uiHandlers  = {
+  [Types.showUploadCSVModal]: function(state, action) {
     return _.assign({}, state, {
-      showUploadCSVModal: action.payload.show,
+      showUploadCSVModal: action.payload,
     });
   },
-  showEditCSVModal: function(state, action) {
+  [Types.showEditCSVModal]: function(state, action) {
     return _.assign({}, state, {
       showEditCSVModal: true,
     });
   }
-}, function(reducer, key) {
-  return Types[key];
-});
-
+};
 
 module.exports = reduceReducer([
   createReducer(globalHandlers),
-  redux.combineReducers({
+  combineReducers({
     files: createReducer({}, []),
     selectedFile: createReducer({}, null),
     user: createReducer({}, null),

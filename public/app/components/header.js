@@ -1,8 +1,27 @@
-var csv = require('csv')
-  , _ = require('lodash')
-  , API = require('../services/api')
-;
+import React, { PropTypes } from 'react';
 
+const Header = ({onClick}) => (
+  <div>
+    <div class="left">
+      <div class="item" onClick="onClick">
+        Upload CSV
+      </div>
+    </div>
+    <div class="right">
+      <div class="item">
+        {user.username}
+      </div>
+    </div>
+  </div>
+);
+
+Header.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
+export default Header;
+
+    /*
 var HeaderComponent = ng.core.Component({
   selector: 'x-header',
   templateUrl: '/app/components/header.html',
@@ -19,7 +38,6 @@ var HeaderComponent = ng.core.Component({
   },
   onUploadCSVClick: function() {
     this.api.showUploadCSVModal(true);
-    /*
     var user = this.state.user
       , file = this.file
     ;
@@ -74,11 +92,11 @@ var HeaderComponent = ng.core.Component({
         });
       });
     }
-      */
   },
 });
 
 module.exports = HeaderComponent;
+      */
 
 
 

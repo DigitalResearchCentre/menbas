@@ -22,14 +22,40 @@ module.exports = function(options) {
     debug = false;
   }
 
+  var plugins = [
+    new ResolverPlugin(new ResolverPlugin.DirectoryDescriptionFilePlugin(
+      'bower.json', ['main']
+    )), 
+    new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery",
+        "window.jQuery": "jquery"
+    }),
+    // prevent webpack accident include server security information
+    new IgnorePlugin(new RegExp('config\/prod.*')),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor', filename: 'vendor.bundle.js',
+      minChunks: function(module, count) {
+        return module.resource && module.resource.indexOf(clientRoot) === -1;
+      }
+    }),
+  ];
+
+  if (env === 'prod') {
+    plugins.push(new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: JSON.stringify("production")
+      }
+    }));
+  }
+
   return {
     devtool: devtool,
     debug: debug,
 
     context: clientRoot,
     entry: {
-      //vendor: path.join(clientRoot, 'vendor.js'),
-      boot: path.join(clientRoot, 'app/boot.js'),
+      app: path.join(clientRoot, 'app/index.js'),
     },
     output: {
       path: path.join(clientRoot, 'dist'),
@@ -37,6 +63,9 @@ module.exports = function(options) {
     },
     module: {
       loaders: [
+        {
+          test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"
+        },
         {
           test: /\.png(\?v=\d+\.\d+\.\d+)?$/,
           loader: "url?minetype=image/jpg&prefix=dist/"
@@ -73,24 +102,7 @@ module.exports = function(options) {
         node: nodeRoot,
       },
     },
-    plugins: [
-      new ResolverPlugin(new ResolverPlugin.DirectoryDescriptionFilePlugin(
-        'bower.json', ['main']
-      )), 
-      new webpack.ProvidePlugin({
-          $: "jquery",
-          jQuery: "jquery",
-          "window.jQuery": "jquery"
-      }),
-      // prevent webpack accident include server security information
-      new IgnorePlugin(new RegExp('config\/prod.*')),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor', filename: 'vendor.bundle.js',
-        minChunks: function(module, count) {
-          return module.resource && module.resource.indexOf(clientRoot) === -1;
-        }
-      }),
-    ],
+    plugins: plugins,
   };
 };
 

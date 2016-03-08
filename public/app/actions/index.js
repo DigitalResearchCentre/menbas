@@ -3,18 +3,16 @@ var _ = require('lodash')
   , createAction = ReduxActions.createAction
 ;
 
-
-var keys = [
-  'auth', 'uploadCSV', 'selectFile', 
+const keys = [
+  'auth', 'uploadCSV', 'selectFile',
   'showEditCSVModal', 'showUploadCSVModal', 
 ];
-var Types = _.zipObject(keys, keys);
 
-var Actions = _.mapValues(Types, function(key) {
-  return createAction(key);
+export const Types = _.zipObject(keys, keys);
+
+const Actions = _.mapValues(Types, function(value, key) {
+  return createAction(value);
 });
 
-module.exports = {
-  Actions: Actions,
-  Types: Types,
-};
+export default Actions;
+

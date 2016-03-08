@@ -2,13 +2,12 @@ var webpack = require('webpack')
   , stdio = require('stdio')
   , config, compiler, ops, env
 ;
-console.log('hello');
 
 ops = stdio.getopt({
   env: {args: 1, description: 'ex. dev, prod, test'}
 });
 
-env = (ops.env || process.env.TC_ENV || 'dev');
+env = (ops.env || 'dev');
 
 config = require('./make-webpack-config')({
   env: env

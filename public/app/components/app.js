@@ -1,36 +1,22 @@
-var APIService = require('../services/api')
-  , StoreService = require('../services/store')
-  , redux = require('redux')
-;
+import React from 'react';
+import Header from '../containers/Header';
 
-var AppComponent = ng.core.Component({
-  selector: 'x-app',
-  templateUrl: '/app/components/app.html',
-  directives: [
-    ng.router.ROUTER_DIRECTIVES,
-    require('./header'),
-    require('./sidebar'),
-    require('./viewer'),
-    require('../directives/loginmodal'),
-    require('../directives/uploadcsvmodal'),
-    require('../directives/editcsvmodal'),
-  ],
-}).Class({
-  constructor: [StoreService, APIService, function(storeService, api) {
-    this.unsubscribe = storeService.subscribe(this.onStateChange.bind(this));
+const Sidebar = () => (<div/>);
+const Viewer = () => (<div/>);
 
-    api.checkAuth();
-  }],
-  ngOnDestroy: function() {
-    this.unsubscribe();
-  },
-  onStateChange: function(state) {
-    this.state = state;
-    console.log(state);
-  },
-});
+const App = function() {
+  return (
+    <div>
+      <Header/>
+      <div className="container">
+        <Sidebar/>
+        <Viewer/>
+      </div>
+    </div>
+  );
+};
 
-module.exports = AppComponent;
+export default App;
 
 
 /*
