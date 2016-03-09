@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Actions from '../actions';
+import LineChart from '../components/LineChart';
 
 
 class Viewer extends Component {
@@ -17,22 +18,10 @@ class Viewer extends Component {
 
   render() {
     const { files, selectedFile } = this.props;
-    let items = _.map(files, (file, i) => {
-      return (
-        <li 
-          key={i}
-          className={'item ' + (selectedFile === file ? 'selected' : '')}>
-          <a onClick={this.onSelect.bind(this, file)}>{file.name}</a>
-          
-          <span 
-            onClick={this.onEdit.bind(this, file)}
-            className="glyphicon glyphicon-edit icon" aria-hidden="true"></span>
-        </li>
-      );
-    });
 
     return (
       <div className="viewer">
+        <LineChart file={selectedFile}/>
       </div>
     );
   }

@@ -205,10 +205,10 @@ var TmpComponent = ng.core.Component({
   ngOnInit: function() {
     this.energies = _.map(this.file._energies, function(energy, key) {
       return {
-        abbreviation: energy.abbreviation,
+        abbr: energy.abbreviation,
         energy: key,
         unit: energy.unit,
-        formula: energy.abbreviation || '',
+        formula: energy.abbr || '',
       };
     });
     this.places = _.map(this.file.places, function(place, key) {

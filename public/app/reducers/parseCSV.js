@@ -12,13 +12,13 @@ export default function parseCSV(file) {
     energies: {},
     _energies: {},
   });
-  csv.parse(file.content, function(err, rows) {
+  return csv.parse(file.content, function(err, rows) {
     var headers = rows.slice(0, 3);
     _.each(rows.slice(3), function(row) {
       var energy = row[0];
       if (energy && row[1]) {
         file._energies[energy] = {
-          abbreviation: row[1],
+          abbr: row[1],
           unit: row[2],
         };
         if (row[1]) {
@@ -40,6 +40,5 @@ export default function parseCSV(file) {
         });
       } 
     });
-    console.log(file);
   });
 }

@@ -62,7 +62,7 @@ var HeaderComponent = ng.core.Component({
           var energy = row[0];
           if (energy && row[1]) {
             file._energies[energy] = {
-              abbreviation: row[1],
+              abbr: row[1],
               unit: row[2],
             };
             if (row[1]) {

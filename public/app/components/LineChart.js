@@ -1,3 +1,4 @@
+import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
@@ -19,46 +20,61 @@ var d3LineChart = {
     });
     return [min, max];
   },
-  create: function(el, props, state) {
-    var chart = d3.select(el)
-      .append('svg')
-      .append('g').attr('class', 'chart')
-    ;
-    chart.append('g').attr('class', 'x axis');
-    chart.append('g').attr('class', 'y axis');
-    this.update(el, props, state);
-  },
-  update: function(el, option, data) {
-    var svg = d3.select(el).select('svg')
+  update: function(svg, option, data, energyName) {
+    var svg = d3.select(svg)
       , chart = svg.select('.chart')
-      , left = 50
+      , left = 100
       , top = 10
       , bottom = 30
-      , props = option.props
       , chartType = option.chart
-      , width = props.width - left
-      , height = props.height - top - bottom
+      , _energies = option._energies
+      , meta = _energies[energyName]
+      , width = option.width - left
+      , height = option.height - top - bottom
       , x = d3.scale.linear().range([0, width])
       , y = d3.scale.linear().range([height, 0])
       , c20 = d3.scale.category20()
       , xAxis, yAxis, line, flag
     ;
-    svg.attr({width: props.width, height: props.height});
+    svg.attr({width: option.width, height: option.height});
     chart.attr('transform', 'translate(' + left + ', ' + top + ')');
 
     xAxis = d3.svg.axis().scale(x).orient('bottom');
     yAxis = d3.svg.axis().scale(y).orient('left');
+
+    function getFormulas(_energies, energyMap, i) {
+      var formulas = {};
+      _.each(energyMap, function(energyData, energyName) {
+        formulas[energyName] = {
+          abbr: _energies[energyName].abbr,
+          value: parseFloat(energyData[i][1].replace(/,/g, '')),
+          formula: _energies[energyName].formula
+        };
+      });
+      return formulas;
+    }
     
     if (chartType === 'all') {
-      data = _.map(data, function (v, k) {
+      data = _.map(data, function (energyMap, place) {
         var row = [];
-        _.each(v, function(d) {
-          var year = parseInt(d[0]), energy = parseFloat(d[1]);
+        _.each(energyMap[energyName], function(yearData, i) {
+          let year = parseInt(yearData[0])
+            , energy = parseFloat((yearData[1] || '').replace(/,/g, ''))
+            , formulas = getFormulas(_energies, energyMap, i)
+          ;
           if (!(_.isNaN(year) || _.isNaN(energy))) {
+            if (meta.formula) {
+              let base =  _.map(formulas, function(formula, energyName) {
+                let { abbr, value } = formula;
+                return `let ${abbr} = ${value};`
+              }).join(' ');
+              energy = eval(base + ' ' + meta.formula);
+            }
             return row.push([year, energy]);
           }
         });
-        row.flagtext = k;
+        row = _.sortBy(row, (d)=>d[0]);
+        row.flagtext = place;
         return row;
       });
     } else {
@@ -90,7 +106,8 @@ var d3LineChart = {
         return row;
       });
     }
-    c20 = c20.domain(data);
+    console.log(data);
+    c20 = c20.domain(_.map(data, (row) => row.flagtext));
 
     x.domain(this._findMinMax(data, function(d) {return d[0];}));
     y.domain(this._findMinMax(data, function(d) {return d[1];}));
@@ -124,7 +141,9 @@ var d3LineChart = {
     ;
 
     var i = 0;
-    flag.attr('fill', c20).attr('transform', function(d) {
+    flag.attr('fill', function(d) {
+      return c20(d.flagtext);
+    }).attr('transform', function(d) {
       i += 1;
       return 'translate(20, ' + (i * 18) + ')';
     });
@@ -138,12 +157,61 @@ var d3LineChart = {
   },
 };
 
-const LinChart = () => {
+class LinChart extends Component {
+  createD3(svg) {
+    if (svg) {
+      this.svg = svg;
+    }
+    let chart = d3.select(this.svg).append('g').attr('class', 'chart');
+    chart.append('g').attr('class', 'x axis');
+    chart.append('g').attr('class', 'y axis');
+  }
 
-  return (
-    d3LineChart.create(el, {props: this.file.props}, {});
-  );
+  onEnergyChange(event) {
+    console.log(event.target.value);
+    let svg = this.svg;
+    let file = _.assign({
+      width: 1024,
+      height: 600,
+      chart: 'all',
+    }, this.props.file);
+
+    d3LineChart.update(svg, file, file.places, event.target.value);
+  }
+
+  render() {
+    const { file } = this.props;
+    let energyDropdown;
+    if (file) {
+      let options = _.map(file.energies, (energyName, abbr) => (
+          <option key={abbr} value={energyName}>
+            {energyName}: {abbr}
+          </option>
+      ));
+      energyDropdown = (
+        <select 
+          ref={(el)=>{
+            if (el) this.selectEnergyEl = el;
+          }}
+          onChange={this.onEnergyChange.bind(this)}>{options}</select>
+      );
+      _.each(file.energies, (energyName) => {
+        this.onEnergyChange({target: {value: energyName}});
+        return false;
+      });
+    }
+    return (
+      <div>
+        <div>
+          {energyDropdown}
+        </div>
+        <svg ref={(el)=>this.createD3(el)}/>
+      </div>
+    );
+  }
 }
+
+export default LinChart;
 
   /*
     this.el = el;
@@ -151,10 +219,6 @@ const LinChart = () => {
     this.charts = ['all', 'EROI'];
     this.chart = 'all';
     this.places = this.file.places;
-    this.file.props = {
-      width: 800,
-      height: 600,
-    };
     console.log(this.file);
 
 
@@ -181,10 +245,10 @@ const LinChart = () => {
   ngOnInit: function() {
     this.energies = _.map(this.file._energies, function(energy, key) {
       return {
-        abbreviation: energy.abbreviation,
+        abbr: energy.abbreviation,
         energy: key,
         unit: energy.unit,
-        formula: energy.abbreviation || '',
+        formula: energy.abbr || '',
       };
     });
     this.places = _.map(this.file.places, function(place, key) {
@@ -204,7 +268,6 @@ const LinChart = () => {
 
 
 
-module.exports = TmpComponent;
 
 
 

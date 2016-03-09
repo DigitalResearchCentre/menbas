@@ -29,7 +29,6 @@ class UploadCSVModal extends Component {
 
   render() {
     const { actions, showUploadCSVModal } = this.props;
-    console.log(this.props);
 
     return (
       <Modal show={showUploadCSVModal}>

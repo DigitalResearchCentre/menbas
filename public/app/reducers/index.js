@@ -40,9 +40,23 @@ var globalHandlers = {
     return state;
   },
   [Types.selectFile]: function(state, action) {
-    parseCSV(action.payload);
     return _.assign({}, state, {
       selectedFile: action.payload,
+    });
+  },
+  [Types.updateFormula]: function(state, action) {
+    let _energies = _.get(state, 'selectedFile._energies', {});
+    let energies = _.get(state, 'selectedFile.energies', {});
+    let abbr = action.payload.abbr;
+    let energy = _energies[energies[abbr]];
+    _energies = _.assign({}, _energies, {
+      [energies[abbr]]: _.assign({}, energy, action.payload) 
+    });
+    
+    return _.assign({}, state, {
+      selectedFile: _.assign({}, state.selectedFile, {
+        _energies: _energies
+      }),
     });
   },
 };
@@ -55,7 +69,7 @@ var uiHandlers  = {
   },
   [Types.showEditCSVModal]: function(state, action) {
     return _.assign({}, state, {
-      showEditCSVModal: true,
+      showEditCSVModal: action.payload,
     });
   },
 };

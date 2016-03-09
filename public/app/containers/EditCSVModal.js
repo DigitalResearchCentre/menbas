@@ -1,18 +1,66 @@
 import React, { PropTypes, Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Input } from 'react-bootstrap';
 import Actions from '../actions';
 
 class EditCSVModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   onSave() {
+    this.props.actions.updateFormula(this.state.variable);
+  }
+
+  onVariableChange(event) {
+    let variable = this.state.variable;
+    this.setState({
+      variable: _.assign(
+        {}, variable, {formula: event.target.value}
+      )
+    });
+  }
+
+  onClose() {
+    this.props.actions.showEditCSVModal(false);
   }
 
   render() {
-    const { actions, showEditCSVModal, selectedFile } = this.props;
+    const { actions, ui, selectedFile } = this.props;
+    const variable = this.state.variable;
+    let variables, variableInput;
+
+    if (variable) {
+      let foo = selectedFile._energies[selectedFile.energies[variable.abbr]];
+      
+      variableInput = (
+        <div>
+          <Input 
+            value={
+              variable.formula === void(0) ? foo.formula : variable.formula
+            }
+            onChange={this.onVariableChange.bind(this)}
+            type="text" label={variable.abbr} placeholder="Enter Formula" />
+        </div>
+      );
+    }
+
+
+    if (selectedFile) {
+      variables = _.map(selectedFile.energies, (name, abbr)=>(
+        <li key={abbr}><a onClick={()=>{
+          let variable = this.state.variable;
+          this.setState({
+            variable: {abbr: abbr, formula: abbr},
+          });
+        }}>{name}: {abbr}</a></li>
+      ));
+    }
 
     return (
-      <Modal show={showEditCSVModal} bsSize="large">
+      <Modal show={ui.showEditCSVModal} bsSize="large">
         <Modal.Header>
           <Modal.Title>Edit Config: </Modal.Title>
         </Modal.Header>
@@ -28,16 +76,19 @@ class EditCSVModal extends Component {
             <ul className="dropdown-menu" aria-labelledby="ddLabel">
               <li><a>Add new variable</a></li>
               <li role="separator" className="divider"></li>
-              <li><a>foo</a></li>
-              <li><a>bar</a></li>
+              {variables}
             </ul>
           </div>
+          {variableInput}
         </Modal.Body>
         <Modal.Footer>
           <Button
             onClick={this.onSave.bind(this)}
             bsStyle="primary"
           >Save</Button>
+          <Button
+            onClick={this.onClose.bind(this)}
+          >Close</Button>
         </Modal.Footer>
       </Modal>
     )
@@ -45,7 +96,7 @@ class EditCSVModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state.ui;
+  return state;
 };
 
 const mapDispatchToProps = (dispatch) => {
