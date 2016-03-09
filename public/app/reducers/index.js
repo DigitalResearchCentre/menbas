@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import _ from 'lodash';
 import { Types } from '../actions';
+import parseCSV from './parseCSV';
 
 function createReducer(reducers) {
   return function(state={}, action) {
@@ -13,8 +14,6 @@ function createReducer(reducers) {
     }
   };
 }
-
-
 
 function reduceReducer(reducers) {
   return function(state, action) {
@@ -38,12 +37,10 @@ var globalHandlers = {
     }
   },
   [Types.uploadCSV]: function(state, action) {
-    return _.assign({}, state, {
-      user: action.payload,
-      files: action.payload.files,
-    });
+    return state;
   },
   [Types.selectFile]: function(state, action) {
+    parseCSV(action.payload);
     return _.assign({}, state, {
       selectedFile: action.payload,
     });

@@ -6,7 +6,7 @@ import Actions from '../actions';
 
 const Header = ({actions, user}) => {
   return (
-    <div>
+    <div className="header">
       <div className="left">
         <div className="item" onClick={() => actions.showUploadCSVModal(true)}>
           Upload CSV

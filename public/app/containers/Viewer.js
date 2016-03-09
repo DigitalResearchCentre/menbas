@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Actions from '../actions';
 
 
-class Sidebar extends Component {
+class Viewer extends Component {
   onEdit(file) {
     this.props.actions.selectFile(file);
     this.props.actions.showEditCSVModal(true);
@@ -32,10 +32,7 @@ class Sidebar extends Component {
     });
 
     return (
-      <div className="sidebar">
-        <ul>
-          {items}
-        </ul>
+      <div className="viewer">
       </div>
     );
   }
@@ -54,6 +51,6 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Sidebar);
+)(Viewer);
 
 

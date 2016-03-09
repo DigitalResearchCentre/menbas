@@ -21,7 +21,6 @@ const _uploadCSV = Actions.uploadCSV;
 _.assign(Actions, {
   checkAuth: function() {
     return function(dispatch, getState) {
-      window.$p = $.get('/auth');
       return $.get('/auth')
         .done(user => dispatch(Actions.auth(user)))
         .fail(function(err) {
@@ -50,7 +49,7 @@ _.assign(Actions, {
       dispatch(Actions.showUploadCSVModal(false));
       return $.post('/uploadCSV', file)
         .done(function(user) {
-          dispatch(_uploadCSV(user));
+          dispatch(Actions.auth(user));
         })
         .fail(function(err) {
           dispatch(_uploadCSV(new Error(err)));

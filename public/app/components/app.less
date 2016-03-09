@@ -26,7 +26,8 @@
 
 @import '../directives/modal.less';
 
-html, body {
+
+html, body, #root {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -34,7 +35,7 @@ html, body {
     border: none;
     overflow: hidden;
 
-    x-app {
+    .app {
         height: 100%;
         width: 100%;
 
@@ -42,7 +43,7 @@ html, body {
 
         @import './header.less';
 
-        >.x-container {
+        .body-container {
             .flex(1, 1, 0);
 
             display: flex;
@@ -53,8 +54,8 @@ html, body {
 
             @import './sidebar.less';
 
-            x-viewer {
-                .flex(1, 1, 80%);
+            .viewer {
+                .flex(4, 4, 80%);
                 overflow: auto;
 
                 .flex-row;

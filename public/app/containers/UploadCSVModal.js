@@ -5,20 +5,25 @@ import { Modal, Button } from 'react-bootstrap';
 import Actions from '../actions';
 
 class UploadCSVModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   onClick() {
+    this.props.actions.uploadCSV(this.state.file);
   }
 
   onFileChange(event) {
     let reader = new FileReader()
       , file = event.target.files[0]
-      , actions = this.props.actions
     ;
-    reader.onload = function(evt) {
-      actions.uploadCSV({
+    reader.onload = (evt) => this.setState({
+      file: {
         name: file.name,
         content: evt.target.result,
-      });
-    };
+      }
+    });
     reader.readAsText(file);
   }
 
