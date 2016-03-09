@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
+import ReactDOM from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -6,7 +7,11 @@ import reactMixin from 'react-mixin';
 import { Modal, Button } from 'react-bootstrap';
 import Actions from '../actions';
 
-class LoginModal extends Modal {
+class LoginModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
   onSignInClick() {
     const { username, password } = this.state;
@@ -14,7 +19,7 @@ class LoginModal extends Modal {
   }
 
   render() {
-    const { user, actions } = this.props;
+    const { user, actions, children } = this.props;
 
     return (
       <Modal show={!user}>
@@ -32,7 +37,10 @@ class LoginModal extends Modal {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.onSignInClick.bind(this)}>Sign In</Button>
+          <Button
+            onClick={this.onSignInClick.bind(this)}
+            bsStyle="primary"
+          >Sign In</Button>
         </Modal.Footer>
       </Modal>
     )

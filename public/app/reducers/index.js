@@ -3,22 +3,18 @@ import { handleActions } from 'redux-actions';
 import _ from 'lodash';
 import { Types } from '../actions';
 
-function createReducer(handlers, defaultState) {
-  console.log(handlers);
-  if (defaultState === void(0)) {
-    defaultState = {};
-  }
-  return function(state, action) {
-    if (state === void(0)) {
-      state = defaultState;
-    }
-    if (handlers.hasOwnProperty(action.type)) {
-      return handlers[action.type](state, action);
+function createReducer(reducers) {
+  return function(state={}, action) {
+    let _reducers = reducers;
+    if (_reducers.hasOwnProperty(action.type)) {
+      return _reducers[action.type](state, action);
     } else {
       return state;
     }
   };
 }
+
+
 
 function reduceReducer(reducers) {
   return function(state, action) {
@@ -28,28 +24,31 @@ function reduceReducer(reducers) {
   };
 }
 
-var globalHandlers = _.mapKeys({
-  auth: function(state, action) {
-    var user = null;
-    if (!action.error) {
-      user = action.payload;
+var globalHandlers = {
+  [Types.auth]: function(state, action) {
+    var user = action.payload;
+    if (action.error) {
+      console.log(action.payload);
+      return state;
+    } else {
+      return _.assign({}, state, {
+        user: user,
+        files: user.files || [],
+      });
     }
+  },
+  [Types.uploadCSV]: function(state, action) {
     return _.assign({}, state, {
-      user: user,
-      files: user.files || [],
+      user: action.payload,
+      files: action.payload.files,
     });
   },
-  uploadCSV: function(state, action) {
-    return state;
-  },
-  selectFile: function(state, action) {
+  [Types.selectFile]: function(state, action) {
     return _.assign({}, state, {
-      selectedFile: action.payload.file,
+      selectedFile: action.payload,
     });
   },
-}, function(reducer, key) {
-  return Types[key];
-});
+};
 
 var uiHandlers  = {
   [Types.showUploadCSVModal]: function(state, action) {
@@ -61,15 +60,17 @@ var uiHandlers  = {
     return _.assign({}, state, {
       showEditCSVModal: true,
     });
-  }
+  },
 };
+
+
 
 module.exports = reduceReducer([
   createReducer(globalHandlers),
   combineReducers({
-    files: createReducer({}, []),
-    selectedFile: createReducer({}, null),
-    user: createReducer({}, null),
+    files: createReducer({}),
+    selectedFile: createReducer({}),
+    user: createReducer({}),
     ui: createReducer(uiHandlers),
   }),
 ]);

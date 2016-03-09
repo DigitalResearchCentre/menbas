@@ -67,7 +67,9 @@ router.post('/uploadCSV', auth, function(req, res, next) {
   } else {
     user.files.push(file);
   }
-  db.collection('users').updateOne({_id: user._id}, user, function(err, result) {
+  db.collection('users').updateOne({
+    _id: user._id
+  }, user, function(err, result) {
     if (err) {
       next(err);
     } else {
@@ -93,7 +95,6 @@ router.patch('/users/:id', auth, function(req, res, next) {
   var data = req.body
     , id = req.params.id
   ;
-  console.log(id);
   console.log(data);
 });
 

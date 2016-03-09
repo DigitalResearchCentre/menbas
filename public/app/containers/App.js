@@ -16,7 +16,8 @@ const App = function() {
         <Sidebar/>
         <Viewer/>
       </div>
-      <LoginModal *ngIf="!state.user"/>
+      <LoginModal/>
+      <UploadCSVModal/>
     </div>
   );
 };

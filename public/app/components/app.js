@@ -1,8 +1,9 @@
 import React from 'react';
 import Header from '../containers/Header';
 import LoginModal from '../containers/LoginModal';
+import UploadCSVModal from '../containers/UploadCSVModal';
+import Sidebar from '../containers/Sidebar';
 
-const Sidebar = () => (<div/>);
 const Viewer = () => (<div/>);
 
 const App = () => (
@@ -13,6 +14,7 @@ const App = () => (
       <Viewer/>
     </div>
     <LoginModal/>
+    <UploadCSVModal/>
   </div>
 );
 

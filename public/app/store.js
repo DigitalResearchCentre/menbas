@@ -25,7 +25,7 @@ export default function configureStore(initialState=_initialState) {
     )
   );
 
-  store.dispatch(Actions.auth());
+  store.dispatch(Actions.checkAuth());
 
   return store;
 };
