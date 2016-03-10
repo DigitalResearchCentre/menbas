@@ -77,6 +77,7 @@ var d3LineChart = {
         row.flagtext = place;
         return row;
       });
+
     } else {
       data = _.map(data, function (energy, k) {
         var fp = energy['Final produce (FP)']

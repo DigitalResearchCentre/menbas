@@ -22,7 +22,9 @@ const Header = ({actions, user}) => {
 };
 
 const mapStateToProps = (state) => {
-  return state;
+  return state.of([
+    'user',
+  ]).toObject();
 };
 
 const mapDispatchToProps = (dispatch) => {

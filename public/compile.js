@@ -18,7 +18,7 @@ compiler = webpack(config);
 if (env == 'dev') {
   compiler.watch({
     aggregateTimeout: 300,
-    poll: 1000,
+    poll: 300,
   }, handleError);
 } else {
   compiler.run(handleError);

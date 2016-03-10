@@ -10,19 +10,26 @@ var webpack = require('webpack')
 
 module.exports = function(options) {
   var env = options.env
-    , devtool
+    , devtool, debug
   ;
   console.log(env);
 
-  if (env == 'dev') {
-    devtool = '#inline-source-map';
-    debug = true;
-  } else{
+  if (env === 'prod' || env === 'production') {
     devtool = '#source-map';
     debug = false;
+    env = JSON.stringify("production");
+  } else {
+    devtool = '#eval-cheap-module-source-map';
+    debug = true;
+    env = JSON.stringify("development");
   }
 
   var plugins = [
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: env
+      },
+    }),
     new ResolverPlugin(new ResolverPlugin.DirectoryDescriptionFilePlugin(
       'bower.json', ['main']
     )), 
@@ -40,14 +47,6 @@ module.exports = function(options) {
       }
     }),
   ];
-
-  if (env === 'prod') {
-    plugins.push(new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production")
-      }
-    }));
-  }
 
   return {
     devtool: devtool,

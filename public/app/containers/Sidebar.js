@@ -42,7 +42,9 @@ class Sidebar extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state;
+  return {
+    selectedFile: state.get('selectedFile'),
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

@@ -114,6 +114,14 @@ _.assign(Actions, {
       });
     }
   },
+  updateFormula: function(file) {
+    return _updateFormula(file);
+    /*
+    return function(dispatch, getState) {
+      dispatch();
+      return $.post('/update', );
+    }*/
+  }
 });
 
 export default Actions;

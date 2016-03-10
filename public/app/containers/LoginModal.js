@@ -49,7 +49,9 @@ class LoginModal extends Component {
 reactMixin(LoginModal.prototype, LinkedStateMixin);
 
 const mapStateToProps = (state) => {
-  return state;
+  return state.of([
+    'user',
+  ]).toObject();
 };
 
 const mapDispatchToProps = (dispatch) => {

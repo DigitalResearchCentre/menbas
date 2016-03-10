@@ -78,6 +78,26 @@ router.post('/uploadCSV', auth, function(req, res, next) {
   });
 });
 
+router.post('/update', auth, function(req, res, next) {
+  var user = req.user
+    , file = req.file
+  ;
+  var found = _.find(user.files, function(f) {
+    return f.name === file.name;
+  });
+  if (found) {
+    _.assign(found, file);
+  }
+  db.collection('users').updateOne({
+    _id: user._id
+  }, user, function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(user);
+    }
+  });
+});
 router.post('/users', auth, function(req, res, next) {
   var data = req.body;
   db.collection('users').insert(req.body, function(err, user) {

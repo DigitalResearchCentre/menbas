@@ -50,7 +50,9 @@ class UploadCSVModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state.ui;
+  return state.of([
+    'showUploadCSVModal',
+  ]).toObject();
 };
 
 const mapDispatchToProps = (dispatch) => {

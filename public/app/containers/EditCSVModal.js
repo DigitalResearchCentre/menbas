@@ -96,7 +96,9 @@ class EditCSVModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state;
+  return state.of([
+    'selectFile', 'showEditCSVModal'
+  ]).toObject();
 };
 
 const mapDispatchToProps = (dispatch) => {

@@ -28,7 +28,9 @@ class Viewer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state;
+  return state.of([
+    'files', 'selectedFile'
+  ]).toObject();
 };
 
 const mapDispatchToProps = (dispatch) => {
