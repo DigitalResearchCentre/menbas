@@ -1,7 +1,11 @@
 {
   "verbose": true,
   "ignoreRoot": [
-    ".git", "node_modules", "bower_components", "public", "test", "data"
+    ".git", ".DS_Store",
+    "package.json",
+    "nodemon.json",
+    "node_modules", "bower_components",
+    "public", "test", "data"
   ]
 }
 

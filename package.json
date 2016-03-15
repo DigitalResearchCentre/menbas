@@ -4,7 +4,7 @@
   "description": "Manager of Energy & Nutrient Balances of Agricultural Systems",
   "main": "index.js",
   "scripts": {
-    "start": "concurrent \"nodemon ./bin/www\" \"node public/compile.js\"",
+    "start": "concurrent \"$(npm bin)/nodemon ./bin/www\" \"node public/compile.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "bower install"
   },
@@ -60,7 +60,7 @@
     "file-loader": "^0.8.4",
     "less": "^2.5.1",
     "less-loader": "^2.2.0",
-    "nodemon": "^1.8.1",
+    "nodemon": "^1.9.1",
     "script-loader": "^0.6.1",
     "style-loader": "^0.12.3",
     "url-loader": "^0.5.6",
