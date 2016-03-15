@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
+import _ from 'lodash';
 import Actions from '../actions';
 
 class UploadCSVModal extends Component {
@@ -50,9 +51,7 @@ class UploadCSVModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state.of([
-    'showUploadCSVModal',
-  ]).toObject();
+  return _.pick(state, [ 'showUploadCSVModal', ]);
 };
 
 const mapDispatchToProps = (dispatch) => {

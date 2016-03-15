@@ -18,7 +18,6 @@ Map.prototype = Object.create(Immutable.Map.prototype, {
   }
 });
 
-
 export default Object.assign({}, Immutable, {
   Map: Map,
   Im: Immutable,

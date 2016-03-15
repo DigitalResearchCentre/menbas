@@ -1,24 +1,10 @@
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import _ from 'lodash';
-import Immutable from '../utils/immutable';
-import Im from 'immutable';
 import { Types } from '../actions';
 import initialState from '../initialState';
 import parseCSV from './parseCSV';
 import config from '../config';
-
-window.Immutable = Immutable;
-
-function test(aa) {
-  console.log(aa);
-  console.log(Immutable.Map);
-  console.log(Immutable.Map({a: 1, b: 2, c: 3}));
-  console.log(Immutable.Map({a: 1, b: 2, c: 3}).pick('a', 'c').toObject());;
- 
-}
-
-test(123);
 
 function createReducer(reducers, errorReducers, defaultState={}) {
   return function(state=defaultState, action) {
@@ -42,15 +28,17 @@ function reduceReducer(reducers) {
 const rootReducers = {
   [Types.auth]: function(state, action) {
     var user = action.payload;
-    return state.merge(state, {
+    return {
+      ...state,
       user: user,
       files: user.files || [],
-    });
+    };
   },
   [Types.selectFile]: function(state, action) {
-    return state.merge(state, {
+    return {
+      ...state,
       selectedFile: action.payload,
-    });
+    };
   },
   [Types.updateFormula]: function(state, action) {
     console.log('TODO: updateFormula');
@@ -64,21 +52,25 @@ const rootReducers = {
       [energies[abbr]]: _.assign({}, energy, action.payload) 
     });
     
-    return _.assign({}, state, {
-      selectedFile: _.assign({}, state.selectedFile, {
+    return {
+      ...state,
+      selectedFile: {
+        ...state.selectedFile,
         _energies: _energies
-      }),
-    });
+      },
+    };
   },
   [Types.showUploadCSVModal]: function(state, action) {
-    return state.merge(state, {
+    return {
+      ...state,
       showUploadCSVModal: action.payload,
-    });
+    };
   },
   [Types.showEditCSVModal]: function(state, action) {
-    return state.merge(state, {
+    return {
+      ...state,
       showEditCSVModal: action.payload,
-    });
+    };
   },
 };
 
@@ -93,7 +85,5 @@ export default reduceReducer([
   },
   createReducer(rootReducers, errorReducers, initialState),
 ]);
-
-
 
 

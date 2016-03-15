@@ -28,7 +28,7 @@ class EditCSVModal extends Component {
   }
 
   render() {
-    const { actions, ui, selectedFile } = this.props;
+    const { actions, showEditCSVModal, selectedFile } = this.props;
     const variable = this.state.variable;
     let variables, variableInput;
 
@@ -60,7 +60,7 @@ class EditCSVModal extends Component {
     }
 
     return (
-      <Modal show={ui.showEditCSVModal} bsSize="large">
+      <Modal show={showEditCSVModal} bsSize="large">
         <Modal.Header>
           <Modal.Title>Edit Config: </Modal.Title>
         </Modal.Header>
@@ -96,9 +96,7 @@ class EditCSVModal extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return state.of([
-    'selectFile', 'showEditCSVModal'
-  ]).toObject();
+  return _.pick(state, ['selectFile', 'showEditCSVModal']);
 };
 
 const mapDispatchToProps = (dispatch) => {

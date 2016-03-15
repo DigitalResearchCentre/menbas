@@ -22,9 +22,7 @@ const Header = ({actions, user}) => {
 };
 
 const mapStateToProps = (state) => {
-  return state.of([
-    'user',
-  ]).toObject();
+  return _.pick(state, ['user']);
 };
 
 const mapDispatchToProps = (dispatch) => {
