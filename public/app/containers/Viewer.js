@@ -21,21 +21,16 @@ class Viewer extends Component {
 
     return (
       <div className="viewer">
-        <LineChart lines={[
-          {
-            label: 'hello',
-            data: [[1985, 3000], [2000, 6000]],
-          },
-          {
-            label: 'world',
-            data: [[1999, 1500], [2005, 4000]],
-          },
-          {
-            label: 'foo',
-            data: [[1997, 2500], [2004, 5000]],
-          }
-
-        ]}/>
+        <LineChart data={{
+          labels: [
+            'hello', 'world',
+          ],
+          lines: [
+            [[1985, 3000], [2000, 6000]],
+            [[1999, 1500], [2005, 4000]],
+            [[1997, 2500], [2004, 5000]],
+          ]
+        }}/>
       </div>
     );
   }
@@ -56,4 +51,37 @@ export default connect(
   mapDispatchToProps
 )(Viewer);
 
+/*
+['', '', '', 'USA'],
+['', '', '', 'Stevens'],
+function transform(data) {
+  // if line
 
+  // x
+  data = _.filter(data, function(d) {
+    return true;
+  });
+  _.each(data, function(d) {
+    foo.labels.push(d.bar);
+    foo.lines.push([d.year, d.energy]);
+  });
+  { 
+    labels: [
+      'a',
+    ]
+    lines: [
+      [0, 0]
+    ]
+  }
+  // if flow
+  {
+    labels: ['EA'],
+    flows: [
+
+    ]
+  }
+
+  
+}
+
+*/
