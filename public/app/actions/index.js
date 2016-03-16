@@ -7,8 +7,9 @@ import csv from 'csv';
 
 
 const keys = [
-  'auth', 'uploadCSV', 'selectFile', 'editFile',
-  'showEditCSVModal', 'showUploadCSVModal',  'updateFormula'
+  'auth', 'uploadCSV', 'selectConfig', 'editFile',
+  'showEditCSVModal', 'showUploadCSVModal',  'updateFormula',
+  'saveConfig',
 ];
 
 export const Types = _.zipObject(keys, keys);
@@ -17,56 +18,36 @@ const Actions = _.mapValues(Types, function(value, key) {
   return createAction(value);
 });
 
-const _uploadCSV = Actions.uploadCSV;
-const _selectFile = Actions.selectFile;
-const _updateFormula = Actions.updateFormula;
-
-
-function parseCSV(file, callback) {
-  let result = _.assign({
-    charts: {
-      width: 960,
-      height: 640,
-      all: "",
-      EROI: "FP / TIC",
-    },
-    places: {},
-    energies: {},
-    _energies: {},
-  }, file);
-  return csv.parse(file.content, function(err, rows) {
-    var headers = rows.slice(0, 3);
+function parseCSV(content, callback) {
+  return csv.parse(content, function(err, rows) {
+    let headers = rows.slice(0, 3)
+      , results = []
+    ;
     _.each(rows.slice(3), function(row) {
-      var energy = row[0];
-      if (energy && row[1]) {
-        result._energies[energy] = {
-          abbr: row[1],
-          unit: row[2],
-        };
-        if (row[1]) {
-          result.energies[row[1]] = energy;
+      let [energy, abbr, unit, ...values] = row;
+
+      _.each(values, function(value, i) {
+        value = _.trim(value);
+        if (value !== '') {
+          results.push({
+            energy,
+            abbr,
+            unit,
+            value: parseFloat(value.replace(/,/g, '')),
+            country: headers[0][i + 3],
+            place: headers[1][i + 3],
+            year: parseInt(headers[2][i + 3]),
+          });
         }
-        _.each(row.slice(3), function(cell, i) {
-          var col = i + 3
-            , country = headers[0][col]
-            , place = headers[1][col]
-            , year = headers[2][col]
-          ;
-          if (!result.places[place]) {
-            result.places[place] = {};
-          }
-          if (!result.places[place][energy]) {
-            result.places[place][energy] = [];
-          }
-          result.places[place][energy].push([year, cell]);
-        });
-      } 
+      });
     });
-    callback(result);
+    callback(results);
   });
 }
 
-_.assign(Actions, {
+
+
+export default _.assign({}, Actions, {
   checkAuth: function() {
     return function(dispatch, getState) {
       return $.get('/auth')
@@ -100,22 +81,39 @@ _.assign(Actions, {
           dispatch(Actions.auth(user));
         })
         .fail(function(err) {
-          dispatch(_uploadCSV(new Error(err)));
+          dispatch(Actions.uploadCSV(new Error(err)));
         });
     };
   },
-  selectFile: function(file) {
-    return function(dispatch) {
+  selectConfig: function(chartConfig) {
+    return function(dispatch, getState) {
+      let state = getState();
       return new Promise((resolve, reject) => {
-        parseCSV(file, function(result) {
-          dispatch(_selectFile(result));
-          resolve(result);
+        let file = _.find(state.files, {name: chartConfig.file});
+        parseCSV(file.content, function(results) {
+          dispatch(Actions.selectConfig({
+            config: chartConfig, 
+            data: results,
+          }));
+          resolve();
         });
       });
     }
   },
+  saveConfig: function(chartConfig) {
+    return function(dispatch, getState) {
+      return $.post('/saveConfig', chartConfig)
+        .done(function(user) {
+          dispatch(Actions.auth(user));
+        })
+        .fail(function(err) {
+          dispatch(Actions.saveConfig(new Error(err)));
+        });
+    }
+  },
+
   updateFormula: function(file) {
-    return _updateFormula(file);
+    return Actions.updateFormula(file);
     /*
     return function(dispatch, getState) {
       dispatch();
@@ -123,6 +121,4 @@ _.assign(Actions, {
     }*/
   }
 });
-
-export default Actions;
 

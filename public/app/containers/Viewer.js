@@ -51,37 +51,3 @@ export default connect(
   mapDispatchToProps
 )(Viewer);
 
-/*
-['', '', '', 'USA'],
-['', '', '', 'Stevens'],
-function transform(data) {
-  // if line
-
-  // x
-  data = _.filter(data, function(d) {
-    return true;
-  });
-  _.each(data, function(d) {
-    foo.labels.push(d.bar);
-    foo.lines.push([d.year, d.energy]);
-  });
-  { 
-    labels: [
-      'a',
-    ]
-    lines: [
-      [0, 0]
-    ]
-  }
-  // if flow
-  {
-    labels: ['EA'],
-    flows: [
-
-    ]
-  }
-
-  
-}
-
-*/

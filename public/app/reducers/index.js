@@ -32,12 +32,38 @@ const rootReducers = {
       ...state,
       user: user,
       files: user.files || [],
+      configs: user.configs || [],
     };
   },
-  [Types.selectFile]: function(state, action) {
+  [Types.saveConfig]: function(state, action) {
+    console.log(action);
+    return state;
+  },
+  [Types.selectConfig]: function(state, action) {
+    let {
+      config: {
+        type, place, year, energy, xAxis, formulas,
+      },
+      data,
+    } = action.payload;
+
+    data = _.filter(data, function(d) {
+      return (
+        (_.isEmpty(place) || place.indexOf(d.place) !== -1) && 
+        (_.isEmpty(energy) || energy.indexOf(d.abbr) !== -1) &&
+        (_.findIndex(year, function(range) {
+          return range.length === 2 
+            ? range[0] <= d.year && d.year <= range[1]
+            : range[0] === d.year
+        })) !== -1
+      );
+    });
     return {
       ...state,
-      selectedFile: action.payload,
+      selectedConfig: {
+        ...action.payload,
+        data,
+      }, 
     };
   },
   [Types.updateFormula]: function(state, action) {
@@ -85,5 +111,7 @@ export default reduceReducer([
   },
   createReducer(rootReducers, errorReducers, initialState),
 ]);
+
+
 
 

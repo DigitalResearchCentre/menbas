@@ -6,27 +6,90 @@ import Actions from '../actions';
 
 
 class Sidebar extends Component {
-  onEdit(file) {
-    this.props.actions.selectFile(file);
-    this.props.actions.showEditCSVModal(true);
+  constructor(props) {
+    super(props);
+    console.log(props);
+    this.state = {
+      items: _.map(props.files, function(file) {
+        return {
+          expand: false,
+          file: file,
+        }
+      }),
+    };
   }
 
-  onSelect(file) {
-    this.props.actions.selectFile(file);
+  componentWillReceiveProps(nextProps) {
+    let items = this.state.items;
+    this.setState({
+      items: _.map(nextProps.files, function(file, i) {
+        return {
+          ...items[i],
+          file: file,
+        };
+      }),
+    });
+  }
+
+  editConfig(chartConfig) {
+    this.props.actions.showEditCSVModal(true);
+    this.props.actions.selectConfig(chartConfig);
+  }
+
+  addConfig(file) {
+    this.props.actions.showEditCSVModal(true);
+    this.props.actions.selectConfig({
+      file: file.name,
+    });
+  }
+
+  toggleItem(item) {
+    this.setState({
+      items: _.map(this.state.items, function(_item) {
+        if (_item === item) {
+          return {
+            ...item,
+            expand: !item.expand,
+          };
+        }
+        return _item;
+      }),
+    });
   }
 
   render() {
-    const { files, selectedFile } = this.props;
-    let items = _.map(files, (file, i) => {
+    const { configs, selectedFile } = this.props;
+  
+    let lis = _.map(this.state.items, (item, i) => {
+      let fileConfigs = _.map(
+        _.filter(configs, {file: item.file.name}),
+        (chartConfig, j) => {
+          return (
+            <li key={j}>
+              <a>{chartConfig.name}</a>
+              <span 
+                onClick={this.editConfig.bind(this, chartConfig)}
+                className="glyphicon glyphicon-edit icon"
+                aria-hidden="true">
+              </span>
+            </li>
+          )
+        }
+      );
       return (
         <li 
           key={i}
-          className={'item ' + (selectedFile === file ? 'selected' : '')}>
-          <a onClick={this.onSelect.bind(this, file)}>{file.name}</a>
-          
+          className={'item ' + (selectedFile === item.file ? 'selected' : '')}>
+          <a onClick={this.toggleItem.bind(this, item)}>
+            {item.file.name}
+          </a>
           <span 
-            onClick={this.onEdit.bind(this, file)}
-            className="glyphicon glyphicon-edit icon" aria-hidden="true"></span>
+            onClick={this.addConfig.bind(this, item.file)}
+            className="glyphicon glyphicon-plus-sign icon" aria-hidden="true">
+          </span>
+          <ul className={item.expand ? 'expand' : ''}>
+            {fileConfigs}
+          </ul>
         </li>
       );
     });
@@ -34,7 +97,7 @@ class Sidebar extends Component {
     return (
       <div className="sidebar">
         <ul>
-          {items}
+          {lis}
         </ul>
       </div>
     );
@@ -42,7 +105,7 @@ class Sidebar extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return _.pick(state, ['selectedFile', 'files'])
+  return _.pick(state, ['selectedFile', 'files', 'configs']);
 };
 
 const mapDispatchToProps = (dispatch) => {

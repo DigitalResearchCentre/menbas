@@ -78,6 +78,32 @@ router.post('/uploadCSV', auth, function(req, res, next) {
   });
 });
 
+router.post('/saveConfig', auth, function(req, res, next) {
+  var user = req.user
+    , chartConfig = req.body
+  ;
+  if (_.isEmpty(user.configs)) {
+    user.configs = [];
+  }
+  var found = _.find(user.configs, function(f) {
+    return f.name === chartConfig.name;
+  });
+  if (found) {
+    found = _.assign(found, chartConfig);
+  } else {
+    user.configs.push(chartConfig);
+  }
+  db.collection('users').updateOne({
+    _id: user._id
+  }, user, function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(user);
+    }
+  });
+});
+
 router.post('/update', auth, function(req, res, next) {
   var user = req.user
     , file = req.file

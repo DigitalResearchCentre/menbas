@@ -14,3 +14,10 @@ render(
   </Provider>,
   document.getElementById('root')
 );
+
+
+
+var Immutable = require('immutable');
+
+window.Immutable = Immutable;
+

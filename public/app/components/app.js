@@ -4,7 +4,7 @@ import Sidebar from '../containers/Sidebar';
 import Viewer from '../containers/Viewer';
 import LoginModal from '../containers/LoginModal';
 import UploadCSVModal from '../containers/UploadCSVModal';
-import EditCSVModal from '../containers/EditCSVModal';
+import EditConfigModal from '../containers/EditConfigModal';
 
 const App = () => (
   <div className="app">
@@ -15,7 +15,7 @@ const App = () => (
     </div>
     <LoginModal/>
     <UploadCSVModal/>
-    <EditCSVModal/>
+    <EditConfigModal/>
   </div>
 );
 
