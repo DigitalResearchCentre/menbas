@@ -50,7 +50,8 @@ const rootReducers = {
   [Types.selectConfig]: function(state, action) {
     let {
       config: {
-        type, places, years, abbrs, xAxis, formulas,
+        type, places, years, abbrs, xAxis, 
+        formulas = '',
       },
       data,
     } = action.payload;

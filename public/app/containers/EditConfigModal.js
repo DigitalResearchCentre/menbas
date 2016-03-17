@@ -8,13 +8,19 @@ import Actions from '../actions';
 
 
 function loadData(props) {
-  const config = _.get(props, 'selectedConfig.config') || {};
+  const config = _.get(props, 'selectedConfig.config', {}) || {};
+  const {
+    years,
+    abbrs,
+    places = _.get(props, 'selectedFile.data.places', {}),
+  } = config;
 
-  return _.defaults({}, config, {
-    years: '',
-    abbrs: '',
-    places: _.get(props, 'selectedFile.data.places', []),
-  });
+  return {
+    ...config,
+    years: _.keys(years).join(', '),
+    abbrs: _.keys(abbrs).join(', '),
+    places: _.keys(places),
+  };
 }
 
 class EditConfigModal extends Component {
@@ -79,6 +85,7 @@ class EditConfigModal extends Component {
       return <option key={i} value={place}>{place}</option>;
     });
 
+    console.log(this.state);
     const customVarLabel = `Custom Variables: ${abbrs.join(' ')}`;
     return (      
       <Modal show={showEditCSVModal} bsSize="large">
