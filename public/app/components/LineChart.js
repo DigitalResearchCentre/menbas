@@ -4,38 +4,50 @@ import $ from 'jquery';
 import d3 from 'd3';
 
 class LineChart extends Component {
-  extent(lines, accessor) {
-    return _.reduce(lines, function(minmax, line) {
-      const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
-      return [_.min(mins), _.max(maxs)];
-    }, [Infinity, 0]);
+
+  componentWillReceiveProps(nextProps) {
+    this.renderD3(nextProps);
   }
 
   componentDidMount() {
+    this.renderD3(this.props);
+  }
+
+  renderD3(props) {
     const {
       width = 800, 
-      height = 600, 
+      height = 640, 
       left = 100,
+      right = 100,
       top = 10,
-      bottom = 30,
+      bottom = 200,
       flagWidth = 15,
       flagHeight = 15,
       flagTextTransform = [20, 13],
       flagTransform = [20, 18],
       data: {
-        lines,
         labels,
+        lines,
+        places,
+        bars,
       }
-    } = this.props;
+    } = props;
+
+    console.log(labels);
+    console.log(lines);
+    console.log(bars);
+    console.log(places);
 
     const svg = d3.select(this.svg)
       , chart = svg.select('.chart')
-      , x = d3.scale.linear().range([0, width - left])
-      , y = d3.scale.linear().range([height - top - bottom, 0])
+      , x = d3.scale.linear().range([0, width])
+      , y = d3.scale.linear().range([height, 0])
+      , xBar = d3.scale.ordinal().rangeRoundBands([0, width], 0.1)
+      , yBar = d3.scale.linear().range([height, 0])
       , c20 = d3.scale.category20()
     ;
-    let xAxis, yAxis, line, flag;
-    svg.attr({width: width, height: height});
+    let xAxis, yAxis, line, bar, flag;
+    svg.attr({width: width + left + right, height: height + top + bottom});
     chart.attr('transform', `translate(${left}, ${top})`);
 
     xAxis = d3.svg.axis().scale(x).orient('bottom');
@@ -43,13 +55,26 @@ class LineChart extends Component {
 
     x.domain(this.extent(lines, d => d[0]));
     y.domain(this.extent(lines, d => d[1]));
-   
-    chart.select('.x.axis').attr({
-      'transform': `translate(0, ${height - top - bottom})`,
-    }).call(xAxis);
+
+    xBar.domain(places);
+    yBar.domain(this.extent(bars, d => d[1]));
+
+    if (bars.length > 0) {
+      xAxis = d3.svg.axis().scale(xBar).orient('bottom');
+      yAxis = d3.svg.axis().scale(yBar).orient('left');
+    }
+ 
+    chart.select('.x.axis')
+        .attr({
+          'transform': `translate(0, ${height})`,
+        })
+        .call(xAxis)
+      .selectAll('text')
+        .attr({'transform': 'rotate(90)'})
+        .style("text-anchor", "start")
+    ;
     chart.select('.y.axis').call(yAxis);
 
-    console.log(lines);
     line = chart.selectAll('.line').data(lines)
     line.enter().append('path').attr({ 'class': 'line', });
     line.attr({
@@ -58,6 +83,22 @@ class LineChart extends Component {
     });
 
     line.exit().remove();
+
+    bar = chart.selectAll('.bar').data(_.flatten(bars));
+    let barWidth = xBar.rangeBand() / bars.length;
+    window.xBar = xBar;
+    bar.enter().append('rect').attr({ 
+      'class': 'bar',
+      'x': (d) => xBar(d[0]),
+      'y': (d) => yBar(d[1]),
+      'width':  barWidth,
+      'height': (d) => height - yBar(d[1]),
+      'stroke': (d) => c20(d[2]),
+      'fill': (d) => c20(d[2]),
+    });
+
+    bar.exit().remove();
+
 
     flag = chart.selectAll('.flag').data(labels);
     const flagEnter = flag.enter().append('g').attr('class', 'flag') ;
@@ -80,6 +121,13 @@ class LineChart extends Component {
       return d || ''; 
     });
     flag.exit().remove();   
+  }
+
+  extent(lines, accessor) {
+    return _.reduce(lines, function(minmax, line) {
+      const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
+      return [_.min(mins), _.max(maxs)];
+    }, [Infinity, 0]);
   }
 
   render() {

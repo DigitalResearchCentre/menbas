@@ -4,15 +4,18 @@ const initialState = {
   configs: [],
   selectedFile: null,
   selectedConfig: {
-    config: {},
-    data: [],
+    config: {
+      year: '',
+    },
+    data: {
+      places: {},
+      years: {},
+      abbrs: {},
+      objects: [],
+    },
   },
   showUploadCSVModal: false,
   showEditCSVModal: false,
-  viewer: {
-    config: null,
-    data: null,
-  }
 };
 
 export default initialState;

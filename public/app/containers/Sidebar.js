@@ -43,7 +43,12 @@ class Sidebar extends Component {
     });
   }
 
+  selectConfig(chartConfig) {
+    this.props.actions.selectConfig(chartConfig);
+  }
+
   toggleItem(item) {
+    this.props.actions.selectItem(item);
     this.setState({
       items: _.map(this.state.items, function(_item) {
         if (_item === item) {
@@ -66,7 +71,8 @@ class Sidebar extends Component {
         (chartConfig, j) => {
           return (
             <li key={j}>
-              <a>{chartConfig.name}</a>
+              <a onClick={()=>this.selectConfig(chartConfig)}>
+                {chartConfig.name}</a>
               <span 
                 onClick={this.editConfig.bind(this, chartConfig)}
                 className="glyphicon glyphicon-edit icon"
@@ -87,7 +93,7 @@ class Sidebar extends Component {
             onClick={this.addConfig.bind(this, item.file)}
             className="glyphicon glyphicon-plus-sign icon" aria-hidden="true">
           </span>
-          <ul className={item.expand ? 'expand' : ''}>
+          <ul className={item.expand ? '' : 'collapse'}>
             {fileConfigs}
           </ul>
         </li>

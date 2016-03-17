@@ -6,31 +6,15 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import reactMixin from 'react-mixin';
 import Actions from '../actions';
 
+
 function loadData(props) {
-  const {
-    selectedConfig: {
-      config: chartConfig,
-      data,
-    }, 
-  } = props;
+  const config = _.get(props, 'selectedConfig.config') || {};
 
-  const abbrs = {};
-  const places = {};
-  _.each(data, function(d) {
-    if (_.trim(d.abbr) !== '' && !abbrs[d.abbr]) {
-      abbrs[d.abbr] = {energy: d.energy, unit: d.unit};
-    }
-    places[d.place] = null;
+  return _.defaults({}, config, {
+    years: '',
+    abbrs: '',
+    places: _.get(props, 'selectedFile.data.places', []),
   });
-
-  return {
-    ...chartConfig,
-    name: chartConfig.name || (chartConfig.type || 'line-chart-1'),
-    formulas: chartConfig.formulas || '',
-    xAxis: chartConfig.xAxis || 'year',
-    abbrs: _.keys(abbrs),
-    places: _.keys(places),
-  };
 }
 
 class EditConfigModal extends Component {
@@ -40,18 +24,7 @@ class EditConfigModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.state = {
-      ...loadData(nextProps),
-    };
-  }
-
-  onVariableChange(event) {
-    let variable = this.state.variable;
-    this.setState({
-      variable: _.assign(
-        {}, variable, {formula: event.target.value}
-      ),
-    });
+    this.state = loadData(nextProps);
   }
 
   selectType(event) {
@@ -66,7 +39,7 @@ class EditConfigModal extends Component {
       }
     });
     this.setState({
-      place: selectedPlaces,
+      places: selectedPlaces,
     });
   }
 
@@ -74,15 +47,17 @@ class EditConfigModal extends Component {
     const state = this.state;
     const selectedConfig = this.props.selectedConfig;
 
-    let years = _.map(year.split(','), function(d) {
+    let years = _.map(state.years.split(','), function(d) {
       return _.map(d.split('-'), parseInt);
     });
 
     this.props.actions.saveConfig({
       ...selectedConfig.config,
-      ..._.pick(this.state, [
-        'name', 'type', 'year', 'place', 'energy', 'xAxis', 'formulas',
-      ])
+      ..._.pick(state, [
+        'name', 'places', 'xAxis', 'formulas',
+      ]),
+      years: years,
+      abbrs: _.map(state.abbrs.split(','), (abbr) => _.trim(abbr)),
     });
   }
 
@@ -95,21 +70,16 @@ class EditConfigModal extends Component {
       actions, showEditCSVModal, 
       selectedConfig: {
         config: chartConfig,
-        data,
       }, 
     } = this.props;
-     
-    const {
-      abbrs, places,
-    } = this.state;
 
-    const placesOptions = _.map(places, function(place, i) {
+    const abbrs = _.keys(_.get(this.props, 'selectedFile.data.abbrs', {}));
+
+    const placesOptions = _.map(this.state.places, function(place, i) {
       return <option key={i} value={place}>{place}</option>;
     });
-    
 
-    const customVarLabel = `Custom Variables:
-      ${abbrs.join(' ')}`;
+    const customVarLabel = `Custom Variables: ${abbrs.join(' ')}`;
     return (      
       <Modal show={showEditCSVModal} bsSize="large">
         <Modal.Header>
@@ -117,23 +87,14 @@ class EditConfigModal extends Component {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <div>
-              <Input type="text" label="Config Name: " 
-                placeholder="" 
-                valueLink={this.linkState('name')}/>
-            </div>
-            <Input type="select" label="Type: "
-              value={this.linkState('type').value}
-              onChange={this.selectType.bind(this)}
-            >
-              <option value="line-chart">Line Chart</option>
-              <option value="bar-chart">Bar Chart</option>
-            </Input>
+            <Input type="text" label="Name: " 
+              placeholder="" 
+              valueLink={this.linkState('name')}/>
           </div>
           <div>
             <Input type="text" label="Years: " 
               placeholder="1980, 2002-2010, ..." 
-              valueLink={this.linkState('year')}/>
+              valueLink={this.linkState('years')}/>
           </div>
           <div>
             <Input type="select" label="Places: " 
@@ -145,24 +106,13 @@ class EditConfigModal extends Component {
             </Input>
           </div>
           <div>
-            <Input type="text" label="Output Variables: " 
+            <Input type="text" label="Indicators: " 
               placeholder="POP, EI, ..." 
-              valueLink={this.linkState('energy')}/>
+              valueLink={this.linkState('abbrs')}/>
           </div>
-          /*
-          <div>
-            <Input type="select" label="X Axis: " placeholder="year"
-              valueLink={this.linkState('xAxis')}
-            >
-              <option value="year">Year</option>
-              <option value="place">Place</option>
-              <option value="energy">Energy</option>
-            </Input>
-          </div>
-          */
           <div>
             <Input type="textarea" label={customVarLabel} 
-              placeholder="POP2 = POP * 2"
+              placeholder="POP2 = POP * 2;"
               valueLink={this.linkState('formulas')}/>
           </div>
         </Modal.Body>
@@ -182,7 +132,9 @@ class EditConfigModal extends Component {
 reactMixin(EditConfigModal.prototype, LinkedStateMixin);
 
 const mapStateToProps = (state) => {
-  return _.pick(state, ['selectedConfig', 'showEditCSVModal']);
+  return _.pick(state, [
+    'selectedFile', 'selectedConfig', 'showEditCSVModal'
+  ]);
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -196,4 +148,25 @@ export default connect(
   mapDispatchToProps
 )(EditConfigModal);
 
+          /*
+          <div>
+            <Input type="select" label="Type: "
+              value={this.linkState('type').value}
+              onChange={this.selectType.bind(this)}
+            >
+              <option value="line-chart">Line Chart</option>
+              <option value="bar-chart">Bar Chart</option>
+            </Input>
+          </div>
+
+          <div>
+            <Input type="select" label="X Axis: " placeholder="year"
+              valueLink={this.linkState('xAxis')}
+            >
+              <option value="year">Year</option>
+              <option value="place">Place</option>
+              <option value="energy">Energy</option>
+            </Input>
+          </div>
+          */
 

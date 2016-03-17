@@ -3,7 +3,6 @@ import { handleActions } from 'redux-actions';
 import _ from 'lodash';
 import { Types } from '../actions';
 import initialState from '../initialState';
-import parseCSV from './parseCSV';
 import config from '../config';
 
 function createReducer(reducers, errorReducers, defaultState={}) {
@@ -35,6 +34,15 @@ const rootReducers = {
       configs: user.configs || [],
     };
   },
+  [Types.selectItem]: function(state, action) {
+    return {
+      ...state,
+      selectedFile: {
+        ...state.selectedFile,
+        data: action.payload,
+      },
+    };
+  },
   [Types.saveConfig]: function(state, action) {
     console.log(action);
     return state;
@@ -42,27 +50,88 @@ const rootReducers = {
   [Types.selectConfig]: function(state, action) {
     let {
       config: {
-        type, place, year, energy, xAxis, formulas,
+        type, places, years, abbrs, xAxis, formulas,
       },
       data,
     } = action.payload;
+    let dataPlaces = {}, dataYears = {}, dataAbbrs = {};
 
-    data = _.filter(data, function(d) {
-      return (
-        (_.isEmpty(place) || place.indexOf(d.place) !== -1) && 
-        (_.isEmpty(energy) || energy.indexOf(d.abbr) !== -1) &&
-        (_.findIndex(year, function(range) {
+    let objects = _.filter(data.objects, function(d) {
+      let included = (
+        (_.isEmpty(places) || place.indexOf(d.place) !== -1) && 
+        (_.isEmpty(abbrs) || energy.indexOf(d.abbr) !== -1) &&
+        (_.isEmpty(years) || _.findIndex(years, function(range) {
           return range.length === 2 
             ? range[0] <= d.year && d.year <= range[1]
             : range[0] === d.year
         })) !== -1
       );
+      if (included) {
+        dataYears[d.year] 
+          ? dataYears[d.year].push(d) 
+          : dataYears[d.year] = [d];
+        dataPlaces[d.place] 
+          ? dataPlaces[d.place].push(d) 
+          : dataPlaces[d.place] = [d];
+        dataAbbrs[d.abbr] 
+          ? dataAbbrs[d.abbr].push(d) 
+          : dataAbbrs[d.abbr] = [d];
+      }
+      return included;
     });
+
+    _.each(_.groupBy(objects, function(obj) {
+      return `${obj.place} ${obj.year}`;
+    }), function(objs, key) {
+      objs = _.groupBy(objs, 'abbr');
+
+      let script = _.map(objs, function(d, abbr) {
+
+        return `var ${abbr} = ${d[0].value};`;
+      }).join('');
+
+      _.each(formulas.split(';'), function(cmd) {
+        if (_.trim(cmd) === '') return;
+        let [variable, formula] = cmd.split('=');
+        let v = eval(`${script} ${formula};`);
+        script += `let ${variable} = ${v}`;
+        console.log(variable, v);
+        let d = {
+          abbr: _.trim(variable),
+          value: v,
+          place: objs['POP'][0].place,
+          year: objs['POP'][0].year,
+        };
+        objects.push(d);
+        dataYears[d.year].push(d); 
+        dataPlaces[d.place].push(d); 
+        if (!dataAbbrs[d.abbr]) {
+          dataAbbrs[d.abbr] = [];
+        }
+        dataAbbrs[d.abbr].push(d); 
+      }).join('');
+    });
+
     return {
       ...state,
       selectedConfig: {
-        ...action.payload,
-        data,
+        config: {
+          ..._.defaults({}, action.payload.config, {
+            name: 'config_1',
+            places: data.places,
+            years: data.years,
+            abbrs: data.abbrs,
+            xAxis: 'year',
+            formulas: '',
+          }),
+        },
+        data: {
+          ...data,
+          places: dataPlaces,
+          years: dataYears,
+          abbrs: dataAbbrs,
+          objects: objects,
+        },
       }, 
     };
   },
