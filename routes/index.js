@@ -78,6 +78,23 @@ router.post('/uploadCSV', auth, function(req, res, next) {
   });
 });
 
+router.post('/removeConfig', auth, function(req, res, next) {
+  var user = req.user
+    , chartConfig = req.body
+  ;
+  db.collection('users').updateOne({
+    _id: user._id
+  }, {
+    '$pull': {configs: {file: chartConfig.file, name: chartConfig.name}},
+  }, function(err, result) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(user);
+    }
+  });
+});
+
 router.post('/saveConfig', auth, function(req, res, next) {
   var user = req.user
     , chartConfig = req.body

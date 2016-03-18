@@ -53,6 +53,13 @@ class EditConfigModal extends Component {
     });
   }
 
+  onRemove() {
+    const props = this.props;
+    if (confirm('Are you sure you want to remove this config file ?')) {
+      props.actions.removeConfig(props.selectedConfig.config);
+    }
+  }
+
   onSave() {
     const state = this.state;
     const selectedConfig = this.props.selectedConfig;
@@ -83,13 +90,15 @@ class EditConfigModal extends Component {
       }, 
     } = this.props;
 
-    const abbrs = _.keys(_.get(this.props, 'selectedFile.data.abbrs', {}));
+    const fileData = _.get(this.props, 'selectedFile.data') || {};
 
-    const placesOptions = _.map(this.state.places, function(place, i) {
+    const abbrs = _.keys(fileData.abbrs);
+    const places = _.keys(fileData.places);
+
+    const placesOptions = _.map(places, function(place, i) {
       return <option key={i} value={place}>{place}</option>;
     });
 
-    console.log(this.state);
     const customVarLabel = `Custom Variables: ${abbrs.join(' ')}`;
     return (      
       <Modal show={showEditCSVModal} bsSize="large">
@@ -128,6 +137,9 @@ class EditConfigModal extends Component {
           </div>
         </Modal.Body>
         <Modal.Footer>
+          <Button bsStyle="danger" className="pull-left"
+            onClick={this.onRemove.bind(this)}
+          >Remove</Button>
           <Button
             onClick={this.onSave.bind(this)}
             bsStyle="primary"
@@ -158,26 +170,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(EditConfigModal);
-
-          /*
-          <div>
-            <Input type="select" label="Type: "
-              value={this.linkState('type').value}
-              onChange={this.selectType.bind(this)}
-            >
-              <option value="line-chart">Line Chart</option>
-              <option value="bar-chart">Bar Chart</option>
-            </Input>
-          </div>
-
-          <div>
-            <Input type="select" label="X Axis: " placeholder="year"
-              valueLink={this.linkState('xAxis')}
-            >
-              <option value="year">Year</option>
-              <option value="place">Place</option>
-              <option value="energy">Energy</option>
-            </Input>
-          </div>
-          */
 

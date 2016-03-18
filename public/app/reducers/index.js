@@ -47,17 +47,22 @@ const rootReducers = {
     console.log(action);
     return state;
   },
+  [Types.removeConfig]: function(state, action) {
+    console.log(action);
+    return state;
+  },
   [Types.selectConfig]: function(state, action) {
     let {
-      config: {
-        type, places, years, abbrs, xAxis, 
-        formulas = '',
-      },
+      config,
       data,
     } = action.payload;
+    let {
+      type, places, years, abbrs, xAxis, 
+      formulas = '',
+    } = config || {};
     let dataPlaces = {}, dataYears = {}, dataAbbrs = {};
 
-    let objects = _.filter(data.objects, function(d) {
+    let objects = _.filter((data || {}).objects, function(d) {
       let included = (
         (_.isEmpty(places) || places.indexOf(d.place) !== -1) && 
         (_.isEmpty(abbrs) || abbrs.indexOf(d.abbr) !== -1) &&
@@ -94,23 +99,30 @@ const rootReducers = {
       _.each(formulas.split(';'), function(cmd) {
         if (_.trim(cmd) === '') return;
         let [variable, formula] = cmd.split('=');
-        let v = eval(`${script} ${formula};`);
-        script += `let ${variable} = ${v}`;
-        console.log(variable, v);
-        let d = {
-          abbr: _.trim(variable),
-          value: v,
-          place: objs['POP'][0].place,
-          year: objs['POP'][0].year,
-        };
-        objects.push(d);
-        dataYears[d.year].push(d); 
-        dataPlaces[d.place].push(d); 
-        if (!dataAbbrs[d.abbr]) {
-          dataAbbrs[d.abbr] = [];
+        try {
+          let v = eval(`${script} ${formula};`);
+          script += `let ${variable} = ${v}`;
+          let d = {
+            abbr: _.trim(variable),
+            value: v,
+            place: objs['POP'][0].place,
+            year: objs['POP'][0].year,
+          };
+          objects.push(d);
+          dataYears[d.year].push(d); 
+          dataPlaces[d.place].push(d); 
+          if (!dataAbbrs[d.abbr]) {
+            dataAbbrs[d.abbr] = [];
+          }
+          dataAbbrs[d.abbr].push(d); 
+        } catch (e) {
+          rootErrorReducer(state, {
+            ...action,
+            payload: e,
+            error: true,
+          });
         }
-        dataAbbrs[d.abbr].push(d); 
-      }).join('');
+      });
     });
 
     return {
@@ -171,13 +183,15 @@ const rootReducers = {
 
 const errorReducers = {};
 
+function rootErrorReducer(state, action) {
+  if (action.error && config.DEBUG) {
+    console.log(action.error);
+  }
+  return state;
+}
+
 export default reduceReducer([
-  function(state, action) {
-    if (action.error && config.DEBUG) {
-      console.log(action.error);
-    }
-    return state;
-  },
+  rootErrorReducer,
   createReducer(rootReducers, errorReducers, initialState),
 ]);
 

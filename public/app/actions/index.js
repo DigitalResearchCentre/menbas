@@ -9,7 +9,7 @@ import csv from 'csv';
 const keys = [
   'auth', 'uploadCSV', 'selectConfig', 'selectItem', 'editFile',
   'showEditCSVModal', 'showUploadCSVModal',  'updateFormula',
-  'saveConfig',
+  'saveConfig', 'removeConfig',
 ];
 
 export const Types = _.zipObject(keys, keys);
@@ -169,6 +169,29 @@ export default _.assign({}, Actions, {
         })
         .fail(function(err) {
           dispatch(Actions.saveConfig(new Error(err)));
+        });
+    }
+  },
+  removeConfig: function(chartConfig) {
+    return function(dispatch, getState) {
+      return $.ajax({
+        type: 'POST',
+        url: '/removeConfig',
+        processData: false,
+        contentType: "application/json",
+        data: JSON.stringify(chartConfig),
+        dataType: 'json'
+      })
+        .done(function(user) {
+          dispatch(Actions.auth(user));
+          dispatch(Actions.showEditCSVModal(false));
+          dispatch(Actions.selectConfig({
+            config: null, 
+            data: null,
+          }));
+        })
+        .fail(function(err) {
+          dispatch(Actions.removeConfig(new Error(err)));
         });
     }
   },

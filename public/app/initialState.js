@@ -5,7 +5,6 @@ const initialState = {
   selectedFile: null,
   selectedConfig: {
     config: {
-      year: '',
     },
     data: {
       places: {},

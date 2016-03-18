@@ -65,6 +65,7 @@ class Sidebar extends Component {
   render() {
     const { configs, selectedFile } = this.props;
   
+    console.log(this.state);
     let lis = _.map(this.state.items, (item, i) => {
       let fileConfigs = _.map(
         _.filter(configs, {file: item.file.name}),
@@ -83,17 +84,20 @@ class Sidebar extends Component {
         }
       );
       return (
-        <li 
-          key={i}
-          className={'item ' + (selectedFile === item.file ? 'selected' : '')}>
+        <li key={i}
+          className={
+            'item ' + (selectedFile === item.file ? 'selected' : '') 
+            + (item.expand ? '' : 'tc-collapse')
+          }>
           <a onClick={this.toggleItem.bind(this, item)}>
+            <span className="tree-toggle icon" aria-hidden="true"></span>
             {item.file.name}
           </a>
           <span 
             onClick={this.addConfig.bind(this, item.file)}
             className="glyphicon glyphicon-plus-sign icon" aria-hidden="true">
           </span>
-          <ul className={item.expand ? '' : 'collapse'}>
+          <ul>
             {fileConfigs}
           </ul>
         </li>

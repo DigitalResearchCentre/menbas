@@ -12,15 +12,31 @@
             list-style: none;
             cursor: pointer;
 
+            .icon {
+                padding: 0 4px;
+            }
+
+            .tree-toggle {
+                .glyphicon;
+                .glyphicon-triangle-bottom;
+            }
+
             &.selected {
                 background: #CFD8DC;
             }
 
-        }
-    }
+            &.tc-collapse {
+                ul {
+                    display: none;
+                }
 
-    ul.collapse {
-        display: none;
+                .tree-toggle {
+                    .glyphicon;
+                    .glyphicon-triangle-right;
+                }
+            }
+
+        }
     }
 }
 
