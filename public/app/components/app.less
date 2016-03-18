@@ -43,20 +43,40 @@ html, body, #root {
 
         .body-container {
             .flex(1, 1, 0);
-
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: flex-start;
-            align-items: stretch;
-            align-content: stretch;
+            .flex-row;
 
             @import './sidebar.less';
 
             .viewer {
                 .flex(4, 4, 80%);
-                overflow: auto;
+                overflow: hidden;
+                padding: 5px;
 
-                .flex-row;
+                .flex-column;
+
+                .nav {
+                    .flex(0, 0, 60);
+
+                    .flex-row;
+
+                    .form-group {
+                        .flex(1);
+                        .flex-row;
+                        .control-label {
+                            .flex(0, 0, 80px);
+                            .flex-row;
+
+                            >* {
+                                .flex(1, 1, 0);
+                                align-self: center;
+                                text-align: center;
+                            }
+                        }
+                        .form-control {
+                            .flex(1, 1, 0);
+                        }
+                    }
+                }
 
                 @import './chart.less';
             }

@@ -100,7 +100,7 @@ export default _.assign({}, Actions, {
       });
       return p
         .done(function(user) {
-          dispatch(Actions.checkAuth(user));
+          dispatch(Actions.auth(user));
         })
         .fail(function(err) {
           dispatch(Actions.auth(new Error(err)));
@@ -152,7 +152,14 @@ export default _.assign({}, Actions, {
   },
   saveConfig: function(chartConfig) {
     return function(dispatch, getState) {
-      return $.post('/saveConfig', chartConfig)
+      return $.ajax({
+        type: 'POST',
+        url: '/saveConfig',
+        processData: false,
+        contentType: "application/json",
+        data: JSON.stringify(chartConfig),
+        dataType: 'json'
+      })
         .done(function(user) {
           dispatch(Actions.auth(user));
           dispatch(Actions.selectConfig({

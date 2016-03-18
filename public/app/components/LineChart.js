@@ -15,12 +15,10 @@ class LineChart extends Component {
 
   renderD3(props) {
     const {
-      width = 800, 
-      height = 640, 
       left = 100,
       right = 100,
       top = 10,
-      bottom = 200,
+      bottom = 50,
       flagWidth = 15,
       flagHeight = 15,
       flagTextTransform = [20, 13],
@@ -33,21 +31,25 @@ class LineChart extends Component {
       }
     } = props;
 
-    console.log(labels);
-    console.log(lines);
-    console.log(bars);
-    console.log(places);
+    const {
+      width: clientWidth,
+      height: clientHeight,
+    } = this.svg.getBoundingClientRect();
+
+    const width = clientWidth - left - right;
+    const height = clientHeight - top - bottom;
+    console.log(width);
+    console.log(height);
 
     const svg = d3.select(this.svg)
       , chart = svg.select('.chart')
       , x = d3.scale.linear().range([0, width])
       , y = d3.scale.linear().range([height, 0])
-      , xBar = d3.scale.ordinal().rangeRoundBands([0, width], 0.1)
+      , xBar = d3.scale.ordinal().rangeRoundBands([0, width], 0.3)
       , yBar = d3.scale.linear().range([height, 0])
       , c20 = d3.scale.category20()
     ;
     let xAxis, yAxis, line, bar, flag;
-    svg.attr({width: width + left + right, height: height + top + bottom});
     chart.attr('transform', `translate(${left}, ${top})`);
 
     xAxis = d3.svg.axis().scale(x).orient('bottom');
@@ -70,8 +72,6 @@ class LineChart extends Component {
         })
         .call(xAxis)
       .selectAll('text')
-        .attr({'transform': 'rotate(90)'})
-        .style("text-anchor", "start")
     ;
     chart.select('.y.axis').call(yAxis);
 
@@ -86,17 +86,17 @@ class LineChart extends Component {
 
     bar = chart.selectAll('.bar').data(_.flatten(bars));
     let barWidth = xBar.rangeBand() / bars.length;
-    window.xBar = xBar;
-    bar.enter().append('rect').attr({ 
+    bar.enter().append('rect').attr({
       'class': 'bar',
-      'x': (d) => xBar(d[0]),
+    });
+    bar.attr({ 
+      'x': (d) => xBar(d[0]) + (barWidth * d[2]),
       'y': (d) => yBar(d[1]),
       'width':  barWidth,
       'height': (d) => height - yBar(d[1]),
       'stroke': (d) => c20(d[2]),
       'fill': (d) => c20(d[2]),
     });
-
     bar.exit().remove();
 
 
@@ -132,7 +132,7 @@ class LineChart extends Component {
 
   render() {
     return (
-      <div>
+      <div className="chart">
         <svg ref={(svg) => this.svg = svg}>
           <g className="chart">
             <g className="x axis"/>

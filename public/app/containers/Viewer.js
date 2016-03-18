@@ -40,22 +40,24 @@ class Viewer extends Component {
       chartData.bars = [];
       chartData.places = [];
     } else if (state.year !== '') {
-      let places = data.places;
+      let places = {};
       data = _.groupBy(data.years[state.year], 'abbr');
       console.log(data);
       chartData.labels = _.keys(data);
       chartData.lines = [];
-      let i = 0;
+      let i = -1;
       chartData.bars = _.map(data, function(rows) {
-        return _.map(rows, (d) => [d.place, d.value, i++]);
+        i += 1;
+        return _.map(rows, function(d) {
+          places[d.place] = null;
+          return  [d.place, d.value, i];
+        });
       });
       chartData.places = _.keys(places);
     }
     console.log(chartData);
     return (
-      <LineChart 
-        data={chartData}
-      />
+      <LineChart data={chartData} />
     );
   }
 
@@ -104,7 +106,7 @@ class Viewer extends Component {
 
     return (
       <div className="viewer">
-        <div>
+        <div className="nav">
           <Input type="select" label="Place: "
             value={this.state.place}
             onChange={(e) => this.selectPlace(e.target.value)}

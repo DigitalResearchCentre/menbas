@@ -9,17 +9,21 @@ import Actions from '../actions';
 
 function loadData(props) {
   const config = _.get(props, 'selectedConfig.config', {}) || {};
-  const {
+  let {
     years,
     abbrs,
-    places = _.get(props, 'selectedFile.data.places', {}),
+    places,
   } = config;
+
+  console.log(config);
 
   return {
     ...config,
-    years: _.keys(years).join(', '),
-    abbrs: _.keys(abbrs).join(', '),
-    places: _.keys(places),
+    years: _.map(years || [], function(range) {
+      return range.length === 2 ? `${range[0]}-${range[1]}` : `${range[0]}`;
+    }).join(', '),
+    abbrs: '',
+    places: places || [],
   };
 }
 

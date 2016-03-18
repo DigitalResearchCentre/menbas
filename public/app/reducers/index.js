@@ -59,8 +59,8 @@ const rootReducers = {
 
     let objects = _.filter(data.objects, function(d) {
       let included = (
-        (_.isEmpty(places) || place.indexOf(d.place) !== -1) && 
-        (_.isEmpty(abbrs) || energy.indexOf(d.abbr) !== -1) &&
+        (_.isEmpty(places) || places.indexOf(d.place) !== -1) && 
+        (_.isEmpty(abbrs) || abbrs.indexOf(d.abbr) !== -1) &&
         (_.isEmpty(years) || _.findIndex(years, function(range) {
           return range.length === 2 
             ? range[0] <= d.year && d.year <= range[1]
@@ -118,10 +118,9 @@ const rootReducers = {
       selectedConfig: {
         config: {
           ..._.defaults({}, action.payload.config, {
-            name: 'config_1',
-            places: data.places,
-            years: data.years,
-            abbrs: data.abbrs,
+            places: [],
+            years: [],
+            abbrs: [],
             xAxis: 'year',
             formulas: '',
           }),
