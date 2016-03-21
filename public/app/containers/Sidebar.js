@@ -8,7 +8,6 @@ import Actions from '../actions';
 class Sidebar extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       items: _.map(props.files, function(file) {
         return {
@@ -65,7 +64,6 @@ class Sidebar extends Component {
   render() {
     const { configs, selectedFile } = this.props;
   
-    console.log(this.state);
     let lis = _.map(this.state.items, (item, i) => {
       let fileConfigs = _.map(
         _.filter(configs, {file: item.file.name}),

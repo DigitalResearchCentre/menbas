@@ -63,18 +63,31 @@ class EditConfigModal extends Component {
   onSave() {
     const state = this.state;
     const selectedConfig = this.props.selectedConfig;
-
-    let years = _.map(state.years.split(','), function(d) {
-      return _.map(d.split('-'), parseInt);
+    let years = []
+      , abbrs = []
+    ;
+    _.each(state.years.split(','), function(d) {
+      if (d) {
+        try {
+          years.push(_.map(d.split('-'), parseInt));
+        } catch (e) {
+          console.log(e);
+        }
+      }
     });
 
+    _.each(state.abbrs.split(','), function(d) {
+      if (d) {
+        abbrs.push(_.trim(d));
+      }
+    });
     this.props.actions.saveConfig({
       ...selectedConfig.config,
       ..._.pick(state, [
-        'name', 'places', 'xAxis', 'formulas',
+        'name', 'places', 'formulas',
       ]),
       years: years,
-      abbrs: _.map(state.abbrs.split(','), (abbr) => _.trim(abbr)),
+      abbrs: abbrs,
     });
   }
 
