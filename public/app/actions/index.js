@@ -174,6 +174,7 @@ export default _.assign({}, Actions, {
   },
   removeConfig: function(chartConfig) {
     return function(dispatch, getState) {
+      dispatch(Actions.removeConfig(chartConfig));
       return $.ajax({
         type: 'POST',
         url: '/removeConfig',
@@ -182,8 +183,7 @@ export default _.assign({}, Actions, {
         data: JSON.stringify(chartConfig),
         dataType: 'json'
       })
-        .done(function(user) {
-          dispatch(Actions.auth(user));
+        .done(function() {
           dispatch(Actions.showEditCSVModal(false));
           dispatch(Actions.selectConfig({
             config: null, 

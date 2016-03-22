@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import configureStore from './store';
 import App from './components/App';
 require('bootstrap');
-require('./components/app.less');
+require('../styles/app.less');
 
 const store = configureStore();
 

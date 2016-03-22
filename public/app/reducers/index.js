@@ -48,8 +48,13 @@ const rootReducers = {
     return state;
   },
   [Types.removeConfig]: function(state, action) {
-    console.log(action);
-    return state;
+    const payload = action.payload;
+    return {
+      ...state,
+      configs: _.filter(state.configs, function(config) {
+        return config.name !== payload.name || config.file !== payload.file;
+      }),
+    };
   },
   [Types.selectConfig]: function(state, action) {
     let {
