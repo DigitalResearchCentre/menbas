@@ -4,6 +4,10 @@ import $ from 'jquery';
 import d3 from 'd3';
 
 class LineChart extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
   componentWillReceiveProps(nextProps) {
     this.renderD3(nextProps);
@@ -32,14 +36,17 @@ class LineChart extends Component {
     } = props;
 
     const {
+      xAxisDomain,
+      yAxisDomain,
+    } = this.state;
+
+    const {
       width: clientWidth,
       height: clientHeight,
     } = this.svg.getBoundingClientRect();
 
     const width = clientWidth - left - right;
     const height = clientHeight - top - bottom;
-    console.log(width);
-    console.log(height);
 
     const svg = d3.select(this.svg)
       , chart = svg.select('.chart')
@@ -52,14 +59,19 @@ class LineChart extends Component {
     let xAxis, yAxis, line, bar, flag;
     chart.attr('transform', `translate(${left}, ${top})`);
 
+    x.domain(this.extent(lines, d => d[0]));
+    xBar.domain(places);
+
+    if (!yAxisDomain) {
+      y.domain(this.extent(lines, d => d[1]));
+      yBar.domain(this.extent(bars, d => d[1]));
+    } else {
+      y.domain(yAxisDomain.split(','));
+      yBar.domain(yAxisDomain);
+    }
+
     xAxis = d3.svg.axis().scale(x).orient('bottom');
     yAxis = d3.svg.axis().scale(y).orient('left');
-
-    x.domain(this.extent(lines, d => d[0]));
-    y.domain(this.extent(lines, d => d[1]));
-
-    xBar.domain(places);
-    yBar.domain(this.extent(bars, d => d[1]));
 
     if (bars.length > 0) {
       xAxis = d3.svg.axis().scale(xBar).orient('bottom');

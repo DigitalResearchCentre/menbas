@@ -15,14 +15,12 @@ function loadData(props) {
     places,
   } = config;
 
-  console.log(config);
-
   return {
     ...config,
     years: _.map(years || [], function(range) {
       return range.length === 2 ? `${range[0]}-${range[1]}` : `${range[0]}`;
     }).join(', '),
-    abbrs: '',
+    abbrs: abbrs ? abbrs.join(',') : '',
     places: places || [],
   };
 }
@@ -69,7 +67,9 @@ class EditConfigModal extends Component {
     _.each(state.years.split(','), function(d) {
       if (d) {
         try {
+          console.log(d);
           years.push(_.map(d.split('-'), parseInt));
+          console.log(years);
         } catch (e) {
           console.log(e);
         }

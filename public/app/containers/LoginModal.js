@@ -13,8 +13,9 @@ class LoginModal extends Component {
     this.state = {};
   }
 
-  onSignInClick() {
+  onSubmit($event) {
     const { username, password } = this.state;
+    $event.preventDefault();
     this.props.actions.login(username, password);
   }
 
@@ -27,18 +28,21 @@ class LoginModal extends Component {
           <Modal.Title>Sign In</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>
-            <label>Username: </label>
-            <input type="text" valueLink={this.linkState('username')}/>
-          </div>
-          <div>
-            <label>Password: </label>
-            <input type="password" valueLink={this.linkState('password')}/>
-          </div>
+          <form onSubmit={this.onSubmit.bind(this)}>
+            <div>
+              <label>Username: </label>
+              <input type="text" valueLink={this.linkState('username')}/>
+            </div>
+            <div>
+              <label>Password: </label>
+              <input type="password" valueLink={this.linkState('password')}/>
+            </div>
+            <input type="submit" className="hidden"/>
+          </form>
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={this.onSignInClick.bind(this)}
+            onClick={this.onSubmit.bind(this)}
             bsStyle="primary"
           >Sign In</Button>
         </Modal.Footer>

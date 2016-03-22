@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button, Input } from 'react-bootstrap';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import _ from 'lodash';
 import Actions from '../actions';
 import LineChart from '../components/LineChart';
@@ -10,8 +11,34 @@ import LineChart from '../components/LineChart';
 class Viewer extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = this.loadState({}, false);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.defaultPlace = _
+      .chain(_.get(nextProps, 'selectedConfig.data.places', {}))
+      .keys().first().value()
+    ;
+    const state = this.loadState(this.state, false);
+    if (!_.isEqual(state, this.state)) {
+      this.state = state;
     }
+  }
+
+  loadState(state, setState=true) {
+    const noneDropdownSelected = _.chain(state)
+      .pick(['place', 'abbr', 'year']).every((v)=>!v).value()
+    ;
+    if (noneDropdownSelected) {
+      state = {
+        ...state,
+        place: this.defaultPlace,
+      }
+    }
+    if (setState) {
+      this.setState(state);
+    }
+    return state;
   }
 
   onEdit(file) {
@@ -23,27 +50,21 @@ class Viewer extends Component {
     const state = this.state;
     let data = _.get(this.props, 'selectedConfig.data', {});
     let chartData = {};
+    let places = {};
     if (state.place !== '') {
       data = _.groupBy(data.places[state.place], 'abbr');
-      chartData.labels = _.keys(data);
       chartData.lines = _.map(data, function(rows) {
         return _.map(rows, (d) => [d.year, d.value]);
       });
       chartData.bars = [];
-      chartData.places = [];
     } else if (state.abbr !== '') {
       data = _.groupBy(data.abbrs[state.abbr], 'place');
-      chartData.labels = _.keys(data);
       chartData.lines = _.map(data, function(rows) {
         return _.map(rows, (d) => [d.year, d.value]);
       });
       chartData.bars = [];
-      chartData.places = [];
     } else if (state.year !== '') {
-      let places = {};
       data = _.groupBy(data.years[state.year], 'abbr');
-      console.log(data);
-      chartData.labels = _.keys(data);
       chartData.lines = [];
       let i = -1;
       chartData.bars = _.map(data, function(rows) {
@@ -53,41 +74,32 @@ class Viewer extends Component {
           return  [d.place, d.value, i];
         });
       });
-      chartData.places = _.keys(places);
     }
-    console.log(chartData);
+    chartData.places = _.keys(places);
+    chartData.labels = _.keys(data);
+    chartData.xAxis = state.xAxis;
+    chartData.yAxis = state.yAxis;
     return (
       <LineChart data={chartData} />
     );
   }
 
   selectPlace(place) {
-    this.setState({
-      place: place,
-      year: '',
-      abbr: '',
-    });
+    this.loadState({place: place, year: '', abbr: ''});
   }
 
   selectYear(year) {
-    this.setState({
-      place: '',
-      year: year,
-      abbr: '',
-    });
+    this.loadState({ place: '', year: year, abbr: '', });
   }
 
   selectAbbr(abbr) {
-    this.setState({
-      place: '',
-      year: '',
-      abbr: abbr,
-    });
+    this.loadState({ place: '', year: '', abbr: abbr, });
   }
 
   render() {
     const { 
-      chartConfig, data,
+      data,
+      config: chartConfig,
     } = this.props.selectedConfig || {};
 
     const {
@@ -105,7 +117,9 @@ class Viewer extends Component {
     ));
 
     return (
-      <div className="viewer">
+      <div className={
+        'viewer ' + (_.isEmpty(chartConfig) ? 'invisible' : '')
+      }>
         <div className="nav">
           <Input type="select" label="Place: "
             value={this.state.place}
@@ -149,4 +163,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Viewer);
+
 

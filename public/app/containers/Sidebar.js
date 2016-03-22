@@ -62,19 +62,26 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { configs, selectedFile } = this.props;
+    const {
+      configs, selectedFile, 
+      selectedConfig = {}
+    } = this.props;
   
     let lis = _.map(this.state.items, (item, i) => {
       let fileConfigs = _.map(
         _.filter(configs, {file: item.file.name}),
         (chartConfig, j) => {
           return (
-            <li key={j}>
+            <li key={j} className={
+              (chartConfig.name === selectedConfig.config.name 
+               && chartConfig.file === selectedConfig.config.file)
+                ? 'selected' : ''
+            } >
               <a onClick={()=>this.selectConfig(chartConfig)}>
                 {chartConfig.name}</a>
               <span 
                 onClick={this.editConfig.bind(this, chartConfig)}
-                className="glyphicon glyphicon-edit icon"
+                className="edit-config-icon"
                 aria-hidden="true">
               </span>
             </li>
@@ -84,8 +91,7 @@ class Sidebar extends Component {
       return (
         <li key={i}
           className={
-            'item ' + (selectedFile === item.file ? 'selected' : '') 
-            + (item.expand ? '' : 'tc-collapse')
+            'item ' + (item.expand ? '' : 'tc-collapse')
           }>
           <a onClick={this.toggleItem.bind(this, item)}>
             <span className="tree-toggle icon" aria-hidden="true"></span>
@@ -93,7 +99,7 @@ class Sidebar extends Component {
           </a>
           <span 
             onClick={this.addConfig.bind(this, item.file)}
-            className="glyphicon glyphicon-plus-sign icon" aria-hidden="true">
+            className="add-config-icon" aria-hidden="true">
           </span>
           <ul>
             {fileConfigs}
@@ -113,7 +119,8 @@ class Sidebar extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return _.pick(state, ['selectedFile', 'files', 'configs']);
+  return _.pick(state, [
+    'selectedFile', 'selectedConfig', 'files', 'configs']);
 };
 
 const mapDispatchToProps = (dispatch) => {
