@@ -4,14 +4,19 @@
     border-right: 2px solid gray;
     overflow: auto;
 
-    >ul {
+    ul {
         padding: 0;
+    }
+
+    li {
+        padding: 5px;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    >ul {
 
         >li {
-            padding: 5px;
-            list-style: none;
-            cursor: pointer;
-
             .icon {
                 padding: 0 4px;
             }
@@ -36,8 +41,21 @@
                 .glyphicon-triangle-bottom;
             }
 
-            ul li.selected {
-                background: #CFD8DC;
+            ul li {
+                .flex-row;
+
+                >a {
+                    .flex(1, 1, 0);
+                    padding-left: 20px;
+                }
+
+                >span {
+                    .flex(0, 0, 16px);
+                }
+
+                &.selected {
+                    background: #CFD8DC;
+                }
             }
 
 

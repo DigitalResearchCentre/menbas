@@ -67,9 +67,7 @@ class EditConfigModal extends Component {
     _.each(state.years.split(','), function(d) {
       if (d) {
         try {
-          console.log(d);
-          years.push(_.map(d.split('-'), parseInt));
-          console.log(years);
+          years.push(_.map(d.split('-'), (y) => parseInt(y)));
         } catch (e) {
           console.log(e);
         }
@@ -114,8 +112,11 @@ class EditConfigModal extends Component {
 
     const customVarLabel = `Custom Variables: ${abbrs.join(' ')}`;
     return (      
-      <Modal show={showEditCSVModal} bsSize="large">
-        <Modal.Header>
+      <Modal 
+        show={showEditCSVModal} bsSize="large" 
+        onHide={this.onClose.bind(this)}
+        keyboard>
+        <Modal.Header closeButton>
           <Modal.Title>Edit Config: </Modal.Title>
         </Modal.Header>
         <Modal.Body>

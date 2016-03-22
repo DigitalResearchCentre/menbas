@@ -19,6 +19,7 @@ class Viewer extends Component {
       .chain(_.get(nextProps, 'selectedConfig.data.places', {}))
       .keys().first().value()
     ;
+    console.log(this.defaultPlace);
     const state = this.loadState(this.state, false);
     if (!_.isEqual(state, this.state)) {
       this.state = state;
