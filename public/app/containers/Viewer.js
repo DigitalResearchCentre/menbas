@@ -19,7 +19,6 @@ class Viewer extends Component {
       .chain(_.get(nextProps, 'selectedConfig.data.places', {}))
       .keys().first().value()
     ;
-    console.log(this.defaultPlace);
     const state = this.loadState(this.state, false);
     if (!_.isEqual(state, this.state)) {
       this.state = state;
@@ -30,6 +29,8 @@ class Viewer extends Component {
     const noneDropdownSelected = _.chain(state)
       .pick(['place', 'abbr', 'year']).every((v)=>!v).value()
     ;
+    console.log(noneDropdownSelected);
+    console.log(this.defaultPlace);
     if (noneDropdownSelected) {
       state = {
         ...state,

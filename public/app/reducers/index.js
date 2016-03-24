@@ -97,7 +97,6 @@ const rootReducers = {
       objs = _.groupBy(objs, 'abbr');
 
       let script = _.map(objs, function(d, abbr) {
-
         return `var ${abbr} = ${d[0].value};`;
       }).join('');
 
@@ -106,7 +105,7 @@ const rootReducers = {
         let [variable, formula] = cmd.split('=');
         try {
           let v = eval(`${script} ${formula};`);
-          script += `let ${variable} = ${v}`;
+          script += `var ${variable} = ${v};`;
           let d = {
             abbr: _.trim(variable),
             value: v,
@@ -189,8 +188,9 @@ const rootReducers = {
 const errorReducers = {};
 
 function rootErrorReducer(state, action) {
+  console.log(action);
   if (action.error && config.DEBUG) {
-    console.log(action.error);
+    console.log(action);
   }
   return state;
 }
