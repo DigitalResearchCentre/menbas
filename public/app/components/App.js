@@ -6,12 +6,14 @@ import LoginModal from '../containers/LoginModal';
 import UploadCSVModal from '../containers/UploadCSVModal';
 import EditConfigModal from '../containers/EditConfigModal';
 
+import SankeyChart from './SankeyChart';
+
 const App = () => (
   <div className="app">
     <Header/>
     <div className="body-container">
       <Sidebar/>
-      <Viewer/>
+      <SankeyChart/>
     </div>
     <LoginModal/>
     <UploadCSVModal/>

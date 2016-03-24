@@ -6,6 +6,7 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import _ from 'lodash';
 import Actions from '../actions';
 import LineChart from '../components/LineChart';
+import SankeyChart from '../components/SankeyChart';
 
 
 class Viewer extends Component {
