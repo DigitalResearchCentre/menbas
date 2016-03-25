@@ -1,0 +1,35 @@
+{
+  "apps": [{
+    "name": "menbas",
+    "script": "bin/www",
+    "watch": true,
+    "ignore_watch" : [
+      ".git", ".DS_Store",
+      "package.json",
+      "public", 
+      "test", 
+      "data",
+      "node_modules", 
+      "bower_components" 
+    ],
+    "watch_options": {
+      "followSymlinks": false
+    },
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+       "NODE_ENV": "production"
+    }
+  }, {
+    "name": "menbas-client",
+    "script": "public/compile.js",
+    "watch": ["public/make-webpack-config.js", "public/compile.js"],
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+       "NODE_ENV": "production"
+    }
+  }]
+}

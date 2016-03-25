@@ -6,51 +6,26 @@ var express = require('express')
   , fs = require('fs')
   , path = require('path')
   , db = require('../db')
+  , Auth = require('./auth')
+  , auth = Auth.auth
 ;
 
-passport.use(new LocalStrategy(function(username, password, done) {
-  db.collection('users').findOne({username: username}, function(err, user) {
-    if (err) {
-      return done(err);
-    }
-    if (user && user.password === password) {
-      return done(null, user);
-    } else {
-      return done({message: 'Incorrect username or password'});
-    }
-  });
-}));
-
-passport.serializeUser(function(user, done) {
-  done(null, user.username);
-});
-
-passport.deserializeUser(function(username, done) {
-  db.collection('users').findOne({username: username}, done);
-});
-
-var auth = function(req, res, next) {
-  if (!req.isAuthenticated()) {
-    res.send(401);
-  } else {
-    next();
-  }
-};
-
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
 router.get('/auth', auth, function(req, res, next) {
-  var user = _.clone(req.user);
-  delete user.password;
-  res.json(user);
+  res.json(_.pick(req.user, ['username']));
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
+router.post('/login', Auth.login, function(req, res) {
   res.redirect('/auth');
 });
+
+router.patch('/users/:id', auth, function(req, res, next) {
+  var data = req.body
+    , id = req.params.id
+  ;
+  console.log(data);
+});
+
+
 
 router.post('/uploadCSV', auth, function(req, res, next) {
   var user = req.user

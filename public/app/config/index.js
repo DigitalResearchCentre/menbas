@@ -1,10 +1,15 @@
 'use strict';
 
 let config;
-if (process.env.NODE_ENV === 'production') {
-  config = require('./prod');
-} else {
-  config = require('./dev');
+switch (process.env.NODE_ENV) {
+  case 'production':
+    config = require('./prod');
+    break;
+  case 'development':
+    config = require('./dev');
+    break;
+  default:
+    config = require('./dev');
 }
 
 export default config;

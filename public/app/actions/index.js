@@ -14,7 +14,7 @@ const keys = [
 
 export const Types = _.zipObject(keys, keys);
 
-const Actions = _.mapValues(Types, function(value, key) {
+const BaseActions = _.mapValues(Types, function(value, key) {
   return createAction(value);
 });
 
@@ -71,23 +71,23 @@ function selectItem(dispatch, item) {
   return new Promise((resolve, reject) => {
     if (!item.data) {
       parseCSV(item.file.content, function(result) {
-        dispatch(Actions.selectItem(result));
+        dispatch(BaseActions.selectItem(result));
         resolve(result);
       });
     } else {
-      dispatch(Actions.selectItem(item.data));
+      dispatch(BaseActions.selectItem(item.data));
       resolve(item.data);
     }
   });
 }
 
-export default _.assign({}, Actions, {
+const Actions = _.assign({}, BaseActions, {
   checkAuth: function() {
     return function(dispatch, getState) {
       return $.get('/auth')
-        .done(user => dispatch(Actions.auth(user)))
+        .done(user => dispatch(BaseActions.auth(user)))
         .fail(function(err) {
-          dispatch(Actions.auth(new Error(err)));
+          dispatch(BaseActions.auth(new Error(err)));
         });
         ;
     }
@@ -100,22 +100,22 @@ export default _.assign({}, Actions, {
       });
       return p
         .done(function(user) {
-          dispatch(Actions.auth(user));
+          dispatch(BaseActions.auth(user));
         })
         .fail(function(err) {
-          dispatch(Actions.auth(new Error(err)));
+          dispatch(BaseActions.auth(new Error(err)));
         });
     };
   },
   uploadCSV: function(file) {
     return function(dispatch, getState) {
-      dispatch(Actions.showUploadCSVModal(false));
+      dispatch(BaseActions.showUploadCSVModal(false));
       return $.post('/uploadCSV', file)
         .done(function(user) {
-          dispatch(Actions.auth(user));
+          dispatch(BaseActions.auth(user));
         })
         .fail(function(err) {
-          dispatch(Actions.uploadCSV(new Error(err)));
+          dispatch(BaseActions.uploadCSV(new Error(err)));
         });
     };
   },
@@ -130,7 +130,7 @@ export default _.assign({}, Actions, {
         , file = _.get(state, 'selectedFile.file', {})
       ;
       if (file.name === chartConfig.file && file.data) {
-        return dispatch(Actions.selectConfig({
+        return dispatch(BaseActions.selectConfig({
           config: chartConfig, 
           data: file.data,
         }));
@@ -139,7 +139,7 @@ export default _.assign({}, Actions, {
           file: _.find(state.files, {name: chartConfig.file})
         });
         action.then((data) => {
-          return dispatch(Actions.selectConfig({
+          return dispatch(BaseActions.selectConfig({
             config: chartConfig, 
             data: data,
           }));
@@ -161,20 +161,20 @@ export default _.assign({}, Actions, {
         dataType: 'json'
       })
         .done(function(user) {
-          dispatch(Actions.auth(user));
-          dispatch(Actions.selectConfig({
+          dispatch(BaseActions.auth(user));
+          dispatch(BaseActions.selectConfig({
             config: chartConfig, 
             data: getState().selectedConfig.data,
           }));
         })
         .fail(function(err) {
-          dispatch(Actions.saveConfig(new Error(err)));
+          dispatch(BaseActions.saveConfig(new Error(err)));
         });
     }
   },
   removeConfig: function(chartConfig) {
     return function(dispatch, getState) {
-      dispatch(Actions.removeConfig(chartConfig));
+      dispatch(BaseActions.removeConfig(chartConfig));
       return $.ajax({
         type: 'POST',
         url: '/removeConfig',
@@ -184,20 +184,20 @@ export default _.assign({}, Actions, {
         dataType: 'json'
       })
         .done(function() {
-          dispatch(Actions.showEditCSVModal(false));
-          dispatch(Actions.selectConfig({
+          dispatch(BaseActions.showEditCSVModal(false));
+          dispatch(BaseActions.selectConfig({
             config: null, 
             data: null,
           }));
         })
         .fail(function(err) {
-          dispatch(Actions.removeConfig(new Error(err)));
+          dispatch(BaseActions.removeConfig(new Error(err)));
         });
     }
   },
 
   updateFormula: function(file) {
-    return Actions.updateFormula(file);
+    return BaseActions.updateFormula(file);
     /*
     return function(dispatch, getState) {
       dispatch();
@@ -206,3 +206,4 @@ export default _.assign({}, Actions, {
   }
 });
 
+export default Actions;

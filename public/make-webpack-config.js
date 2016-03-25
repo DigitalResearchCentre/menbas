@@ -14,20 +14,18 @@ module.exports = function(options) {
   ;
   console.log(env);
 
-  if (env === 'prod' || env === 'production') {
+  if (env === 'production') {
     devtool = '#source-map';
     debug = false;
-    env = JSON.stringify("production");
   } else {
     devtool = '#eval-cheap-module-source-map';
     debug = true;
-    env = JSON.stringify("development");
   }
 
   var plugins = [
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: env
+        NODE_ENV: JSON.stringify(env),
       },
     }),
     new ResolverPlugin(new ResolverPlugin.DirectoryDescriptionFilePlugin(
