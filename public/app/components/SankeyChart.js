@@ -67,7 +67,7 @@ class SankeyChart extends Component {
                 d.target.name + "\n" + d.value; });
 
     var node = svg.select('g.nodes').selectAll(".node")
-      .data(graph.nodes)
+      .data(nodes)
     .enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { 
@@ -78,18 +78,31 @@ class SankeyChart extends Component {
 		  this.parentNode.appendChild(this); })
       .on("drag", dragmove));
 
+      function dragmove(d) {
+        d3.select(this).attr("transform", 
+                             "translate(" + (
+                               d.x = Math.max(0, Math.min(width - d.dx, d3.event.x))
+                             ) + "," + (
+                             d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
+                             ) + ")");
+                             sankey.relayout();
+                             link.attr("d", path);
+      }
   }
 
   render() {
 
-    return (
-      <div className="viewer">
-        <div className="chart">
-          <h1>hello </h1>
+    /**
+              <h1>hello </h1>
           <svg ref={(svg) => this.svg = svg}>
             <g className="nodes"></g>
             <g className="links"></g>
           </svg>
+
+     */
+    return (
+      <div className="viewer">
+        <div className="chart">
         </div>
       </div>
     );

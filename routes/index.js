@@ -8,10 +8,12 @@ var express = require('express')
   , db = require('../db')
   , Auth = require('./auth')
   , auth = Auth.auth
+  , Users = db.collection('users')
+  , Configs = db.collection('configs')
 ;
 
 router.get('/auth', auth, function(req, res, next) {
-  res.json(_.pick(req.user, ['username']));
+  res.json(_.pick(req.user, ['_id', 'username']));
 });
 
 router.post('/login', Auth.login, function(req, res) {
@@ -25,7 +27,11 @@ router.patch('/users/:id', auth, function(req, res, next) {
   console.log(data);
 });
 
-
+router.get('/configs', auth, function(req, res, next) {
+  Configs.find({user: req.user._id}, function() {
+    
+  });  
+});
 
 router.post('/uploadCSV', auth, function(req, res, next) {
   var user = req.user
@@ -137,3 +143,4 @@ router.patch('/users/:id', auth, function(req, res, next) {
 });
 
 module.exports = router;
+
