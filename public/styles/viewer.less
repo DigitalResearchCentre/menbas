@@ -1,0 +1,65 @@
+.viewer {
+    .flex(4, 4, 80%);
+    overflow: hidden;
+    padding: 5px;
+
+    .flex-column;
+
+    .nav {
+        .flex(0, 0, 160px);
+
+        .flex-column;
+
+        >.sub-nav {
+            .flex(0, 0, 50px);
+            .flex-row;
+
+            .form-group {
+                margin-left: 10px;
+                .flex(1, 1);
+                .flex-row;
+                .control-label {
+                    .flex(0, 0, 60px);
+                    .flex-row;
+
+                    >* {
+                        .flex(1, 1, 0);
+                        align-self: center;
+                        text-align: center;
+                    }
+                }
+                .form-control {
+                    .flex(1, 1, 0);
+                }
+
+            }
+            >.select-type {
+                .flex(0, 0, 250px);
+            }
+
+
+        }
+
+        >.configs {
+            .flex(1, 1);
+            .flex-row;
+
+            .form-group {
+                .flex(1, 1);
+                .flex-column;
+                .form-control {
+                    .flex(1, 1, 0);
+                }
+
+                &.axis {
+                    .flex(0, 0, 160px);
+                }
+            }
+        }
+
+
+    }
+
+    @import './chart.less';
+}
+

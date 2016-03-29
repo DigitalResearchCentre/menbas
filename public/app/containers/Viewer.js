@@ -26,12 +26,14 @@ class Viewer extends Component {
     }
   }
 
+  componentDidMount() {
+    this.selectType('Location');
+  }
+
   loadState(state, setState=true) {
     const noneDropdownSelected = _.chain(state)
       .pick(['place', 'abbr', 'year']).every((v)=>!v).value()
     ;
-    console.log(noneDropdownSelected);
-    console.log(this.defaultPlace);
     if (noneDropdownSelected) {
       state = {
         ...state,
@@ -55,19 +57,43 @@ class Viewer extends Component {
     let chartData = {};
     let places = {};
     if (state.place !== '') {
-      data = _.groupBy(data.places[state.place], 'abbr');
+      data = _.filter(data.places[state.place], function(d) {
+        return (
+          _.isEmpty(state.years) || 
+          state.years.indexOf(d.year.toString()) !== -1 
+        ) && (
+          _.isEmpty(state.abbrs) || state.abbrs.indexOf(d.abbr) !== -1
+        );
+      });
+      data = _.groupBy(data, 'abbr');
       chartData.lines = _.map(data, function(rows) {
         return _.map(rows, (d) => [d.year, d.value]);
       });
       chartData.bars = [];
     } else if (state.abbr !== '') {
-      data = _.groupBy(data.abbrs[state.abbr], 'place');
+      data = _.filter(data.abbrs[state.abbr], function(d) {
+        return (
+          _.isEmpty(state.years) || 
+          state.years.indexOf(d.year.toString()) !== -1 
+        ) && (
+          _.isEmpty(state.places) || state.places.indexOf(d.place) !== -1
+        );
+      });
+      data = _.groupBy(data, 'place');
       chartData.lines = _.map(data, function(rows) {
         return _.map(rows, (d) => [d.year, d.value]);
       });
       chartData.bars = [];
     } else if (state.year !== '') {
-      data = _.groupBy(data.years[state.year], 'abbr');
+      data = _.filter(data.years[state.year], function(d) {
+        return (
+          _.isEmpty(state.abbrs) || 
+          state.abbrs.indexOf(d.abbr.toString()) !== -1 
+        ) && (
+          _.isEmpty(state.places) || state.places.indexOf(d.place) !== -1
+        );
+      });
+      data = _.groupBy(data, 'abbr');
       chartData.lines = [];
       let i = -1;
       chartData.bars = _.map(data, function(rows) {
@@ -87,6 +113,63 @@ class Viewer extends Component {
     );
   }
 
+  selectType(type) {
+    const {
+      places, years, abbrs, 
+    } = this.state;
+    let place = '', abbr = '', year = '';
+
+    this.setState({type: type});
+    switch (type) {
+      case 'Location':
+        place = _.first(places);
+        break;
+      case 'Indicator':
+        abbr = _.first(abbrs);
+        break;
+      case 'Time':
+        year = _.first(years);
+        break;
+      default:
+        return;
+    }
+    this.loadState({place: place, year: year, abbr: abbr});
+  }
+
+  renderViewBy(placesOptions, abbrsOptions, yearsOptions) {
+    switch (this.state.type) {
+      case 'Location':
+        return (
+          <Input type="select" label="Place: "
+            value={this.state.place}
+            onChange={(e) => this.selectPlace(e.target.value)}
+          >
+            {placesOptions}
+          </Input>
+        );
+      case 'Indicator':
+        return (
+          <Input type="select" label="Indicator: "
+            value={this.state.abbr}
+            onChange={(e) => this.selectAbbr(e.target.value)}
+          >
+            {abbrsOptions}
+          </Input>
+        );
+      case 'Time':
+        return (
+          <Input type="select" label="Year: "
+            value={this.state.year}
+            onChange={(e) => this.selectYear(e.target.value)}
+          >
+            {yearsOptions}
+          </Input>
+        );
+      default:
+        return ;
+    }
+  }
+
   selectPlace(place) {
     this.loadState({place: place, year: '', abbr: ''});
   }
@@ -99,6 +182,58 @@ class Viewer extends Component {
     this.loadState({ place: '', year: '', abbr: abbr, });
   }
 
+  selectPlaces(event) {
+    let selected = [];
+    _.each(event.target.children, function(option) {
+      if (option.selected)  {
+        selected.push(option.value);
+      }
+    });
+    this.setState({places: selected});
+  }
+
+  selectYears(event) {
+    let selected = [];
+    _.each(event.target.children, function(option) {
+      if (option.selected)  {
+        selected.push(option.value);
+      }
+    });
+    this.setState({years: selected});
+  }
+
+  selectAbbrs(event) {
+    let selected = [];
+    _.each(event.target.children, function(option) {
+      if (option.selected)  {
+        selected.push(option.value);
+      }
+    });
+    this.setState({abbrs: selected});
+  }
+
+  toggleConfigs() {
+    this.setState({
+      showConfigs: !this.state.showConfigs
+    });
+  }
+
+  onSave() {
+    const { places, years, abbrs } = this.state;
+    const { actions, selectedConfig } = this.props;
+    actions.showEditCSVModal(true);
+    actions.selectConfig({
+      ...selectedConfig.config,
+      places: places,
+      years: years,
+      abbrs: abbrs,
+    });
+  }
+
+  onExport() {
+
+  }
+
   render() {
     const { 
       data,
@@ -106,9 +241,14 @@ class Viewer extends Component {
     } = this.props.selectedConfig || {};
 
     const {
-      places, years, abbrs, objects,
+      places, years, abbrs, 
     } = data || {};
 
+    let typesOptions = _.map([
+      'Location', 'Indicator', 'Time', 'Energy'
+    ], (k, i) => (
+      <option key={i} value={k}>{k}</option>
+    ));
     let placesOptions = _.map(_.keys(places), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
@@ -118,35 +258,68 @@ class Viewer extends Component {
     let abbrsOptions = _.map(_.keys(abbrs), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
+    let selectPlaces, selectAbbrs, selectYears;
+    if (this.state.type !== 'Location') {
+      selectPlaces = (
+        <Input type="select" value={this.state.places}
+          onChange={this.selectPlaces.bind(this)}
+          multiple>
+          {placesOptions}
+        </Input>
+      );
+    }
+    if (this.state.type !== 'Indicator') {
+      selectAbbrs = (
+        <Input type="select" value={this.state.abbrs}
+          onChange={this.selectAbbrs.bind(this)}
+          multiple>
+          {abbrsOptions}
+        </Input>
+      );
+    }
+    if (this.state.type !== 'Time') {
+      selectYears = (
+        <Input type="select" value={this.state.years}
+          onChange={this.selectYears.bind(this)}
+          multiple>
+          {yearsOptions}
+        </Input>
+      );
+    }
+
 
     return (
       <div className={
         'viewer ' + (_.isEmpty(chartConfig) ? 'invisible' : '')
       }>
         <div className="nav">
-          <Input type="select" label="Place: "
-            value={this.state.place}
-            onChange={(e) => this.selectPlace(e.target.value)}
-          >
-            <option value="">All</option>
-            {placesOptions}
-          </Input>
-          <Input type="select" label="Year: "
-            value={this.state.year}
-            onChange={(e) => this.selectYear(e.target.value)}
-          >
-            <option value="">All</option>
-            {yearsOptions}
-          </Input>
-          <Input type="select" label="Indicator: "
-            value={this.state.abbr}
-            onChange={(e) => this.selectAbbr(e.target.value)}
-          >
-            <option value="">All</option>
-            {abbrsOptions}
-          </Input>
+          <div className="sub-nav">
+            <Input type="select" label="View By: "
+              value={this.state.type}
+              groupClassName="select-type"
+              onChange={(e) => this.selectType(e.target.value)}
+            >
+              {typesOptions}
+            </Input>
+            {this.renderViewBy(placesOptions, abbrsOptions, yearsOptions)}
+          </div>
+          <div className={ 'configs ' }>
+            {selectPlaces}
+            {selectAbbrs}
+            {selectYears}
+          </div>
         </div>
         {this.renderChart()}
+        <div>
+          <Button
+            onClick={this.onSave.bind(this)}
+            bsStyle="primary"
+          >Save</Button>
+          <Button
+            onClick={this.onExport.bind(this)}
+            bsStyle="primary"
+          >Export</Button>
+        </div>
       </div>
     );
   }

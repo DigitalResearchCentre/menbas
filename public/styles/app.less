@@ -46,45 +46,7 @@ html, body, #root {
             .flex-row;
 
             @import './sidebar.less';
-
-            .viewer {
-                .flex(4, 4, 80%);
-                overflow: hidden;
-                padding: 5px;
-
-                .flex-column;
-
-                .nav {
-                    .flex(0, 0, 60);
-
-                    .flex-row;
-
-                    .form-group {
-                        .flex(1);
-                        .flex-row;
-                        .control-label {
-                            .flex(0, 0, 80px);
-                            .flex-row;
-
-                            >* {
-                                .flex(1, 1, 0);
-                                align-self: center;
-                                text-align: center;
-                            }
-                        }
-                        .form-control {
-                            .flex(1, 1, 0);
-                        }
-
-                        &.axis {
-                            .flex(0, 0, 160px);
-                        }
-                    }
-                }
-
-                @import './chart.less';
-            }
-
+            @import './viewer.less';
         }
     }
 

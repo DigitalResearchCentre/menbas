@@ -32,7 +32,6 @@ const rootReducers = {
       ...state,
       user: user,
       files: user.files || [],
-      configs: user.configs || [],
     };
   },
   [Types.selectFile]: function(state, action) {
@@ -41,6 +40,7 @@ const rootReducers = {
     return update(state, {
       files: {[index]: {$set: file}},
       selectedFile: {$set: action.payload},
+      configs: {$set: file.configs || []},
     });
   },
   [Types.uploadCSV]: function(state, action) {
@@ -57,8 +57,21 @@ const rootReducers = {
     }
   },
   [Types.saveConfig]: function(state, action) {
-    console.log(action);
-    return state;
+    const file = action.payload.value;
+    const index = _.findIndex(state.files, (f)=> f._id === file._id);
+    if (index === -1) {
+      return state;
+    } else {
+      return update(state, {
+        files: {[index]: {$set: file}},
+        selectedFile: {
+          $set: {
+            ...state.selectedFile,
+            file,
+          }
+        },
+      });
+    }
   },
   [Types.removeConfig]: function(state, action) {
     const payload = action.payload;
@@ -78,32 +91,7 @@ const rootReducers = {
       type, places, years, abbrs, xAxis, 
       formulas = '',
     } = config || {};
-    let dataPlaces = {}, dataYears = {}, dataAbbrs = {};
-    console.log(data);
-
-    let objects = _.filter((data || {}).objects, function(d) {
-      let included = (
-        (_.isEmpty(places) || places.indexOf(d.place) !== -1) && 
-        (_.isEmpty(abbrs) || abbrs.indexOf(d.abbr) !== -1) &&
-        (_.isEmpty(years) || _.findIndex(years, function(range) {
-          return range.length === 2 
-            ? range[0] <= d.year && d.year <= range[1]
-            : range[0] === d.year
-        })) !== -1
-      );
-      if (included) {
-        dataYears[d.year] 
-          ? dataYears[d.year].push(d) 
-          : dataYears[d.year] = [d];
-        dataPlaces[d.place] 
-          ? dataPlaces[d.place].push(d) 
-          : dataPlaces[d.place] = [d];
-        dataAbbrs[d.abbr] 
-          ? dataAbbrs[d.abbr].push(d) 
-          : dataAbbrs[d.abbr] = [d];
-      }
-      return included;
-    });
+    let objects = (data || {}).objects;
 
     _.each(_.groupBy(objects, function(obj) {
       return `${obj.place} ${obj.year}`;
@@ -127,12 +115,6 @@ const rootReducers = {
             year: objs['POP'][0].year,
           };
           objects.push(d);
-          dataYears[d.year].push(d); 
-          dataPlaces[d.place].push(d); 
-          if (!dataAbbrs[d.abbr]) {
-            dataAbbrs[d.abbr] = [];
-          }
-          dataAbbrs[d.abbr].push(d); 
         } catch (e) {
           rootErrorReducer(state, {
             ...action,
@@ -151,15 +133,11 @@ const rootReducers = {
             places: [],
             years: [],
             abbrs: [],
-            xAxis: 'year',
             formulas: '',
           }),
         },
         data: {
           ...data,
-          places: dataPlaces,
-          years: dataYears,
-          abbrs: dataAbbrs,
           objects: objects,
         },
       }, 

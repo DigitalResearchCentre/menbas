@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import update from 'react-addons-update';
 import ReduxActions, { createAction }  from 'redux-actions';
 import $ from 'jquery';
 import csv from 'csv';
@@ -173,20 +174,35 @@ const Actions = _.assign({}, BaseActions, {
   },
   saveConfig: function(chartConfig) {
     return function(dispatch, getState) {
+      const state = getState();
+      let file = state.selectedFile;
+      if (!file.configs) {
+        file.configs = [];
+      }
+      const index = _.findIndex(file.configs, function(c) {
+        return c.name === chartConfig.name;
+      });
+      if (index === -1) {
+        file = update(file, {
+          configs: {$push: [chartConfig]}
+        });
+      } else {
+        file = update(file, {
+          configs: {[index]: {$set: chartConfig}},
+        });
+      }
       return $.ajax({
         type: 'POST',
-        url: '/saveConfig',
+        url: '/files',
         processData: false,
         contentType: "application/json",
-        data: JSON.stringify(chartConfig),
+        data: JSON.stringify(_.pick(file, [
+          '_id', 'name', 'user_id', 'configs', 'content',
+        ])),
         dataType: 'json'
       })
-        .done(function(user) {
-          dispatch(Actions.auth(user));
-          dispatch(BaseActions.selectConfig({
-            config: chartConfig, 
-            data: getState().selectedConfig.data,
-          }));
+        .done(function(result) {
+          dispatch(BaseActions.saveConfig(result));
         })
         .fail(function(err) {
           dispatch(BaseActions.saveConfig(new Error(err)));
