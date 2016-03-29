@@ -26,32 +26,31 @@ class SankeyChart extends Component {
       .nodePadding(10)
       .size([800, 600])
     ;
-    console.log(props.data.abbrs);
     let color = d3.scale.category20();
     
     let path = sankey.link();
     let nodeMap = {};
     let svg = d3.select(this.svg);
-
-    let nodes = _.map([
-      {"name":"Energy"},
-      {"name":"Industrial Processes"},
-      {"name":"Electricity and heat"},
-    ], function(n) {
-      nodeMap[n.name] = n;
-      return n;
+    let abbrs = _.groupBy(props.data, 'abbr');
+    let nodes = _.map(props.data, function(n) {
+      let nn = _.pick(n, ['abbr', 'value']);
+      nodeMap[n.abbr] = nn;
+      return nn;
     });
-    let links = _.map([{
-      "source":"Energy",
-      "target":"Industrial Processes", "value":"1.2"
-    }, {
-      "source":"Energy",
-      "target":"Electricity and heat","value":"0.3"
-    }], function(l) {
+    if (_.isEmpty(props.data)) return;
+    let links = _.map([
+      ['LP', 'TP'],
+      ['LP', 'LBP'],
+      ['TP', 'BR'],
+      ['TP', 'FP'],
+      ['FP', 'ASI'],
+      ['ASI', 'EI'],
+      ['BR', 'TIC'],
+    ], function(link) {
       return {
-        source: nodeMap[l.source],
-        target: nodeMap[l.target],
-        value: l.value,
+        source: nodeMap[link[0]],
+        target: nodeMap[link[1]],
+        value: nodeMap[link[1]].value || 0.1,
       };
     });
     sankey.nodes(nodes).links(links).layout(32);
@@ -59,13 +58,14 @@ class SankeyChart extends Component {
     let link = svg.select('g.links').selectAll('.link').data(links)
       .enter().append('path')
         .attr("class", "link")
-        .attr("d", path)
-        .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-        .sort(function(a, b) { return b.dy - a.dy; });
+        .attr("d", function(d) {
+          return path(d);
+        })
+        .style("stroke-width", function(d) { return Math.max(1, d.dy); });
     link.append("title")
         .text(function(d) {
-      	return d.source.name + " → " + 
-                d.target.name + "\n" + d.value; });
+      	return d.source.abbr + " → " + 
+                d.target.abbr + "\n" + d.value; });
 
     var node = svg.select('g.nodes').selectAll(".node")
       .data(nodes)
@@ -73,12 +73,14 @@ class SankeyChart extends Component {
       .attr("class", "node")
       .attr("transform", function(d) { 
 		  return "translate(" + d.x + "," + d.y + ")"; })
-    .call(d3.behavior.drag()
+
+      /*
+       *    .call(d3.behavior.drag()
       .origin(function(d) { return d; })
       .on("dragstart", function() { 
 		  this.parentNode.appendChild(this); })
-      .on("drag", dragmove));
 
+      .on("drag", dragmove));
       function dragmove(d) {
         d3.select(this).attr("transform", 
                              "translate(" + (
@@ -89,18 +91,17 @@ class SankeyChart extends Component {
                              sankey.relayout();
                              link.attr("d", path);
       }
+      */
   }
 
   render() {
-
-    /**
-              <h1>hello </h1>
-          <svg ref={(svg) => this.svg = svg}>
+    /*
+               <svg ref={(svg) => this.svg = svg}>
             <g className="nodes"></g>
             <g className="links"></g>
           </svg>
 
-     */
+    * */
     return (
       <div className="viewer">
         <div className="chart">

@@ -30,7 +30,6 @@ class Viewer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     const state = loadState(nextProps, this.state);
     if (!_.isEqual(state, this.state)) {
       this.setState(state, () => {
@@ -52,6 +51,10 @@ class Viewer extends Component {
     let chartData = {};
     let places = {};
     if (state.type === 'Energy') {
+      data = _.filter(data.places[state.place], function(d) {
+        return d.year.toString() == state.year;
+        
+      });
       return <SankeyChart data={data}/>
     }
     if (state.place !== '') {
@@ -127,6 +130,10 @@ class Viewer extends Component {
       case 'Time':
         year = _.first(years);
         break;
+      case 'Energy':
+        year = _.first(years);
+        place = _.first(places);
+        break;
       default:
         this.setState({type: type});
         return;
@@ -135,45 +142,22 @@ class Viewer extends Component {
   }
 
   renderViewBy(placesOptions, abbrsOptions, yearsOptions) {
-    switch (this.state.type) {
-      case 'Location':
-        return (
-          <Input type="select" label="Place: "
-            value={this.state.place}
-            onChange={(e) => this.selectPlace(e.target.value)}
-          >
-            {placesOptions}
-          </Input>
-        );
-      case 'Indicator':
-        return (
-          <Input type="select" label="Indicator: "
-            value={this.state.abbr}
-            onChange={(e) => this.selectAbbr(e.target.value)}
-          >
-            {abbrsOptions}
-          </Input>
-        );
-      case 'Time':
-        return (
-          <Input type="select" label="Year: "
-            value={this.state.year}
-            onChange={(e) => this.selectYear(e.target.value)}
-          >
-            {yearsOptions}
-          </Input>
-        );
-      default:
-        return ;
-    }
   }
 
   selectPlace(place) {
-    this.setState({place: place, year: '', abbr: ''});
+    if (this.state.type === 'Energy') {
+      this.setState({place: place, abbr: ''});
+    } else {
+      this.setState({place: place, year: '', abbr: ''});
+    }
   }
 
   selectYear(year) {
-    this.setState({ place: '', year: year, abbr: '', });
+    if (this.state.type === 'Energy') {
+      this.setState({ year: year, abbr: '', });
+    } else {
+      this.setState({ place: '', year: year, abbr: '', });
+    }
   }
 
   selectAbbr(abbr) {
@@ -257,7 +241,8 @@ class Viewer extends Component {
       <option key={i} value={k}>{k}</option>
     ));
     let selectPlaces, selectAbbrs, selectYears;
-    if (this.state.type !== 'Location') {
+    const type = this.state.type;
+    if (type !== 'Location') {
       selectPlaces = (
         <Input type="select" value={this.state.places}
           onChange={this.selectPlaces.bind(this)}
@@ -266,7 +251,7 @@ class Viewer extends Component {
         </Input>
       );
     }
-    if (this.state.type !== 'Indicator') {
+    if (type !== 'Indicator') {
       selectAbbrs = (
         <Input type="select" value={this.state.abbrs}
           onChange={this.selectAbbrs.bind(this)}
@@ -275,7 +260,7 @@ class Viewer extends Component {
         </Input>
       );
     }
-    if (this.state.type !== 'Time') {
+    if (type !== 'Time' && type !== 'Energy') {
       selectYears = (
         <Input type="select" value={this.state.years}
           onChange={this.selectYears.bind(this)}
@@ -285,6 +270,37 @@ class Viewer extends Component {
       );
     }
 
+    let sp, sa, sy;
+    if (type === 'Location' || type === 'Energy') {
+      sp = (
+        <Input type="select" label="Place: "
+          value={this.state.place}
+          onChange={(e) => this.selectPlace(e.target.value)}
+        >
+          {placesOptions}
+        </Input>
+      )
+    }
+    if (type === 'Indicator') {
+      sa = (
+        <Input type="select" label="Indicator: "
+          value={this.state.abbr}
+          onChange={(e) => this.selectAbbr(e.target.value)}
+        >
+          {abbrsOptions}
+        </Input>
+      )
+    }
+    if (type === 'Energy' || type === 'Time') {
+      sy = (
+        <Input type="select" label="Year: "
+          value={this.state.year}
+          onChange={(e) => this.selectYear(e.target.value)}
+        >
+          {yearsOptions}
+        </Input>
+      )
+    }
 
     return (
       <div className={
@@ -299,7 +315,9 @@ class Viewer extends Component {
             >
               {typesOptions}
             </Input>
-            {this.renderViewBy(placesOptions, abbrsOptions, yearsOptions)}
+            {sp}
+            {sa}
+            {sy}
           </div>
           <div className={ 'configs ' }>
             {selectPlaces}
@@ -313,10 +331,6 @@ class Viewer extends Component {
             onClick={this.onSave.bind(this)}
             bsStyle="primary"
           >Edit Setting</Button>
-          <Button
-            onClick={this.onExport.bind(this)}
-            bsStyle="primary"
-          >Export</Button>
         </div>
       </div>
     );
