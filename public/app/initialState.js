@@ -1,7 +1,6 @@
 const initialState = {
   user: null,
   files: [],
-  configs: [],
   selectedFile: null,
   selectedConfig: {
     config: {

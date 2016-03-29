@@ -8,7 +8,7 @@ import csv from 'csv';
 const keys = [
   'auth', 'uploadCSV', 'selectConfig', 'selectFile', 'editFile',
   'showEditCSVModal', 'showUploadCSVModal',  'updateFormula',
-  'saveConfig', 'removeConfig',
+  'saveConfig', 'removeConfig', 'export',
 ];
 
 export const Types = _.zipObject(keys, keys);
@@ -152,13 +152,13 @@ const Actions = _.assign({}, BaseActions, {
       let state = getState()
         , file = _.get(state, 'selectedFile.file', {})
       ;
-      if (file.name === chartConfig.file && file.data) {
+      if (file._id === chartConfig.file && file.data) {
         return dispatch(BaseActions.selectConfig({
           config: chartConfig, 
           data: file.data,
         }));
       } else {
-        file = _.find(state.files, {name: chartConfig.file});
+        file = _.find(state.files, {_id: chartConfig.file});
         let action = Actions.selectFile(file); 
         dispatch(action).then((f) => {
           return dispatch(BaseActions.selectConfig({
@@ -175,7 +175,9 @@ const Actions = _.assign({}, BaseActions, {
   saveConfig: function(chartConfig) {
     return function(dispatch, getState) {
       const state = getState();
-      let file = state.selectedFile;
+      let file = _.find(state.files, function(f) {
+        return f._id === chartConfig.file;
+      });
       if (!file.configs) {
         file.configs = [];
       }
@@ -202,7 +204,10 @@ const Actions = _.assign({}, BaseActions, {
         dataType: 'json'
       })
         .done(function(result) {
-          dispatch(BaseActions.saveConfig(result));
+          dispatch(BaseActions.saveConfig({
+            name: chartConfig.name,
+            result: result,
+          }));
         })
         .fail(function(err) {
           dispatch(BaseActions.saveConfig(new Error(err)));

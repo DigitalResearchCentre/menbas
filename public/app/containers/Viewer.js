@@ -8,42 +8,37 @@ import Actions from '../actions';
 import LineChart from '../components/LineChart';
 import SankeyChart from '../components/SankeyChart';
 
+function loadState(props, state) {
+  const data = _.get(props, 'selectedConfig.data') || {};
+  const {
+    places = [],
+    years = [],
+    abbrs = [],
+  } = _.get(props, 'selectedConfig.config') || {};
+  return {
+    ...state,
+    places: _.isEmpty(places) ? _.keys(data.places) : places,
+    years: _.isEmpty(years) ? _.keys(data.years) : years,
+    abbrs: _.isEmpty(abbrs) ? _.keys(data.abbrs) : abbrs,
+  };
+}
 
 class Viewer extends Component {
   constructor(props) {
     super(props);
-    this.state = this.loadState({}, false);
+    this.state = loadState(props, {});
   }
 
   componentWillReceiveProps(nextProps) {
-    this.defaultPlace = _
-      .chain(_.get(nextProps, 'selectedConfig.data.places', {}))
-      .keys().first().value()
-    ;
-    const state = this.loadState(this.state, false);
+    console.log(nextProps);
+    const state = loadState(nextProps, this.state);
     if (!_.isEqual(state, this.state)) {
-      this.state = state;
+      this.setState(state, () => {
+        if (!state.type || (!state.place && !state.abbr && !state.year)) {
+          this.selectType('Location');
+        }
+      });
     }
-  }
-
-  componentDidMount() {
-    this.selectType('Location');
-  }
-
-  loadState(state, setState=true) {
-    const noneDropdownSelected = _.chain(state)
-      .pick(['place', 'abbr', 'year']).every((v)=>!v).value()
-    ;
-    if (noneDropdownSelected) {
-      state = {
-        ...state,
-        place: this.defaultPlace,
-      }
-    }
-    if (setState) {
-      this.setState(state);
-    }
-    return state;
   }
 
   onEdit(file) {
@@ -56,6 +51,9 @@ class Viewer extends Component {
     let data = _.get(this.props, 'selectedConfig.data', {});
     let chartData = {};
     let places = {};
+    if (state.type === 'Energy') {
+      return <SankeyChart data={data}/>
+    }
     if (state.place !== '') {
       data = _.filter(data.places[state.place], function(d) {
         return (
@@ -119,7 +117,6 @@ class Viewer extends Component {
     } = this.state;
     let place = '', abbr = '', year = '';
 
-    this.setState({type: type});
     switch (type) {
       case 'Location':
         place = _.first(places);
@@ -131,9 +128,10 @@ class Viewer extends Component {
         year = _.first(years);
         break;
       default:
+        this.setState({type: type});
         return;
     }
-    this.loadState({place: place, year: year, abbr: abbr});
+    this.setState({type: type, place: place, year: year, abbr: abbr});
   }
 
   renderViewBy(placesOptions, abbrsOptions, yearsOptions) {
@@ -171,15 +169,15 @@ class Viewer extends Component {
   }
 
   selectPlace(place) {
-    this.loadState({place: place, year: '', abbr: ''});
+    this.setState({place: place, year: '', abbr: ''});
   }
 
   selectYear(year) {
-    this.loadState({ place: '', year: year, abbr: '', });
+    this.setState({ place: '', year: year, abbr: '', });
   }
 
   selectAbbr(abbr) {
-    this.loadState({ place: '', year: '', abbr: abbr, });
+    this.setState({ place: '', year: '', abbr: abbr, });
   }
 
   selectPlaces(event) {
@@ -231,7 +229,7 @@ class Viewer extends Component {
   }
 
   onExport() {
-
+    this.props.actions.export('jpg');
   }
 
   render() {
@@ -314,7 +312,7 @@ class Viewer extends Component {
           <Button
             onClick={this.onSave.bind(this)}
             bsStyle="primary"
-          >Save</Button>
+          >Edit Setting</Button>
           <Button
             onClick={this.onExport.bind(this)}
             bsStyle="primary"

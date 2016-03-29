@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
+import canvg from 'canvg-browser';
 
 class LineChart extends Component {
   constructor(props) {
@@ -11,6 +12,14 @@ class LineChart extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.renderD3(nextProps);
+    /*
+        <canvas ref={(canvas)=>this.canvas = canvas;}></canvas>
+    if (nextProps.export === 'jpg') {
+
+    } else {
+    }*/
+    //canvg(this.canvas, this.svg, {ignoreMouse: true});
+    //img = this.canvas.toDataURL('image/jpg');
   }
 
   componentDidMount() {
@@ -87,7 +96,9 @@ class LineChart extends Component {
     ;
     chart.select('.y.axis').call(yAxis);
 
-    line = chart.selectAll('.line').data(lines)
+    line = chart.selectAll('.line').data(_.map(lines, function(row) {
+      return _.sortBy(row, (d)=>d[0]);
+    }));
     line.enter().append('path').attr({ 'class': 'line', });
     line.attr({
       d: d3.svg.line().x(d => x(d[0])).y(d => y(d[1])),

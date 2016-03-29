@@ -39,7 +39,7 @@ class Sidebar extends Component {
   addConfig(file) {
     this.props.actions.showEditCSVModal(true);
     this.props.actions.selectConfig({
-      file: file.name,
+      file: file._id,
     });
   }
 
@@ -54,22 +54,20 @@ class Sidebar extends Component {
         expand: {$set: !item.expand},
       }}),
     }, function() {
+      actions.selectFile(item.file);
       actions.selectConfig({
-        file: item.file.name,
+        file: item.file._id,
       });
     });
   }
 
   render() {
     const {
-      configs, selectedFile, 
-      selectedConfig = {}
+      selectedFile, selectedConfig = {}
     } = this.props;
   
     let lis = _.map(this.state.items, (item, i) => {
-      let fileConfigs = _.map(
-        _.filter(configs, {file: item.file.name}),
-        (chartConfig, j) => {
+      let fileConfigs = _.map(item.file.configs, (chartConfig, j) => {
           return (
             <li key={j} className={
               (chartConfig.name === selectedConfig.config.name 
@@ -115,8 +113,7 @@ class Sidebar extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return _.pick(state, [
-    'selectedFile', 'selectedConfig', 'files', 'configs']);
+  return _.pick(state, ['selectedFile', 'selectedConfig', 'files', ]);
 };
 
 const mapDispatchToProps = (dispatch) => {

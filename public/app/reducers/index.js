@@ -40,7 +40,6 @@ const rootReducers = {
     return update(state, {
       files: {[index]: {$set: file}},
       selectedFile: {$set: action.payload},
-      configs: {$set: file.configs || []},
     });
   },
   [Types.uploadCSV]: function(state, action) {
@@ -57,7 +56,8 @@ const rootReducers = {
     }
   },
   [Types.saveConfig]: function(state, action) {
-    const file = action.payload.value;
+    const { result, name } = action.payload;
+    const file = result.value;
     const index = _.findIndex(state.files, (f)=> f._id === file._id);
     if (index === -1) {
       return state;
@@ -70,6 +70,13 @@ const rootReducers = {
             file,
           }
         },
+        selectedConfig: {
+          config: {
+            $set: _.find(file.configs, function(c) {
+              return c.name === name;
+            }),
+          }
+        }
       });
     }
   },
@@ -92,10 +99,24 @@ const rootReducers = {
       formulas = '',
     } = config || {};
     let objects = (data || {}).objects;
+    let dataPlaces = data.places || {}
+      , dataYears = data.years || {}
+      , dataAbbrs = data.abbrs || {}
+    ;
 
     _.each(_.groupBy(objects, function(obj) {
       return `${obj.place} ${obj.year}`;
     }), function(objs, key) {
+      let place, year;
+      _.each(objs, function(o) {
+        if (o.place) {
+          place = o.place;
+        }
+        if (o.year) {
+          year = o.year;
+        }
+        return !(place && year);
+      });
       objs = _.groupBy(objs, 'abbr');
 
       let script = _.map(objs, function(d, abbr) {
@@ -111,10 +132,22 @@ const rootReducers = {
           let d = {
             abbr: _.trim(variable),
             value: v,
-            place: objs['POP'][0].place,
-            year: objs['POP'][0].year,
+            place: place,
+            year: year,
           };
           objects.push(d);
+          if (!dataPlaces[d.place]) {
+            dataPlaces[d.place] = [];
+          }
+          dataPlaces[d.place].push(d);
+          if (!dataYears[d.year]) {
+            dataYears[d.year] = [];
+          }
+          dataYears[d.year].push(d);
+          if (!dataAbbrs[d.abbr]) {
+            dataAbbrs[d.abbr] = [];
+          }
+          dataAbbrs[d.abbr].push(d);
         } catch (e) {
           rootErrorReducer(state, {
             ...action,
@@ -138,6 +171,9 @@ const rootReducers = {
         },
         data: {
           ...data,
+          places: dataPlaces,
+          years: dataYears,
+          abbrs: dataAbbrs,
           objects: objects,
         },
       }, 

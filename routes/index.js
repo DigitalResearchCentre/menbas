@@ -49,7 +49,9 @@ router.post('/files', auth, function(req, res, next) {
     , file = req.body
     , query
   ;
-  query = file._id ? ObjectID(file._id) : {user_id: user._id, name: file.name};
+  query = file._id 
+    ? {_id: ObjectID(file._id)} 
+    : {user_id: user._id, name: file.name};
   Files.findOneAndUpdate(
     query,
     _.assign({}, _.omit(file, ['_id']), {user_id: user._id}), 

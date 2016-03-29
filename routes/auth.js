@@ -40,7 +40,7 @@ passport.deserializeUser(function(id, done) {
       'files.name': 1,
     }
   }], function(err, users) {
-    done(err, users.length === 0 ? null : users[0]);
+    done(err, _.isEmpty(users) ? null : users[0]);
   });
 });
 

@@ -26,6 +26,7 @@ class SankeyChart extends Component {
       .nodePadding(10)
       .size([800, 600])
     ;
+    console.log(props.data.abbrs);
     let color = d3.scale.category20();
     
     let path = sankey.link();
