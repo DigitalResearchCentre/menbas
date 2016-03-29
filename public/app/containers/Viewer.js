@@ -34,7 +34,7 @@ class Viewer extends Component {
     if (!_.isEqual(state, this.state)) {
       this.setState(state, () => {
         if (!state.type || (!state.place && !state.abbr && !state.year)) {
-          this.selectType('Location');
+          this.selectType('Energy');
         }
       });
     }
@@ -52,8 +52,9 @@ class Viewer extends Component {
     let places = {};
     if (state.type === 'Energy') {
       data = _.filter(data.places[state.place], function(d) {
-        return d.year.toString() == state.year;
-        
+        return d.year.toString() == state.year && (
+          _.isEmpty(state.abbrs) || state.abbrs.indexOf(d.abbr) !== -1
+        );
       });
       return <SankeyChart data={data}/>
     }
@@ -242,7 +243,7 @@ class Viewer extends Component {
     ));
     let selectPlaces, selectAbbrs, selectYears;
     const type = this.state.type;
-    if (type !== 'Location') {
+    if (type !== 'Location' && type !== 'Energy') {
       selectPlaces = (
         <Input type="select" value={this.state.places}
           onChange={this.selectPlaces.bind(this)}
