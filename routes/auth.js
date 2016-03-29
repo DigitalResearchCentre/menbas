@@ -2,6 +2,8 @@ var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , _ = require('lodash')
   , db = require('../db')
+  , bson = require('bson')
+  , ObjectID = bson.ObjectID
 ;
 
 passport.use(new LocalStrategy(function(username, password, done) {
@@ -18,11 +20,28 @@ passport.use(new LocalStrategy(function(username, password, done) {
 }));
 
 passport.serializeUser(function(user, done) {
-  done(null, user.username);
+  done(null, user._id);
 });
 
-passport.deserializeUser(function(username, done) {
-  db.collection('users').findOne({username: username}, done);
+passport.deserializeUser(function(id, done) {
+  db.collection('users').aggregate([{
+    $match: {_id: ObjectID(id)},
+  }, {
+    $lookup: {
+      from: 'files',
+      localField: '_id',
+      foreignField: 'user_id',
+      as: 'files',
+    },
+  }, {
+    $project: {
+      'username': 1,
+      'files._id': 1,
+      'files.name': 1,
+    }
+  }], function(err, users) {
+    done(err, users.length === 0 ? null : users[0]);
+  });
 });
 
 function auth(req, res, next) {

@@ -61,7 +61,8 @@ module.exports = function(options) {
     module: {
       loaders: [
         {
-          test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"
+          test: /\.js$/, loader: "babel-loader",
+          exclude: [/node_modules/, /bower_components/], 
         },
         {
           test: /\.png(\?v=\d+\.\d+\.\d+)?$/,
@@ -93,7 +94,7 @@ module.exports = function(options) {
     },
     resolve: {
       root: [clientRoot],
-      modulesDirectories: ['web_modules', 'bower_components', 'node_modules', ],
+      modulesDirectories: ['web_modules', 'node_modules', 'bower_components', ],
       alias: {
         bower: bowerRoot,
         node: nodeRoot,

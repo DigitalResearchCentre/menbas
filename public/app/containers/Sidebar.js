@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import update from 'react-addons-update';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -46,18 +47,16 @@ class Sidebar extends Component {
     this.props.actions.selectConfig(chartConfig);
   }
 
-  toggleItem(item) {
-    this.props.actions.selectItem(item);
+  toggleItem(item, i) {
+    const { actions } = this.props;
     this.setState({
-      items: _.map(this.state.items, function(_item) {
-        if (_item === item) {
-          return {
-            ...item,
-            expand: !item.expand,
-          };
-        }
-        return _item;
-      }),
+      items: update(this.state.items, {[i]: {
+        expand: {$set: !item.expand},
+      }}),
+    }, function() {
+      actions.selectConfig({
+        file: item.file.name,
+      });
     });
   }
 
@@ -91,16 +90,13 @@ class Sidebar extends Component {
       return (
         <li key={i}
           className={
-            'item ' + (item.expand ? '' : 'tc-collapse')
+            'item ' + (item.expand ? '' : 'tc-collapse ') +
+            (item.file._id === (selectedFile || {})._id ? 'selected ' : '')
           }>
-          <a onClick={this.toggleItem.bind(this, item)}>
+          <a onClick={this.toggleItem.bind(this, item, i)}>
             <span className="tree-toggle icon" aria-hidden="true"></span>
             {item.file.name}
           </a>
-          <span 
-            onClick={this.addConfig.bind(this, item.file)}
-            className="add-config-icon" aria-hidden="true">
-          </span>
           <ul>
             {fileConfigs}
           </ul>

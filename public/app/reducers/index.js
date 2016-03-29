@@ -1,3 +1,4 @@
+import update from 'react-addons-update';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import _ from 'lodash';
@@ -34,14 +35,26 @@ const rootReducers = {
       configs: user.configs || [],
     };
   },
-  [Types.selectItem]: function(state, action) {
-    return {
-      ...state,
-      selectedFile: {
-        ...state.selectedFile,
-        data: action.payload,
-      },
-    };
+  [Types.selectFile]: function(state, action) {
+    const file = action.payload;
+    const index = _.findIndex(state.files, (f)=> f._id === file._id);
+    return update(state, {
+      files: {[index]: {$set: file}},
+      selectedFile: {$set: action.payload},
+    });
+  },
+  [Types.uploadCSV]: function(state, action) {
+    const file = action.payload.value;
+    const index = _.findIndex(state.files, (f)=> f._id === file._id);
+    if (index === -1) {
+      return update(state, {
+        files: {$push: [file]},
+      });
+    } else {
+      return update(state, {
+        files: {[index]: {$set: file}},
+      });
+    }
   },
   [Types.saveConfig]: function(state, action) {
     console.log(action);
@@ -66,6 +79,7 @@ const rootReducers = {
       formulas = '',
     } = config || {};
     let dataPlaces = {}, dataYears = {}, dataAbbrs = {};
+    console.log(data);
 
     let objects = _.filter((data || {}).objects, function(d) {
       let included = (
@@ -188,7 +202,6 @@ const rootReducers = {
 const errorReducers = {};
 
 function rootErrorReducer(state, action) {
-  console.log(action);
   if (action.error && config.DEBUG) {
     console.log(action);
   }

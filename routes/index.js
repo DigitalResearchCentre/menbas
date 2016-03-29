@@ -5,15 +5,28 @@ var express = require('express')
   , _ = require('lodash')
   , fs = require('fs')
   , path = require('path')
+  , bson = require('bson')
+  , ObjectID = bson.ObjectID
   , db = require('../db')
   , Auth = require('./auth')
   , auth = Auth.auth
   , Users = db.collection('users')
   , Configs = db.collection('configs')
+  , Files = db.collection('files')
 ;
 
+function sendData(req, res, next) {
+  return function(err, data) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(data);
+    }
+  };
+}
+
 router.get('/auth', auth, function(req, res, next) {
-  res.json(_.pick(req.user, ['_id', 'username']));
+  res.json(req.user);
 });
 
 router.post('/login', Auth.login, function(req, res) {
@@ -27,37 +40,32 @@ router.patch('/users/:id', auth, function(req, res, next) {
   console.log(data);
 });
 
+router.get('/files/:id', auth, function(req, res, next) {
+  Files.findOne({_id: ObjectID(req.params.id)}, sendData(req, res, next));
+});
+
+router.post('/files', auth, function(req, res, next) {
+  var user = req.user
+    , file = req.body
+  ;
+  Files.findOneAndUpdate(
+    {user_id: user._id, name: file.name},
+    _.assign({}, file, {user_id: user._id}), 
+    {upsert: true, returnOriginal: false},
+    function(err, result) {
+      res.json(result);
+    }
+  );
+});
+
+
+
 router.get('/configs', auth, function(req, res, next) {
   Configs.find({user: req.user._id}, function() {
     
   });  
 });
 
-router.post('/uploadCSV', auth, function(req, res, next) {
-  var user = req.user
-    , file = req.body
-  ;
-  if (_.isEmpty(user.files)) {
-    user.files = [];
-  }
-  var found = _.find(user.files, function(f) {
-    return f.name === file.name;
-  });
-  if (found) {
-    found = _.assign(found, file);
-  } else {
-    user.files.push(file);
-  }
-  db.collection('users').updateOne({
-    _id: user._id
-  }, user, function(err, result) {
-    if (err) {
-      next(err);
-    } else {
-      res.json(user);
-    }
-  });
-});
 
 router.post('/removeConfig', auth, function(req, res, next) {
   var user = req.user

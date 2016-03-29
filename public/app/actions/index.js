@@ -1,13 +1,11 @@
-var _ = require('lodash')
-  , ReduxActions = require('redux-actions')
-  , createAction = ReduxActions.createAction
-;
+import _ from 'lodash';
+import ReduxActions, { createAction }  from 'redux-actions';
 import $ from 'jquery';
 import csv from 'csv';
 
 
 const keys = [
-  'auth', 'uploadCSV', 'selectConfig', 'selectItem', 'editFile',
+  'auth', 'uploadCSV', 'selectConfig', 'selectFile', 'editFile',
   'showEditCSVModal', 'showUploadCSVModal',  'updateFormula',
   'saveConfig', 'removeConfig',
 ];
@@ -67,27 +65,23 @@ function parseCSV(content, callback) {
   });
 }
 
-function selectItem(dispatch, item) {
-  return new Promise((resolve, reject) => {
-    if (!item.data) {
-      parseCSV(item.file.content, function(result) {
-        dispatch(BaseActions.selectItem(result));
-        resolve(result);
-      });
-    } else {
-      dispatch(BaseActions.selectItem(item.data));
-      resolve(item.data);
-    }
-  });
-}
-
 const Actions = _.assign({}, BaseActions, {
+  // set auth user for app
+  auth: function(user) {
+    return function(dispatch, getState) {
+      const state = getState();
+      if (!_.isEqual(state.user, user)) {
+        return dispatch(BaseActions.auth(user));
+      }
+    }
+  },
+  // check if user is already authenticated
   checkAuth: function() {
     return function(dispatch, getState) {
       return $.get('/auth')
-        .done(user => dispatch(BaseActions.auth(user)))
+        .done(user => dispatch(Actions.auth(user)))
         .fail(function(err) {
-          dispatch(BaseActions.auth(new Error(err)));
+          dispatch(Actions.auth(new Error(err)));
         });
         ;
     }
@@ -100,28 +94,56 @@ const Actions = _.assign({}, BaseActions, {
       });
       return p
         .done(function(user) {
-          dispatch(BaseActions.auth(user));
+          dispatch(Actions.auth(user));
         })
         .fail(function(err) {
-          dispatch(BaseActions.auth(new Error(err)));
+          dispatch(Actions.auth(new Error(err)));
         });
     };
   },
   uploadCSV: function(file) {
     return function(dispatch, getState) {
       dispatch(BaseActions.showUploadCSVModal(false));
-      return $.post('/uploadCSV', file)
-        .done(function(user) {
-          dispatch(BaseActions.auth(user));
+      return $.post('/files', _.omit(file, 'fetched'))
+        .done(function(result) {
+          dispatch(BaseActions.uploadCSV(result));
         })
         .fail(function(err) {
           dispatch(BaseActions.uploadCSV(new Error(err)));
         });
     };
   },
-  selectItem: function(item) {
+  selectFile: function(file) {
     return function(dispatch, getState) {
-      return selectItem(dispatch, item);
+      return new Promise((resolve, reject) => {
+        if (!file.fetched) {
+          return $.get('/files/' + file._id)
+            .then(function(f) {
+              dispatch(Actions.selectFile({
+                ...f,
+                fetched: true,
+              })).then(resolve);
+            })
+            .fail(function(err) {
+              dispatch(BaseActions.selectFile(new Error(err)));
+              resolve(err);
+            });
+        } else {
+          if (!file.data) {
+            parseCSV(file.content, function(result) {
+              const newFile = {
+                ...file,
+                data: result,
+              };
+              dispatch(BaseActions.selectFile(newFile));
+              resolve(newFile);
+            });
+          } else {
+            dispatch(BaseActions.selectFile(file));
+            resolve(file);
+          }
+        }
+      });
     };
   },
   selectConfig: function(chartConfig) {
@@ -135,13 +157,12 @@ const Actions = _.assign({}, BaseActions, {
           data: file.data,
         }));
       } else {
-        let action = selectItem(dispatch, {
-          file: _.find(state.files, {name: chartConfig.file})
-        });
-        action.then((data) => {
+        file = _.find(state.files, {name: chartConfig.file});
+        let action = Actions.selectFile(file); 
+        dispatch(action).then((f) => {
           return dispatch(BaseActions.selectConfig({
             config: chartConfig, 
-            data: data,
+            data: f.data,
           }));
         });
         return dispatch(function(dispatch) {
@@ -161,7 +182,7 @@ const Actions = _.assign({}, BaseActions, {
         dataType: 'json'
       })
         .done(function(user) {
-          dispatch(BaseActions.auth(user));
+          dispatch(Actions.auth(user));
           dispatch(BaseActions.selectConfig({
             config: chartConfig, 
             data: getState().selectedConfig.data,
