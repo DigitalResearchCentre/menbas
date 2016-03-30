@@ -35,7 +35,7 @@ class Viewer extends Component {
     if (!_.isEqual(state, this.state)) {
       this.setState(state, () => {
         if (!state.type || (!state.place && !state.abbr && !state.year)) {
-          this.selectType('Energy');
+          this.selectType('Location');
         }
       });
     }
