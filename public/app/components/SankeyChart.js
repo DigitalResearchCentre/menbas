@@ -31,10 +31,13 @@ class SankeyChart extends Component {
       left: width - 250, top: 18,
     }
     
-    if (_.isEmpty(data)) return;
     let abbrs = _.groupBy(data, 'abbr');
     let areaTotal = _.get(abbrs, 'AREA_TOT.0.value');
-    if (!areaTotal) return;
+    if (!areaTotal) {
+      svg.select('g.links').selectAll('.link').data([]).exit().remove();
+      svg.select('g.nodes').selectAll('.node').data([]).exit().remove();
+      return;
+    };
 
     let rect = svg.select('g.rects').selectAll('.rect');
 
@@ -44,6 +47,9 @@ class SankeyChart extends Component {
         height: height / 4,
         rx: height / 40,
       });
+    rect.select('text').attr({
+      transform: 'translate(30, ' + (height / 9)  + ')',
+    })
 
     let sun = svg.select('g.sun').attr({
       transform: 'translate(70, ' + (height * 2 / 3)  + ')',
@@ -237,12 +243,6 @@ class SankeyChart extends Component {
 
     nodeEnter.append('text')
       .text((d)=> { return d.abbr + ' ' + Math.round(d.value * 10) / 10 });
-    nodeEnter.append('rect')
-      .attr({
-        height: 40,
-        width: 40,
-      })
-
 
     node.exit().remove();
 
@@ -253,6 +253,7 @@ class SankeyChart extends Component {
 
   render() {
     let width = 800, height = 600; // 3200 2400
+
     return (
       <div className="viewer">
         <div className="chart">
@@ -269,14 +270,16 @@ class SankeyChart extends Component {
             </g>
             <g className="links"></g>
             <g className="flags"></g>
-            <g className="nodes"></g>
             <g className="rects">
               <g 
                 transform={'translate('+(height/8)+','+(height/5)+' )'}
                 className="rect">
                 <rect
                   className="associated-biodiversity"></rect>
-                <text>ASSOCIATED BIODIVERSITY</text>
+                <text>
+                  <tspan>ASSOCIATED</tspan> 
+                  <tspan x="0" dy="20">BIODIVERSITY</tspan> 
+                </text>
               </g>
               <g 
                 transform={
@@ -296,7 +299,10 @@ class SankeyChart extends Component {
                 className="rect">
                 <rect 
                   className="livestock-barnyard"></rect>
-                <text>LIVESTOCK-BARNYARD</text>
+                <text>
+                  <tspan>LIVESTOCK-</tspan>
+                  <tspan x="0" dy="20">BARNYARD</tspan>
+                </text>
               </g>
               <g 
                 transform={
@@ -305,7 +311,11 @@ class SankeyChart extends Component {
                     (height / 40 + height/5) +' )'}
                 className="rect">
                 <rect className="farming-community"></rect>
-                <text>FARMING COMMUNITY</text>
+                <text>
+                  <tspan>FARMING -</tspan>
+                  <tspan x="0" dy="20">COMMUNITY</tspan>
+                </text>
+
               </g>
               <g
                 transform={
@@ -317,6 +327,7 @@ class SankeyChart extends Component {
                 <text>SOCIETY</text>
               </g>
             </g>
+            <g className="nodes"></g>
           </svg>
         </div>
       </div>
