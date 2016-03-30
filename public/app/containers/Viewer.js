@@ -156,7 +156,15 @@ class Viewer extends Component {
 
   selectPlace(place) {
     if (this.state.type === 'Energy') {
-      this.setState({place: place, abbr: ''});
+      let years = _.keys(_.groupBy(
+        _.get(this.props, 'selectedConfig.data.places', {})[place],
+        'year'
+      ));
+      let year = this.state.year;
+      if (years.indexOf(year) === -1) {
+        year = _.first(years);
+      }
+      this.setState({place: place, abbr: '', year: year});
     } else {
       this.setState({place: place, year: '', abbr: ''});
     }
