@@ -166,6 +166,7 @@ const rootReducers = {
             places: [],
             years: [],
             abbrs: [],
+            sankey: {},
             formulas: '',
           }),
         },

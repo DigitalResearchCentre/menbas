@@ -31,6 +31,7 @@ class Viewer extends Component {
 
   componentWillReceiveProps(nextProps) {
     const state = loadState(nextProps, this.state);
+    this.sankeyConfig = _.get(nextProps, 'selectedConfig.config.sankey', {});
     if (!_.isEqual(state, this.state)) {
       this.setState(state, () => {
         if (!state.type || (!state.place && !state.abbr && !state.year)) {
@@ -45,9 +46,14 @@ class Viewer extends Component {
     this.props.actions.showEditCSVModal(true);
   }
 
+  onSankeyConfigChange(sankeyConfig) {
+    this.sankeyConfig = sankeyConfig;
+  }
+
   renderChart() {
     const state = this.state;
     let data = _.get(this.props, 'selectedConfig.data', {});
+    let config = _.get(this.props, 'selectedConfig.config', {});
     let chartData = {};
     let places = {};
     if (state.type === 'Energy') {
@@ -56,7 +62,10 @@ class Viewer extends Component {
           _.isEmpty(state.abbrs) || state.abbrs.indexOf(d.abbr) !== -1
         );
       });
-      return <SankeyChart data={data}/>
+      return (
+        <SankeyChart data={data} config={this.sankeyConfig} 
+          onConfigChange={this.onSankeyConfigChange.bind(this)}/>
+      )
     }
     if (state.place !== '') {
       data = _.filter(data.places[state.place], function(d) {
@@ -210,6 +219,7 @@ class Viewer extends Component {
       places: places,
       years: years,
       abbrs: abbrs,
+      sankey: this.sankeyConfig,
     });
   }
 
