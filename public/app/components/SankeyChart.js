@@ -69,14 +69,6 @@ class SankeyChart extends Component {
     });
     placeInfo.select('.place-name').text(data[0].place);
 
-    let nodes = [
-      {text: 'ASSOCIATED BIODIVERSITY'},
-      {text: 'FARMLAND' },
-      {text: 'LIVESTOCK-BARNYARD'},
-      {text: 'FARMING COMMUNITY'},
-    ];
-
-
     data = _.filter(data, function(d) {
       return [
         'SR', 'UPH', 'LP', 'LBP', 'TP', 'BR', 'FW', 'FP', 'LBS',
@@ -110,7 +102,7 @@ class SankeyChart extends Component {
     flag.exit().remove();   
 
 
-    nodes = _.map(data, function(n) {
+    let nodes = _.map(data, function(n) {
       if (!config[n.abbr]) {
         config[n.abbr] = {};
       }
@@ -153,7 +145,6 @@ class SankeyChart extends Component {
       l.source.targetLinks.push(l);
       return l;
     });
-    let link = svg.select('g.links').selectAll('.link').data(links);
 
     let path = function(d) {
       let x0 = d.source.x
@@ -166,17 +157,14 @@ class SankeyChart extends Component {
       ]);
     };
 
+    let link = svg.select('g.links').selectAll('.link').data(links);
+
     let linkEnter = link.enter().append('path')
       .attr({
         'class': 'link',
-        d: path,
-        stroke: (d, i) => 'blue',
-      })
-      .style("stroke-width", function(d) {
-        return Math.max(1, d.value); 
       })
       .on('contextmenu', function(d) {
-        //d3.event.preventDefault();
+        d3.event.preventDefault();
         let { layerX, layerY } = d3.event;
         let coords  = _.sortBy(d.path, function([x, y]) {
           return (x - layerX) * (x - layerX) + (y - layerY) * (y - layerY);
@@ -213,15 +201,21 @@ class SankeyChart extends Component {
         })
       )
     ;
+    link
+      .attr({
+        d: path,
+      })
+      .style("stroke-width", function(d) {
+        return Math.max(1, d.value); 
+      })
+    ;
 
     link.exit().remove();
 
     let node = svg.select('g.nodes').selectAll(".node").data(nodes);
-
     let nodeEnter = node.enter().append('g')
       .attr({
         'class': 'node',
-        'transform': (d)=>'translate(' + d.x  + ',' + d.y + ')',
       })
       .call(
         d3.behavior.drag().origin((d)=>d)
@@ -243,6 +237,9 @@ class SankeyChart extends Component {
 
     nodeEnter.append('text')
       .text((d)=> { return d.abbr + ' ' + Math.round(d.value * 10) / 10 });
+    node.attr({
+      'transform': (d)=>'translate(' + d.x  + ',' + d.y + ')',
+    });
 
     node.exit().remove();
 

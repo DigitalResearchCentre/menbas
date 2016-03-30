@@ -58,7 +58,7 @@ class Viewer extends Component {
     let places = {};
     if (state.type === 'Energy') {
       data = _.filter(data.places[state.place], function(d) {
-        return d.year.toString() == state.year && (
+        return d.year.toString() === state.year.toString() && (
           _.isEmpty(state.abbrs) || state.abbrs.indexOf(d.abbr) !== -1
         );
       });
@@ -141,17 +141,17 @@ class Viewer extends Component {
         year = _.first(years);
         break;
       case 'Energy':
-        year = _.first(years);
         place = _.first(places);
+        year = _.first(_.keys(_.groupBy(
+          _.get(this.props, 'selectedConfig.data.places', {})[place],
+          'year'
+        )));
         break;
       default:
         this.setState({type: type});
         return;
     }
     this.setState({type: type, place: place, year: year, abbr: abbr});
-  }
-
-  renderViewBy(placesOptions, abbrsOptions, yearsOptions) {
   }
 
   selectPlace(place) {
@@ -233,9 +233,11 @@ class Viewer extends Component {
       config: chartConfig,
     } = this.props.selectedConfig || {};
 
-    const {
+    let {
       places, years, abbrs, 
     } = data || {};
+
+    const type = this.state.type;
 
     let typesOptions = _.map([
       'Location', 'Indicator', 'Time', 'Energy'
@@ -245,6 +247,9 @@ class Viewer extends Component {
     let placesOptions = _.map(_.keys(places), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
+    if (type === 'Energy') {
+      years = _.groupBy(data.places[this.state.place], 'year');
+    }
     let yearsOptions = _.map(_.keys(years), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
@@ -252,7 +257,6 @@ class Viewer extends Component {
       <option key={i} value={k}>{k}</option>
     ));
     let selectPlaces, selectAbbrs, selectYears;
-    const type = this.state.type;
     if (type !== 'Location' && type !== 'Energy') {
       selectPlaces = (
         <Input type="select" value={this.state.places}
