@@ -95,7 +95,7 @@ const rootReducers = {
       data,
     } = action.payload;
     let {
-      type, places, years, abbrs, xAxis, 
+      type, places, years, abbrs, xAxis,
       formulas = '',
     } = config || {};
     let objects = (data || {}).objects;
@@ -103,7 +103,6 @@ const rootReducers = {
       , dataYears = data.years || {}
       , dataAbbrs = data.abbrs || {}
     ;
-
     _.each(_.groupBy(objects, function(obj) {
       return `${obj.place} ${obj.year}`;
     }), function(objs, key) {
@@ -223,161 +222,161 @@ const rootReducers = {
                     "x" : 292.9999847412109375,
                     "y" : 202
                 },
-                "links" : [ 
-                    [ 
-                        "LP", 
-                        "TP", 
-                        [ 
-                            [ 
-                                228, 
+                "links" : [
+                    [
+                        "LP",
+                        "TP",
+                        [
+                            [
+                                228,
                                 359
-                            ], 
-                            [ 
-                                235.0000610351562500, 
+                            ],
+                            [
+                                235.0000610351562500,
                                 427
-                            ], 
-                            [ 
-                                238, 
+                            ],
+                            [
+                                238,
                                 513
-                            ], 
-                            [ 
-                                286, 
+                            ],
+                            [
+                                286,
                                 563
-                            ], 
-                            [ 
-                                378, 
+                            ],
+                            [
+                                378,
                                 569
                             ]
                         ]
-                    ], 
-                    [ 
-                        "LBP", 
-                        "TP", 
-                        [ 
-                            [ 
-                                343, 
+                    ],
+                    [
+                        "LBP",
+                        "TP",
+                        [
+                            [
+                                343,
                                 419
-                            ], 
-                            [ 
-                                286, 
+                            ],
+                            [
+                                286,
                                 514
                             ]
                         ]
-                    ], 
-                    [ 
-                        "TP", 
-                        "BR", 
-                        [ 
-                            [ 
-                                466, 
+                    ],
+                    [
+                        "TP",
+                        "BR",
+                        [
+                            [
+                                466,
                                 557
-                            ], 
-                            [ 
-                                500, 
+                            ],
+                            [
+                                500,
                                 529
-                            ], 
-                            [ 
-                                513, 
+                            ],
+                            [
+                                513,
                                 495
-                            ], 
-                            [ 
-                                498, 
+                            ],
+                            [
+                                498,
                                 402
                             ]
                         ]
-                    ], 
-                    [ 
-                        "TP", 
-                        "FP", 
-                        [ 
-                            [ 
-                                432, 
+                    ],
+                    [
+                        "TP",
+                        "FP",
+                        [
+                            [
+                                432,
                                 580
-                            ], 
-                            [ 
-                                765, 
+                            ],
+                            [
+                                765,
                                 558
-                            ], 
-                            [ 
-                                758, 
+                            ],
+                            [
+                                758,
                                 346
-                            ], 
-                            [ 
-                                715, 
+                            ],
+                            [
+                                715,
                                 235
-                            ], 
-                            [ 
-                                649, 
+                            ],
+                            [
+                                649,
                                 156
-                            ], 
-                            [ 
-                                663, 
+                            ],
+                            [
+                                663,
                                 175
-                            ], 
-                            [ 
-                                697, 
+                            ],
+                            [
+                                697,
                                 211
-                            ], 
-                            [ 
-                                718, 
+                            ],
+                            [
+                                718,
                                 240
                             ]
                         ]
-                    ], 
-                    [ 
-                        "BR", 
-                        "TIC", 
-                        [ 
-                            [ 
-                                460, 
+                    ],
+                    [
+                        "BR",
+                        "TIC",
+                        [
+                            [
+                                460,
                                 250.0000152587890625
-                            ], 
-                            [ 
-                                399, 
+                            ],
+                            [
+                                399,
                                 155
-                            ], 
-                            [ 
-                                298.9999847412109375, 
+                            ],
+                            [
+                                298.9999847412109375,
                                 186.9999847412109375
-                            ], 
-                            [ 
-                                302, 
+                            ],
+                            [
+                                302,
                                 255
                             ]
                         ]
-                    ], 
-                    [ 
-                        "FP", 
-                        "ASI", 
-                        [ 
-                            [ 
-                                621, 
+                    ],
+                    [
+                        "FP",
+                        "ASI",
+                        [
+                            [
+                                621,
                                 124
-                            ], 
-                            [ 
-                                548, 
+                            ],
+                            [
+                                548,
                                 63
                             ]
                         ]
-                    ], 
-                    [ 
-                        "ASI", 
-                        "EI", 
-                        [ 
-                            [ 
-                                358, 
+                    ],
+                    [
+                        "ASI",
+                        "EI",
+                        [
+                            [
+                                358,
                                 63
-                            ], 
-                            [ 
-                                268.9999694824218750, 
+                            ],
+                            [
+                                268.9999694824218750,
                                 135
-                            ], 
-                            [ 
-                                256.9999847412109375, 
+                            ],
+                            [
+                                256.9999847412109375,
                                 200
-                            ], 
-                            [ 
-                                272, 
+                            ],
+                            [
+                                272,
                                 257
                             ]
                         ]
@@ -394,7 +393,7 @@ const rootReducers = {
           abbrs: dataAbbrs,
           objects: objects,
         },
-      }, 
+      },
     };
   },
   [Types.updateFormula]: function(state, action) {
@@ -406,9 +405,9 @@ const rootReducers = {
     let abbr = action.payload.abbr;
     let energy = _energies[energies[abbr]];
     _energies = _.assign({}, _energies, {
-      [energies[abbr]]: _.assign({}, energy, action.payload) 
+      [energies[abbr]]: _.assign({}, energy, action.payload)
     });
-    
+
     return {
       ...state,
       selectedFile: {
@@ -444,6 +443,3 @@ export default reduceReducer([
   rootErrorReducer,
   createReducer(rootReducers, errorReducers, initialState),
 ]);
-
-
-

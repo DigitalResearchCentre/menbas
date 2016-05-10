@@ -53,6 +53,7 @@ class Viewer extends Component {
   renderChart() {
     const state = this.state;
     let data = _.get(this.props, 'selectedConfig.data', {});
+    //    console.log(data);
     let config = _.get(this.props, 'selectedConfig.config', {});
     let chartData = {};
     let places = {};
@@ -63,15 +64,15 @@ class Viewer extends Component {
         );
       });
       return (
-        <SankeyChart data={data} config={this.sankeyConfig} 
+        <SankeyChart data={data} config={this.sankeyConfig}
           onConfigChange={this.onSankeyConfigChange.bind(this)}/>
       )
     }
     if (state.place !== '') {
       data = _.filter(data.places[state.place], function(d) {
         return (
-          _.isEmpty(state.years) || 
-          state.years.indexOf(d.year.toString()) !== -1 
+          _.isEmpty(state.years) ||
+          state.years.indexOf(d.year.toString()) !== -1
         ) && (
           _.isEmpty(state.abbrs) || state.abbrs.indexOf(d.abbr) !== -1
         );
@@ -84,8 +85,8 @@ class Viewer extends Component {
     } else if (state.abbr !== '') {
       data = _.filter(data.abbrs[state.abbr], function(d) {
         return (
-          _.isEmpty(state.years) || 
-          state.years.indexOf(d.year.toString()) !== -1 
+          _.isEmpty(state.years) ||
+          state.years.indexOf(d.year.toString()) !== -1
         ) && (
           _.isEmpty(state.places) || state.places.indexOf(d.place) !== -1
         );
@@ -98,8 +99,8 @@ class Viewer extends Component {
     } else if (state.year !== '') {
       data = _.filter(data.years[state.year], function(d) {
         return (
-          _.isEmpty(state.abbrs) || 
-          state.abbrs.indexOf(d.abbr.toString()) !== -1 
+          _.isEmpty(state.abbrs) ||
+          state.abbrs.indexOf(d.abbr.toString()) !== -1
         ) && (
           _.isEmpty(state.places) || state.places.indexOf(d.place) !== -1
         );
@@ -126,7 +127,7 @@ class Viewer extends Component {
 
   selectType(type) {
     const {
-      places, years, abbrs, 
+      places, years, abbrs,
     } = this.state;
     let place = '', abbr = '', year = '';
 
@@ -236,13 +237,13 @@ class Viewer extends Component {
   }
 
   render() {
-    const { 
+    const {
       data,
       config: chartConfig,
     } = this.props.selectedConfig || {};
 
     let {
-      places, years, abbrs, 
+      places, years, abbrs,
     } = data || {};
 
     const type = this.state.type;
@@ -261,9 +262,27 @@ class Viewer extends Component {
     let yearsOptions = _.map(_.keys(years), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
+    /*
+    var abbrsIndicators = _.map(abbrs, function(obj) {
+      return _.sample(obj);
+    });
+    console.log(abbrsIndicators);
+    */
+    let abbrsOptions = _.map(_.map(abbrs, function(obj) {
+      return _.sample(obj);
+    }), function(obj) {
+       return <option key={obj.abbr} value={obj.abbr}>{obj.energy}({obj.abbr})</option>;
+    });
+
+
+    //console.log(_.keys(abbrs));
+    /*
     let abbrsOptions = _.map(_.keys(abbrs), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
+    */
+    //console.log(abbrsOptions);
+
     let selectPlaces, selectAbbrs, selectYears;
     if (type !== 'Location' && type !== 'Energy') {
       selectPlaces = (
@@ -374,5 +393,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Viewer);
-
-
