@@ -271,7 +271,7 @@ class Viewer extends Component {
     let abbrsOptions = _.map(_.map(abbrs, function(obj) {
       return _.sample(obj);
     }), function(obj) {
-       return <option key={obj.abbr} value={obj.abbr}>{obj.energy}({obj.abbr})</option>;
+       return <option key={obj.abbr} value={obj.abbr}>{obj.energy} ({obj.abbr})</option>;
     });
 
 
