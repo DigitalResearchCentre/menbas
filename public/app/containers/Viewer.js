@@ -256,7 +256,7 @@ class Viewer extends Component {
     let placesOptions = _.map(_.keys(places), (k, i) => (
       <option key={i} value={k}>{k}</option>
     ));
-    if (type === 'Energy') {
+    if (type === 'Energy' || type === 'Location') {
       years = _.groupBy(data.places[this.state.place], 'year');
     }
     let yearsOptions = _.map(_.keys(years), (k, i) => (
@@ -302,9 +302,10 @@ class Viewer extends Component {
         </Input>
       );
     }
+
     if (type !== 'Time' && type !== 'Energy') {
       selectYears = (
-        <Input type="select" value={this.state.years}
+        <Input id="yearSelection" type="select" value={this.state.years}
           onChange={this.selectYears.bind(this)}
           multiple>
           {yearsOptions}
