@@ -30,7 +30,7 @@ class SankeyChart extends Component {
       width: 14, height: 14, transform: [20, 13],
       left: width - 250, top: 18,
     }
-    
+
     let abbrs = _.groupBy(data, 'abbr');
     let areaTotal = _.get(abbrs, 'AREA_TOT.0.value');
     if (!areaTotal) {
@@ -78,14 +78,14 @@ class SankeyChart extends Component {
 
     let flag = svg.select('g.flags')
       .attr({
-        'transform': 
+        'transform':
           `translate(-${height/16}, -${height/16})`,
       })
       .selectAll('.flag').data(data);
 
     let flagEnter = flag.enter().append('g').attr('class', 'flag');
     flagEnter.append('text').attr({
-      'transform': 
+      'transform':
         `translate(${flagOpts.transform[0]}, ${flagOpts.transform[1]})`,
     });
 
@@ -93,13 +93,13 @@ class SankeyChart extends Component {
       transform: function(d, i) {
         let {left, top} = flagOpts;
         top = height - top * ((data || []).length - i);
-        return `translate(${left}, ${top})`; 
+        return `translate(${left}, ${top})`;
       },
     });
     flag.select('text').text(function(d) {
-      return d.abbr + ': ' + d.energy; 
+      return d.abbr + ': ' + d.energy;
     });
-    flag.exit().remove();   
+    flag.exit().remove();
 
 
     let nodes = _.map(data, function(n) {
@@ -206,7 +206,7 @@ class SankeyChart extends Component {
         d: path,
       })
       .style("stroke-width", function(d) {
-        return Math.max(1, d.value); 
+        return Math.max(1, d.value);
       })
     ;
 
@@ -266,42 +266,41 @@ class SankeyChart extends Component {
               </text>
             </g>
             <g className="links"></g>
-            <g className="flags"></g>
             <g className="rects">
-              <g 
+              <g
                 transform={'translate('+(height/8)+','+(height/5)+' )'}
                 className="rect">
                 <rect
                   className="associated-biodiversity"></rect>
                 <text>
-                  <tspan>ASSOCIATED</tspan> 
-                  <tspan x="0" dy="20">BIODIVERSITY</tspan> 
+                  <tspan>ASSOCIATED</tspan>
+                  <tspan x="0" dy="20">BIODIVERSITY</tspan>
                 </text>
               </g>
-              <g 
+              <g
                 transform={
                   'translate('+
                     (height / 8 + height / 5)+','+
                     (height / 5 + height / 5)+' )'}
                 className="rect">
-                <rect 
+                <rect
                   className="farmland"></rect>
                 <text>FARMLAND</text>
               </g>
-              <g 
+              <g
                 transform={
                   'translate('+
                     (height / 8 + (height * 2)/ 5)+','+
                     (height / 5 + (height * 2)/ 5)+' )'}
                 className="rect">
-                <rect 
+                <rect
                   className="livestock-barnyard"></rect>
                 <text>
                   <tspan>LIVESTOCK-</tspan>
                   <tspan x="0" dy="20">BARNYARD</tspan>
                 </text>
               </g>
-              <g 
+              <g
                 transform={
                   'translate('+
                     (width - (height/5) - (height/4) - (height/40)) + ','+
@@ -334,4 +333,3 @@ class SankeyChart extends Component {
 
 
 export default SankeyChart;
-
