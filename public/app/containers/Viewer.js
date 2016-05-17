@@ -161,11 +161,13 @@ class Viewer extends Component {
         _.get(this.props, 'selectedConfig.data.places', {})[place],
         'year'
       ));
+      let abbrs = _.get(this.props, "selectedConfig.data.abbrs");
       let year = this.state.year;
       if (years.indexOf(year) === -1) {
         year = _.first(years);
       }
       this.setState({place: place, abbr: '', year: year});
+      this.setState({abbrs: _.keys(abbrs)});
     } else {
       this.setState({place: place, year: '', abbr: ''});
     }
