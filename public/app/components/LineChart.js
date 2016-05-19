@@ -79,14 +79,14 @@ class LineChart extends Component {
       yBar.domain(yAxisDomain);
     }
 
-    xAxis = d3.svg.axis().scale(x).orient('bottom');
+    xAxis = d3.svg.axis().scale(x).orient('bottom').tickFormat(d3.format());
     yAxis = d3.svg.axis().scale(y).orient('left');
 
     if (bars.length > 0) {
       xAxis = d3.svg.axis().scale(xBar).orient('bottom');
       yAxis = d3.svg.axis().scale(yBar).orient('left');
     }
- 
+
     chart.select('.x.axis')
         .attr({
           'transform': `translate(0, ${height})`,
@@ -112,7 +112,7 @@ class LineChart extends Component {
     bar.enter().append('rect').attr({
       'class': 'bar',
     });
-    bar.attr({ 
+    bar.attr({
       'x': (d) => xBar(d[0]) + (barWidth * d[2]),
       'y': (d) => yBar(d[1]),
       'width':  barWidth,
@@ -130,20 +130,20 @@ class LineChart extends Component {
     });
 
     flagEnter.append('text').attr(
-      'transform', 
+      'transform',
       `translate(${flagTextTransform[0]}, ${flagTextTransform[1]})`);
 
     flag.attr({
       fill: (d, i) => c20(i),
       transform: function(d, i) {
         let [left, top] = flagTransform;
-        return `translate(${left}, ${top * i})`; 
+        return `translate(${left}, ${top * i})`;
       },
     });
     flag.select('text').text(function(d) {
-      return d || ''; 
+      return d || '';
     });
-    flag.exit().remove();   
+    flag.exit().remove();
   }
 
   extent(lines, accessor) {
@@ -169,4 +169,3 @@ class LineChart extends Component {
 
 
 export default LineChart;
-
