@@ -103,6 +103,7 @@ class LineChart extends Component {
     line.attr({
       d: d3.svg.line().x(d => x(d[0])).y(d => y(d[1])),
       stroke: (d, i) => c20(i),
+      fill: "none"
     });
 
     line.exit().remove();

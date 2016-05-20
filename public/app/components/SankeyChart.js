@@ -46,6 +46,11 @@ class SankeyChart extends Component {
         width: height / 4,
         height: height / 4,
         rx: height / 40,
+        stroke: "black",
+        fill: "white",
+      })
+      .style({
+        "stroke-width": 4,
       });
     rect.select('text').attr({
       transform: 'translate(30, ' + (height / 9)  + ')',

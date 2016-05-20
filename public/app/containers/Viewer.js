@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Actions from '../actions';
 import LineChart from '../components/LineChart';
 import SankeyChart from '../components/SankeyChart';
+import saveSvgAsPng from 'save-svg-as-png';
 
 function loadState(props, state) {
   const data = _.get(props, 'selectedConfig.data') || {};
@@ -120,6 +121,7 @@ class Viewer extends Component {
     chartData.labels = _.keys(data);
     chartData.xAxis = state.xAxis;
     chartData.yAxis = state.yAxis;
+    //console.log(chartData);
     return (
       <LineChart data={chartData} />
     );
@@ -232,6 +234,23 @@ class Viewer extends Component {
       abbrs: abbrs,
       sankey: this.sankeyConfig,
     });
+  }
+
+  onExportImage() {
+    var html = d3.select("svg")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("id", "drawChart")
+        .node().parentNode.innerHTML;
+
+    var image = new Image();
+    image.src = 'data:image/svg+xml;base64,'+ btoa(unescape(encodeURIComponent(html)));
+    var canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    var context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    saveSvgAsPng.saveSvgAsPng(document.getElementById("drawChart"), "diagram.png", {backgroundColor: "white"});
   }
 
   onExport() {
@@ -375,7 +394,11 @@ class Viewer extends Component {
           <Button
             onClick={this.onSave.bind(this)}
             bsStyle="primary"
-          >Edit Setting</Button>
+          >Edit Setting</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button
+            onClick={this.onExportImage.bind(this)}
+            bsStyle="primary"
+            >Export Image</Button>
         </div>
       </div>
     );
