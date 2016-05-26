@@ -8,6 +8,7 @@ var express = require('express')
   , cookieParser = require('cookie-parser')
   , bodyParser = require('body-parser')
   , passport = require('passport')
+  , dbconfig = require('./config')
 ;
 var app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-db.connect('mongodb://localhost:27017/menbas', function(err, dbInstance) {
+db.connect('mongodb://'+dbconfig.dbuser+':'+dbconfig.dbpass+'@localhost:27017/menbas', function(err, dbInstance) {
   var routes = require('./routes/index');
   if (err) {
     console.log(err);
