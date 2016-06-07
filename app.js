@@ -35,7 +35,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-db.connect('mongodb://'+dbconfig.dbuser+':'+dbconfig.dbpass+'@localhost:27017/menbas', function(err, dbInstance) {
+var dbURL = "";
+if(dbconfig.dbuser && dbconfig.dbpass) {
+  dbURL = 'mongodb://'+dbconfig.dbuser+':'+dbconfig.dbpass+'@localhost:27017/menbas';
+}
+else {
+  dbURL = 'mongodb://localhost:27017/menbas';
+}
+db.connect(dbURL, function(err, dbInstance) {
   var routes = require('./routes/index');
   if (err) {
     console.log(err);
