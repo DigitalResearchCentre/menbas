@@ -190,7 +190,7 @@ const Actions = _.assign({}, BaseActions, {
       let p = $.post('/login', {
         username: username,
         password: password,
-      });
+      }, null, "json");
       return p
         .done(function(user) {
           dispatch(Actions.auth(user));
