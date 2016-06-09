@@ -216,7 +216,7 @@ class SankeyChart extends Component {
     ;
 
     link.exit().remove();
-
+    svg.selectAll('g.node').remove();
     let node = svg.select('g.nodes').selectAll(".node").data(nodes);
     let nodeEnter = node.enter().append('g')
       .attr({
