@@ -72,8 +72,8 @@ class LineChart extends Component {
     xBar.domain(places);
 
     if (!yAxisDomain) {
-      y.domain(this.extent(lines, d => d[1]));
-      yBar.domain(this.extent(bars, d => d[1]));
+      y.domain(this.extentTop(lines, d => d[1]));
+      yBar.domain(this.extentTop(bars, d => d[1]));
     } else {
       y.domain(yAxisDomain.split(','));
       yBar.domain(yAxisDomain);
@@ -151,6 +151,13 @@ class LineChart extends Component {
     return _.reduce(lines, function(minmax, line) {
       const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
       return [_.min(mins), _.max(maxs)];
+    }, [Infinity, 0]);
+  }
+
+  extentTop(lines, accessor) {
+    return _.reduce(lines, function(minmax, line) {
+      const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
+      return [0, _.max(maxs)];
     }, [Infinity, 0]);
   }
 
