@@ -114,6 +114,161 @@ function removeDiacritics (str) {
 
 }
 */
+function strToNum (str) {
+  return parseFloat(str.replace(/,/g, ''));
+}
+
+function calcThirdVars (secondVars) {
+  let thirdVars = [];
+  let fp = (_.find(secondVars, function(p) {return p.abbr == 'FP'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'FP'}).values, strToNum) : [],
+      tic = (_.find(secondVars, function(p) {return p.abbr == 'TIC'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'TIC'}).values, strToNum) : [],
+      ei = (_.find(secondVars, function(p) {return p.abbr == 'EI'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'EI'}).values, strToNum) : [],
+      br = (_.find(secondVars, function(p) {return p.abbr == 'BR'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'BR'}).values, strToNum) : [],
+      uph = (_.find(secondVars, function(p) {return p.abbr == 'UPH'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'UPH'}).values, strToNum) : [],
+      nin = (_.find(secondVars, function(p) {return p.abbr == 'NIN'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'NIN'}).values, strToNum) : [],
+      nout = (_.find(secondVars, function(p) {return p.abbr == 'NOUT'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'NOUT'}).values, strToNum) : [],
+      pin = (_.find(secondVars, function(p) {return p.abbr == 'PIN'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'PIN'}).values, strToNum) : [],
+      pout = (_.find(secondVars, function(p) {return p.abbr == 'POUT'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'POUT'}).values, strToNum) : [],
+      kin = (_.find(secondVars, function(p) {return p.abbr == 'KIN'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'KIN'}).values, strToNum) : [],
+      kout = (_.find(secondVars, function(p) {return p.abbr == 'KOUT'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'KOUT'}).values, strToNum) : [],
+      pop = (_.find(secondVars, function(p) {return p.abbr == 'POP'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'POP'}).values, strToNum) : [],
+      area = (_.find(secondVars, function(p) {return p.abbr == 'AREA'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'AREA'}).values, strToNum) : [],
+      livestock = (_.find(secondVars, function(p) {return p.abbr == 'LIVESTOCK'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'LIVESTOCK'}).values, strToNum) : [],
+      pop_ag = (_.find(secondVars, function(p) {return p.abbr == 'POP_AG'})) ? _.map(_.find(secondVars, function(p) {return p.abbr == 'POP_AG'}).values, strToNum) : []
+      ;
+
+  //Final EROI (FEROI)
+  let feroi = [];
+  if(fp.length && tic.length && (fp.length == tic.length)) {
+    for(var i = 0; i<fp.length; i++) {
+      if(tic[i] != 0) {
+          feroi.push(fp[i]/tic[i]);
+      }
+      else {
+          feroi.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Final EROI", abbr:"FEROI", unit: "", values: feroi});
+
+  //External Final EROI (EFEROI)
+  let eferoi = [];
+  if(fp.length && ei.length && (fp.length == ei.length)) {
+    for(var i = 0; i<fp.length; i++) {
+      if(ei[i] != 0) {
+          eferoi.push(fp[i]/ei[i]);
+      }
+      else {
+          eferoi.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"External Final EROI", abbr:"EFEROI", unit:"", values: eferoi});
+
+  //Internal Final EROI (IFEROI)
+  let iferoi = [];
+  if(fp.length && br.length && (fp.length == br.length)) {
+    for(var i = 0; i<fp.length; i++) {
+      if(br[i] != 0) {
+          iferoi.push(fp[i]/br[i]);
+      }
+      else {
+          iferoi.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Internal Final EROI", abbr:"IFEROI", unit:"", values: iferoi});
+
+  //NPPact EROI (NPPEROI)
+  let npperoi = [];
+  if(uph.length && br.length && tic.length && (uph.length == br.length) && (br.length == tic.length)) {
+    for(var i = 0; i<uph.length; i++) {
+      if(tic[i] != 0) {
+          npperoi.push((uph[i]+br[i])/tic[i]);
+      }
+      else {
+          npperoi.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"NPPact EROI", abbr:"NPPEROI", unit:"", values: npperoi});
+
+  //Nitrogen Balance (NBALANCE)
+  let  nbalance = [];
+  if(nin.length && nout.length && (nin.length == nout.length)) {
+    for(var i = 0; i<nin.length; i++) {
+        nbalance.push(nin[i]-nout[i]);
+    }
+  }
+  thirdVars.push({energy:"Nitrogen Balance", abbr:"NBALANCE", unit:"", values: nbalance});
+
+  //Phosphorus Balance (PBALANCE)
+  let  pbalance = [];
+  if(pin.length && pout.length && (pin.length == pout.length)) {
+    for(var i = 0; i<pin.length; i++) {
+        pbalance.push(pin[i]-pout[i]);
+    }
+  }
+  thirdVars.push({energy:"Phosphorus Balance", abbr:"PBALANCE", unit:"", values: pbalance});
+
+  //Population Density (POPDEN)
+  let popden = [];
+  if(pop.length && area.length && (pop.length == area.length)) {
+    for(var i = 0; i<pop.length; i++) {
+      if(area[i] != 0) {
+          popden.push(pop[i]/area[i]);
+      }
+      else {
+          popden.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Population Density", abbr:"POPDEN", unit:"", values: popden});
+
+  //Livestoct Density (LIVEDEN)
+  let liveden = [];
+  if(livestock.length && area.length && (livestock.length == area.length)) {
+    for(var i = 0; i<livestock.length; i++) {
+      if(area[i] != 0) {
+          liveden.push(livestock[i]/area[i]);
+      }
+      else {
+          liveden.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Livestoct Density", abbr:"LIVEDEN", unit:"", values: liveden});
+
+  //Labor Productivity (LABPROD)
+  let labprod = [];
+  if(fp.length && pop_ag.length && (fp.length == pop_ag.length)) {
+    for(var i = 0; i<fp.length; i++) {
+      if(pop_ag[i] != 0) {
+          labprod.push(fp[i]/pop_ag[i]);
+      }
+      else {
+          labprod.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Labor Productivity", abbr:"LABPROD", unit:"", values: labprod});
+
+  //Area Productivity (AREAPROD)
+  let areaprod = [];
+  if(fp.length && area.length && (fp.length == area.length)) {
+    for(var i = 0; i<fp.length; i++) {
+      if(area[i] != 0) {
+          areaprod.push(fp[i]/area[i]);
+      }
+      else {
+          areaprod.push("");
+      }
+    }
+  }
+  thirdVars.push({energy:"Area Productivity", abbr:"AREAPROD", unit:"", values: areaprod});
+
+  return thirdVars;
+}
 
 function parseCSV(content, callback) {
   return csv.parse(content, function(err, rows) {
@@ -123,9 +278,20 @@ function parseCSV(content, callback) {
       , years = {}
       , abbrs = {}
     ;
+    let reqs = ['FP', 'ITC', 'EI', 'BR', 'UPH',
+    'NIN', 'NOUT', 'PIN', 'POUT', 'KIN', 'KOUT',
+    'POP', 'AREA', 'LIVESTOCK', 'POP_AG'];
+    let reqsPara = [];
     _.each(rows.slice(3), function(row) {
       let [energy, abbr, unit, ...values] = row;
       if (!!abbr) {
+        if(_.includes(reqs, abbr)) {
+          let obj = {
+            abbr: abbr,
+            values: values,
+          };
+          reqsPara.push(obj)
+        };
         _.each(values, function(value, i) {
           value = _.trim(value);
           if (value !== '') {
@@ -151,6 +317,42 @@ function parseCSV(content, callback) {
             }
             abbrs[obj.abbr].push(obj);
             results.push(obj);
+          }
+        });
+      }
+    });
+    //console.log(_.find(reqsPara, function(p) {return p.abbr == 'POP'}).values);
+    //console.log(places);
+    //console.log(calcThirdVars(reqsPara));
+    var thirdVars = calcThirdVars(reqsPara);
+    _.each(thirdVars, function(tVars, i) {
+      if(_.size(tVars.values) !== 0) {
+        _.each(tVars.values, function(tVar, i) {
+          console.log(tVar);
+          if(_.trim(tVar)!== '') {
+            let obj = {
+              energy: tVars.energy,
+              abbr: tVars.abbr,
+              unit: tVars.unit,
+              value: tVar,
+              country: headers[0][i + 3],
+              place: headers[1][i + 3],
+              year: parseInt(headers[2][i + 3]),
+            };
+            if (!places[obj.place]) {
+              places[obj.place] = [];
+            }
+            places[obj.place].push(obj);
+            if (!years[obj.year]) {
+              years[obj.year] = [];
+            }
+            years[obj.year].push(obj);
+            if (!abbrs[obj.abbr]) {
+              abbrs[obj.abbr] = [];
+            }
+            abbrs[obj.abbr].push(obj);
+            results.push(obj);
+            //console.log(obj);
           }
         });
       }
