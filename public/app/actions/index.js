@@ -328,7 +328,7 @@ function parseCSV(content, callback) {
     _.each(thirdVars, function(tVars, i) {
       if(_.size(tVars.values) !== 0) {
         _.each(tVars.values, function(tVar, i) {
-          console.log(tVar);
+          //console.log(tVar);
           if(_.trim(tVar)!== '') {
             let obj = {
               energy: tVars.energy,

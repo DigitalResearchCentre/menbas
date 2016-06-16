@@ -213,6 +213,8 @@ class SankeyChart extends Component {
       .style("stroke-width", function(d) {
         return Math.max(1, d.value);
       })
+      .attr("fill", "none")
+      .attr("stroke", "#F28017")
     ;
 
     link.exit().remove();
