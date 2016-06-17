@@ -141,7 +141,7 @@ function calcThirdVars (secondVars) {
   let feroi = [];
   if(fp.length && tic.length && (fp.length == tic.length)) {
     for(var i = 0; i<fp.length; i++) {
-      if(tic[i] != 0) {
+      if(tic[i] != 0 && !isNaN(fp[i]) && !isNaN(tic[i])) {
           feroi.push(fp[i]/tic[i]);
       }
       else {
@@ -155,7 +155,7 @@ function calcThirdVars (secondVars) {
   let eferoi = [];
   if(fp.length && ei.length && (fp.length == ei.length)) {
     for(var i = 0; i<fp.length; i++) {
-      if(ei[i] != 0) {
+      if(ei[i] != 0 && !isNaN(fp[i]) && !isNaN(ei[i])) {
           eferoi.push(fp[i]/ei[i]);
       }
       else {
@@ -169,7 +169,7 @@ function calcThirdVars (secondVars) {
   let iferoi = [];
   if(fp.length && br.length && (fp.length == br.length)) {
     for(var i = 0; i<fp.length; i++) {
-      if(br[i] != 0) {
+      if(br[i] != 0 && !isNaN(fp[i]) && !isNaN(br[i])) {
           iferoi.push(fp[i]/br[i]);
       }
       else {
@@ -183,7 +183,7 @@ function calcThirdVars (secondVars) {
   let npperoi = [];
   if(uph.length && br.length && tic.length && (uph.length == br.length) && (br.length == tic.length)) {
     for(var i = 0; i<uph.length; i++) {
-      if(tic[i] != 0) {
+      if(tic[i] != 0 && !isNaN(uph[i]) && !isNaN(br[i]) && !isNaN(tic[i])) {
           npperoi.push((uph[i]+br[i])/tic[i]);
       }
       else {
@@ -197,7 +197,12 @@ function calcThirdVars (secondVars) {
   let  nbalance = [];
   if(nin.length && nout.length && (nin.length == nout.length)) {
     for(var i = 0; i<nin.length; i++) {
+      if(!isNaN(nin[i]) && !isNaN(nout[i])) {
         nbalance.push(nin[i]-nout[i]);
+      }
+      else {
+        nbalance.push("");
+      }
     }
   }
   thirdVars.push({energy:"Nitrogen Balance", abbr:"NBALANCE", unit:"", values: nbalance});
@@ -206,7 +211,13 @@ function calcThirdVars (secondVars) {
   let  pbalance = [];
   if(pin.length && pout.length && (pin.length == pout.length)) {
     for(var i = 0; i<pin.length; i++) {
+      if(!isNaN(pin[i]) && !isNaN(pout[i])) {
         pbalance.push(pin[i]-pout[i]);
+      }
+      else {
+        pbalance.push("");
+      }
+
     }
   }
   thirdVars.push({energy:"Phosphorus Balance", abbr:"PBALANCE", unit:"", values: pbalance});
@@ -215,7 +226,7 @@ function calcThirdVars (secondVars) {
   let popden = [];
   if(pop.length && area.length && (pop.length == area.length)) {
     for(var i = 0; i<pop.length; i++) {
-      if(area[i] != 0) {
+      if(area[i] != 0 && !isNaN(pop[i]) && !isNaN(area[i])) {
           popden.push(pop[i]/area[i]);
       }
       else {
@@ -229,7 +240,7 @@ function calcThirdVars (secondVars) {
   let liveden = [];
   if(livestock.length && area.length && (livestock.length == area.length)) {
     for(var i = 0; i<livestock.length; i++) {
-      if(area[i] != 0) {
+      if(area[i] != 0 && !isNaN(livestock[i]) && !isNaN(area[i])) {
           liveden.push(livestock[i]/area[i]);
       }
       else {
@@ -243,7 +254,7 @@ function calcThirdVars (secondVars) {
   let labprod = [];
   if(fp.length && pop_ag.length && (fp.length == pop_ag.length)) {
     for(var i = 0; i<fp.length; i++) {
-      if(pop_ag[i] != 0) {
+      if(pop_ag[i] != 0 && !isNaN(fp[i]) && !isNaN(pop_ag[i])) {
           labprod.push(fp[i]/pop_ag[i]);
       }
       else {
@@ -257,7 +268,7 @@ function calcThirdVars (secondVars) {
   let areaprod = [];
   if(fp.length && area.length && (fp.length == area.length)) {
     for(var i = 0; i<fp.length; i++) {
-      if(area[i] != 0) {
+      if(area[i] != 0 && !isNaN(fp[i]) && !isNaN(area[i])) {
           areaprod.push(fp[i]/area[i]);
       }
       else {
