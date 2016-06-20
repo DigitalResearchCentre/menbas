@@ -8,9 +8,11 @@ import Actions from '../actions';
 import LineChart from '../components/LineChart';
 import SankeyChart from '../components/SankeyChart';
 import saveSvgAsPng from 'save-svg-as-png';
+import $ from 'jquery';
 
 function loadState(props, state) {
   const data = _.get(props, 'selectedConfig.data') || {};
+  //console.log(data);
   const {
     places = [],
     years = [],
@@ -23,11 +25,27 @@ function loadState(props, state) {
     abbrs: _.isEmpty(abbrs) ? _.keys(data.abbrs) : abbrs,
   };
 }
-
+/*
+function loadAreaState(props, state) {
+  const data = _.get(props, 'selectedConfig.data') || {};
+  const {
+    places = [],
+    years = [],
+    abbrs = [],
+  } = _.get(props, 'selectedConfig.config') || {};
+  return {
+    ...state,
+    places: _.isEmpty(places) ? _.keys(data.areaPlaces) : places,
+    years: _.isEmpty(years) ? _.keys(data.areaYears) : years,
+    abbrs: _.isEmpty(abbrs) ? _.keys(data.areaAbbrs) : abbrs,
+  };
+}
+*/
 class Viewer extends Component {
   constructor(props) {
     super(props);
     this.state = loadState(props, {});
+    this.flag = 0;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,10 +69,38 @@ class Viewer extends Component {
     this.sankeyConfig = sankeyConfig;
   }
 
+  perHectareData() {
+    const state = this.state;
+    let data = _.get(this.props, 'selectedConfig.data', {});
+    if(_.size(data.objects)) {
+      if(!this.flag) {
+        data.oldPlaces = data.places;
+        data.places = {};
+        data.places = data.areaPlaces;
+        data.oldYears = data.years;
+        data.years = {};
+        data.years = data.areaYears;
+        data.oldAbbrs = data.abbrs;
+        data.abbrs = {};
+        data.abbrs = data.areaAbbrs;
+        this.flag = 1;
+        $(".preHectare").text("total");
+      }
+      else if(this.flag) {
+        data.places = data.oldPlaces;
+        data.years = data.oldYears;
+        data.abbrs = data.oldAbbrs;
+        this.flag = 0;
+        $(".preHectare").text("per hectare");
+      }
+    }
+    this.selectType('Location');
+  }
+
   renderChart() {
     const state = this.state;
     let data = _.get(this.props, 'selectedConfig.data', {});
-    //    console.log(data);
+    //console.log(this.props);
     let config = _.get(this.props, 'selectedConfig.config', {});
     let chartData = {};
     let places = {};
@@ -291,6 +337,12 @@ class Viewer extends Component {
     this.props.actions.export('jpg');
   }
 
+  cleanChart() {
+    $(".chartContainer").empty();
+    //$(".chartContainer").append(this.renderChart(1));
+    //console.log(this.renderChart());
+  }
+
   render() {
     const {
       data,
@@ -369,6 +421,7 @@ class Viewer extends Component {
     }
 
     let sp, sa, sy;
+    let hb;
     if (type === 'Location' || type === 'Energy') {
       sp = (
         <Input type="select" label="Place: "
@@ -399,7 +452,15 @@ class Viewer extends Component {
         </Input>
       )
     }
-
+    if(_.has(data.abbrs, "AREA")) {
+      hb = (
+        <Button
+          className="preHectare"
+          onClick={this.perHectareData.bind(this)}
+          bsStyle="primary"
+          >per hectare</Button>
+      )
+    }
     return (
       <div className={
         'viewer ' + (_.isEmpty(chartConfig) ? 'invisible' : '')
@@ -423,7 +484,9 @@ class Viewer extends Component {
             {selectYears}
           </div>
         </div>
+        <div className="chartContainer">
         {this.renderChart()}
+        </div>
         <div>
           <Button
             onClick={this.onSave.bind(this)}
@@ -434,10 +497,10 @@ class Viewer extends Component {
             bsStyle="primary"
             >Export Image</Button>&nbsp;&nbsp;&nbsp;&nbsp;
           <Button
-            idName="exportSVG"
             onClick={this.onExportSVG.bind(this)}
             bsStyle="primary"
-            >Export SVG</Button>
+            >Export SVG</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+          {hb}
         </div>
       </div>
     );

@@ -1,25 +1,28 @@
-.chart {
-    .flex(1, 1, 0);
-    overflow: auto;
-    .flex-row;
+.chartContainer {
+  .flex(1, 1, 0);
+  overflow: auto;
+  .flex-row;
 
-    svg {
-        .flex(1, 1, 0);
-    }
+  .chart {
+      .flex(1, 1, 0);
+      overflow: auto;
+      .flex-row;
 
-    .axis {
-        path, line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-    }
+      svg {
+          .flex(1, 1, 0);
+      }
 
-    .line {
-        fill: none;
-        stroke-width: 1.5px;
-    }
+      .axis {
+          path, line {
+              fill: none;
+              stroke: #000;
+              shape-rendering: crispEdges;
+          }
+      }
+
+      .line {
+          fill: none;
+          stroke-width: 1.5px;
+      }
+  }
 }
-
-
-

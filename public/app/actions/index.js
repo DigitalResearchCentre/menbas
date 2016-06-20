@@ -288,11 +288,16 @@ function parseCSV(content, callback) {
       , places = {}
       , years = {}
       , abbrs = {}
+      , areaResults = []
+      , areaPlaces = {}
+      , areaYears = {}
+      , areaAbbrs = {}
     ;
     let reqs = ['FP', 'ITC', 'EI', 'BR', 'UPH',
     'NIN', 'NOUT', 'PIN', 'POUT', 'KIN', 'KOUT',
     'POP', 'AREA', 'LIVESTOCK', 'POP_AG'];
     let reqsPara = [];
+    let areaValues = [];
     _.each(rows.slice(3), function(row) {
       let [energy, abbr, unit, ...values] = row;
       if (!!abbr) {
@@ -301,7 +306,10 @@ function parseCSV(content, callback) {
             abbr: abbr,
             values: values,
           };
-          reqsPara.push(obj)
+          reqsPara.push(obj);
+          if(abbr === "AREA") {
+            areaValues = _.map(values, strToNum);
+          }
         };
         _.each(values, function(value, i) {
           value = _.trim(value);
@@ -311,6 +319,15 @@ function parseCSV(content, callback) {
               abbr: abbr,
               unit: unit,
               value: parseFloat(value.replace(/,/g, '')),
+              country: headers[0][i + 3],
+              place: headers[1][i + 3],
+              year: parseInt(headers[2][i + 3]),
+            };
+            let areaobj = {
+              energy: energy,
+              abbr: abbr,
+              unit: unit,
+              value: (!isNaN(areaValues[i]) && areaValues[i] != 0) ? parseFloat(value.replace(/,/g, ''))/areaValues[i] : "",
               country: headers[0][i + 3],
               place: headers[1][i + 3],
               year: parseInt(headers[2][i + 3]),
@@ -328,12 +345,27 @@ function parseCSV(content, callback) {
             }
             abbrs[obj.abbr].push(obj);
             results.push(obj);
+
+
+            if (!areaPlaces[areaobj.place]) {
+              areaPlaces[areaobj.place] = [];
+            }
+            areaPlaces[areaobj.place].push(areaobj);
+            if (!areaYears[areaobj.year]) {
+              areaYears[areaobj.year] = [];
+            }
+            areaYears[areaobj.year].push(areaobj);
+            if (!areaAbbrs[areaobj.abbr]) {
+              areaAbbrs[areaobj.abbr] = [];
+            }
+            areaAbbrs[areaobj.abbr].push(areaobj);
+            areaResults.push(areaobj);
           }
         });
       }
     });
     //console.log(_.find(reqsPara, function(p) {return p.abbr == 'POP'}).values);
-    //console.log(places);
+    //console.log(areaResults);
     //console.log(calcThirdVars(reqsPara));
     var thirdVars = calcThirdVars(reqsPara);
     _.each(thirdVars, function(tVars, i) {
@@ -373,6 +405,10 @@ function parseCSV(content, callback) {
       years: years,
       abbrs: abbrs,
       objects: results,
+      areaPlaces: areaPlaces,
+      areaYears: areaYears,
+      areaAbbrs: areaAbbrs,
+      areaObjects: areaResults,
     });
   });
 }
