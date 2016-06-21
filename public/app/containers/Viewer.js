@@ -94,7 +94,20 @@ class Viewer extends Component {
         $(".preHectare").text("per hectare");
       }
     }
-    this.selectType('Location');
+    switch(state.type) {
+      case "Location":
+        this.selectType('Location');
+        break;
+      case "Indicator":
+        this.selectType('Indicator');
+        break;
+      case "Time":
+        this.selectType('Time');
+        break;
+      default:
+        this.selectType('Location');
+    }
+
   }
 
   renderChart() {
@@ -500,7 +513,7 @@ class Viewer extends Component {
             onClick={this.onExportSVG.bind(this)}
             bsStyle="primary"
             >Export SVG</Button>&nbsp;&nbsp;&nbsp;&nbsp;
-          {hb}
+          {hb}&nbsp;&nbsp;&nbsp;&nbsp;
         </div>
       </div>
     );
