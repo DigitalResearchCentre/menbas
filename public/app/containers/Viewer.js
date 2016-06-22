@@ -525,6 +525,10 @@ class Viewer extends Component {
             bsStyle="primary"
             >Export SVG</Button>&nbsp;&nbsp;&nbsp;&nbsp;
           {hb}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button
+            onClick={this.exportCsv.bind(this)}
+            bsStyle="primary"
+            >Export CSV</Button>&nbsp;&nbsp;&nbsp;&nbsp;
         </div>
       </div>
     );
