@@ -157,7 +157,7 @@ let brticIndex = _.findIndex(links, function(link){
 let tpbrIndex = _.findIndex(links, function(link){
   return (link.source.abbr == "TP" && link.target.abbr == "BR")
 });
-console.log(tpbrIndex);
+//console.log(tpbrIndex);
 /*
 links[tpbrIndex].path = _.concat(links[tpbrIndex].path, links[brticIndex].path);
 links[tpbrIndex].target.x = links[brticIndex].target.x;
@@ -167,9 +167,11 @@ links = _.remove(links, function(link){
 });
 */
 links[brticIndex].value = links[tpbrIndex].value;
+/*
 links[brticIndex].target.abbr = links[tpbrIndex].target.abbr;
 links[brticIndex].target.value = links[tpbrIndex].target.value;
-console.log(links);
+*/
+//console.log(links);
 /** end of remove BR to TIC link **/
 
     let path = function(d) {
@@ -264,7 +266,7 @@ console.log(links);
     ;
 
     nodeEnter.append('text')
-      .text((d)=> { return d.abbr + ' ' + Math.round(d.value * 10) / 10 });
+      .text((d)=> { return d.abbr !== "TIC" ? d.abbr + ' ' + Math.round(d.value * 10) / 10 : '' });
     node.attr({
       'transform': (d)=>'translate(' + d.x  + ',' + d.y + ')',
     });
