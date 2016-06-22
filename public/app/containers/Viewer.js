@@ -110,6 +110,17 @@ class Viewer extends Component {
 
   }
 
+  exportCsv() {
+    let csv = _.get(this.props, 'selectedFile.content', {});
+    let data = _.get(this.props, 'selectedConfig.data', {});
+    let places = _.keys(_.get(this.props, 'selectedConfig.data.places', {}));
+    console.log(places);
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += csv;
+    var encodedUri = encodeURI(csvContent);
+    //window.open(encodedUri);
+  }
+
   renderChart() {
     const state = this.state;
     let data = _.get(this.props, 'selectedConfig.data', {});

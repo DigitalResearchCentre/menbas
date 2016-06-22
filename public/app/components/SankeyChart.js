@@ -150,6 +150,27 @@ class SankeyChart extends Component {
       l.source.targetLinks.push(l);
       return l;
     });
+/** play with links to remove BR to TIC link **/
+let brticIndex = _.findIndex(links, function(link){
+  return (link.source.abbr == "BR" && link.target.abbr == "TIC")
+});
+let tpbrIndex = _.findIndex(links, function(link){
+  return (link.source.abbr == "TP" && link.target.abbr == "BR")
+});
+console.log(tpbrIndex);
+/*
+links[tpbrIndex].path = _.concat(links[tpbrIndex].path, links[brticIndex].path);
+links[tpbrIndex].target.x = links[brticIndex].target.x;
+links[tpbrIndex].target.y = links[brticIndex].target.y;
+links = _.remove(links, function(link){
+  return !(link.source.abbr == "BR" && link.target.abbr == "TIC")
+});
+*/
+links[brticIndex].value = links[tpbrIndex].value;
+links[brticIndex].target.abbr = links[tpbrIndex].target.abbr;
+links[brticIndex].target.value = links[tpbrIndex].target.value;
+console.log(links);
+/** end of remove BR to TIC link **/
 
     let path = function(d) {
       let x0 = d.source.x
