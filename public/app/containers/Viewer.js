@@ -9,6 +9,7 @@ import LineChart from '../components/LineChart';
 import SankeyChart from '../components/SankeyChart';
 import saveSvgAsPng from 'save-svg-as-png';
 import $ from 'jquery';
+import csv from 'csv';
 
 function loadState(props, state) {
   const data = _.get(props, 'selectedConfig.data') || {};
@@ -111,14 +112,12 @@ class Viewer extends Component {
   }
 
   exportCsv() {
-    let csv = _.get(this.props, 'selectedFile.content', {});
     let data = _.get(this.props, 'selectedConfig.data', {});
-    let places = _.keys(_.get(this.props, 'selectedConfig.data.places', {}));
-    console.log(places);
+    //console.log(data.addContent);
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += csv;
+    csvContent += data.addContent;
     var encodedUri = encodeURI(csvContent);
-    //window.open(encodedUri);
+    window.open(encodedUri);
   }
 
   renderChart() {
@@ -525,6 +524,10 @@ class Viewer extends Component {
             bsStyle="primary"
             >Export SVG</Button>&nbsp;&nbsp;&nbsp;&nbsp;
           {hb}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button
+            onClick={this.exportCsv.bind(this)}
+            bsStyle="primary"
+            >Export CSV</Button>&nbsp;&nbsp;&nbsp;&nbsp;
         </div>
       </div>
     );

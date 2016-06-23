@@ -367,11 +367,14 @@ function parseCSV(content, callback) {
     //console.log(_.find(reqsPara, function(p) {return p.abbr == 'POP'}).values);
     //console.log(areaResults);
     //console.log(calcThirdVars(reqsPara));
+    let addContent = content + "\n";
     var thirdVars = calcThirdVars(reqsPara);
     _.each(thirdVars, function(tVars, i) {
       if(_.size(tVars.values) !== 0) {
+        let thirdStr = tVars.energy + "," + tVars.abbr + "," + tVars.unit ;
         _.each(tVars.values, function(tVar, i) {
           //console.log(tVar);
+          thirdStr += "," + (_.trim(tVar)!== '' ? _.ceil(tVar, 1) : tVar);
           if(_.trim(tVar)!== '') {
             let obj = {
               energy: tVars.energy,
@@ -398,6 +401,9 @@ function parseCSV(content, callback) {
             //console.log(obj);
           }
         });
+        thirdStr += "\n";
+        //console.log(thirdStr);
+        addContent += thirdStr;
       }
     });
     callback({
@@ -409,6 +415,7 @@ function parseCSV(content, callback) {
       areaYears: areaYears,
       areaAbbrs: areaAbbrs,
       areaObjects: areaResults,
+      addContent: addContent,
     });
   });
 }
