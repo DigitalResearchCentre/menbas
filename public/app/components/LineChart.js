@@ -157,7 +157,7 @@ class LineChart extends Component {
   extentTop(lines, accessor) {
     return _.reduce(lines, function(minmax, line) {
       const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
-      return [0, _.max(maxs)];
+      return _.min(mins)< 0 ? [_.min(mins), _.max(maxs)] : [0, _.max(maxs)];
     }, [Infinity, 0]);
   }
 
