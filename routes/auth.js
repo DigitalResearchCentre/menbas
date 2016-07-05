@@ -4,6 +4,7 @@ var passport = require('passport')
   , db = require('../db')
   , bson = require('bson')
   , ObjectID = bson.ObjectID
+  ,bcrypt = require('bcrypt-nodejs')
 ;
 
 passport.use(new LocalStrategy(function(username, password, done) {
@@ -11,7 +12,9 @@ passport.use(new LocalStrategy(function(username, password, done) {
     if (err) {
       return done(err);
     }
-    if (user && user.password === password) {
+    //console.log(bcrypt.compareSync(password, user.password));
+    //if (user && user.password === password) {
+    if (user && bcrypt.compareSync(password, user.password)) {
       return done(null, user);
     } else {
       return done({message: 'Incorrect username or password'});

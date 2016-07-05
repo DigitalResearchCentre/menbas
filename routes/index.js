@@ -13,6 +13,7 @@ var express = require('express')
   , Users = db.collection('users')
   , Configs = db.collection('configs')
   , Files = db.collection('files')
+  ,bcrypt = require('bcrypt-nodejs')
 ;
 
 function sendData(req, res, next) {
@@ -25,12 +26,58 @@ function sendData(req, res, next) {
   };
 }
 
+function createAccount(username, password) {
+  db.collection('users').find({
+    username: username
+  }).toArray(function(err, users) {
+    if (users.length === 0) {
+      db.collection('users').insertOne({
+        username: username, password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
+      }, function(err, user) {
+        //console.log(user);
+      });
+    }
+    else {
+      db.collection('users').findOneAndUpdate({username: username}, {username: username, password: bcrypt.hashSync(password, bcrypt.genSaltSync(10))});
+    }
+  });
+
+    /*
+    db.collection('users').insertOne({
+      username: username, password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
+    }, function(err, user) {
+      console.log(user);
+    });
+    */
+
+
+}
+
 router.get('/auth', auth, function(req, res, next) {
   res.json(req.user);
 });
 
 router.post('/login', Auth.login, function(req, res) {
   res.redirect('/auth');
+});
+
+router.get('/newaccount/:uname/:upass', auth, function(req, res) {
+  //console.log(req.user.username);
+  //console.log(req.params.name);
+  if(req.user.username === 'jin') {
+    return createAccount(req.params.uname, req.params.upass);
+  }
+  return;
+});
+
+router.post('/account', auth, function(req, res) {
+  if(req.user.username === 'jin') {
+    return createAccount(req.body.username, req.body.password);
+  }
+  else {
+    console.log("cannot create account");
+  }
+  //res.json(req.user);
 });
 
 router.patch('/users/:id', auth, function(req, res, next) {
@@ -49,12 +96,12 @@ router.post('/files', auth, function(req, res, next) {
     , file = req.body
     , query
   ;
-  query = file._id 
-    ? {_id: ObjectID(file._id)} 
+  query = file._id
+    ? {_id: ObjectID(file._id)}
     : {user_id: user._id, name: file.name};
   Files.findOneAndUpdate(
     query,
-    _.assign({}, _.omit(file, ['_id']), {user_id: user._id}), 
+    _.assign({}, _.omit(file, ['_id']), {user_id: user._id}),
     {upsert: true, returnOriginal: false},
     function(err, result) {
       res.json(result);
@@ -66,8 +113,8 @@ router.post('/files', auth, function(req, res, next) {
 
 router.get('/configs', auth, function(req, res, next) {
   Configs.find({user: req.user._id}, function() {
-    
-  });  
+
+  });
 });
 
 
@@ -155,4 +202,3 @@ router.patch('/users/:id', auth, function(req, res, next) {
 });
 
 module.exports = router;
-

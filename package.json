@@ -17,6 +17,7 @@
   "dependencies": {
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-2": "^6.5.0",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.13.2",
     "bson": "^0.4.22",
     "canvg-browser": "^1.0.0",

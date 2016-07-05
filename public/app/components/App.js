@@ -5,6 +5,7 @@ import Viewer from '../containers/Viewer';
 import LoginModal from '../containers/LoginModal';
 import UploadCSVModal from '../containers/UploadCSVModal';
 import EditConfigModal from '../containers/EditConfigModal';
+import CreateAccountModal from '../containers/CreateAccountModal';
 
 const App = () => (
   <div className="app">
@@ -14,10 +15,10 @@ const App = () => (
       <Viewer/>
     </div>
     <LoginModal/>
+    <CreateAccountModal/>
     <UploadCSVModal/>
     <EditConfigModal/>
   </div>
 );
 
 export default App;
-

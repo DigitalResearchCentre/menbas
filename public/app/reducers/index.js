@@ -422,6 +422,12 @@ const rootReducers = {
       showUploadCSVModal: action.payload,
     };
   },
+  [Types.showCreateAccountModal]: function(state, action) {
+    return {
+      ...state,
+      showCreateAccountModal: action.payload,
+    };
+  },
   [Types.showEditCSVModal]: function(state, action) {
     return {
       ...state,

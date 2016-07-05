@@ -8,7 +8,7 @@ import csv from 'csv';
 const keys = [
   'auth', 'uploadCSV', 'selectConfig', 'selectFile', 'editFile',
   'showEditCSVModal', 'showUploadCSVModal',  'updateFormula',
-  'saveConfig', 'removeConfig', 'export',
+  'saveConfig', 'removeConfig', 'export', 'showCreateAccountModal', 'CreateAccount'
 ];
 
 export const Types = _.zipObject(keys, keys);
@@ -467,6 +467,12 @@ const Actions = _.assign({}, BaseActions, {
           dispatch(BaseActions.uploadCSV(new Error(err)));
         });
     };
+  },
+  createAccount: function(username, password) {
+    return function(dispatch, getState) {
+      dispatch(BaseActions.showCreateAccountModal(false));
+      return $.post('/account', {username: username, password: password,});
+    }
   },
   selectFile: function(file) {
     return function(dispatch, getState) {

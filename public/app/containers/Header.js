@@ -5,12 +5,18 @@ import Actions from '../actions';
 
 
 const Header = ({actions, user}) => {
+  let cb = (
+      <div className="item" onClick={() => actions.showCreateAccountModal(true)}>
+        Create Account
+      </div>
+    )
   return (
     <div className="header">
       <div className="left">
         <div className="item" onClick={() => actions.showUploadCSVModal(true)}>
           Upload CSV
         </div>
+        {user && user.username === 'jin' ? cb : ''}
       </div>
       <div className="right">
         <div className="item">
@@ -35,5 +41,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Header);
-
-
