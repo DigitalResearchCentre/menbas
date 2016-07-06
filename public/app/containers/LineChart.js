@@ -100,7 +100,7 @@ class LineChart extends Component {
   }
 
   render() {
-    const { 
+    const {
       data,
       config: chartConfig,
     } = this.props.selectedConfig || {};
@@ -166,5 +166,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(LineChart);
-
-

@@ -12,6 +12,7 @@ class LineChart extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.renderD3(nextProps);
+    //console.log(nextProps);
     /*
         <canvas ref={(canvas)=>this.canvas = canvas;}></canvas>
     if (nextProps.export === 'jpg') {
@@ -65,6 +66,8 @@ class LineChart extends Component {
       , yBar = d3.scale.linear().range([height, 0])
       , c20 = d3.scale.category20()
     ;
+    let cMin = props.data.yMin
+      , cMax = props.data.yMax;
     let xAxis, yAxis, line, bar, flag;
     chart.attr('transform', `translate(${left}, ${top})`);
 
@@ -72,8 +75,8 @@ class LineChart extends Component {
     xBar.domain(places);
 
     if (!yAxisDomain) {
-      y.domain(this.extentTop(lines, d => d[1]));
-      yBar.domain(this.extentTop(bars, d => d[1]));
+      y.domain(this.extentTop(lines, d => d[1], cMin, cMax));
+      yBar.domain(this.extentTop(bars, d => d[1], cMin, cMax));
     } else {
       y.domain(yAxisDomain.split(','));
       yBar.domain(yAxisDomain);
@@ -154,10 +157,15 @@ class LineChart extends Component {
     }, [Infinity, 0]);
   }
 
-  extentTop(lines, accessor) {
+  extentTop(lines, accessor, customizedMin, customizedMax) {
     return _.reduce(lines, function(minmax, line) {
       const [mins, maxs] = _.zip(minmax, d3.extent(line, accessor));
-      return _.min(mins)< 0 ? [_.min(mins), _.max(maxs)] : [0, _.max(maxs)];
+      let min, max;
+      _.min(mins)< 0 ? min = _.min(mins) : min = 0;
+      ((customizedMin === null) || (customizedMin === undefined))  ? min = min : min = customizedMin;
+      ((customizedMax === null) || (customizedMax === undefined)) ?  max = _.max(maxs) : max = customizedMax;
+      //return _.min(mins)< 0 ? [_.min(mins), _.max(maxs)] : [0, _.max(maxs)];
+      return [min, max];
     }, [Infinity, 0]);
   }
 

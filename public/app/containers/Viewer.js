@@ -127,6 +127,11 @@ class Viewer extends Component {
     let config = _.get(this.props, 'selectedConfig.config', {});
     let chartData = {};
     let places = {};
+
+    let max, min = null;
+    max = (_.trim($(".max").val()) !== "") ? _.trim($(".max").val()) : null;
+    min = (_.trim($(".min").val()) !== "") ? _.trim($(".min").val()) : null;
+
     if (state.type === 'Energy') {
       data = _.filter(data.places[state.place], function(d) {
         return d.year.toString() === state.year.toString() && (
@@ -190,7 +195,8 @@ class Viewer extends Component {
     chartData.labels = _.keys(data);
     chartData.xAxis = state.xAxis;
     chartData.yAxis = state.yAxis;
-    //console.log(chartData);
+    chartData.yMax = max;
+    chartData.yMin = min;
     return (
       <LineChart data={chartData} />
     );
@@ -366,6 +372,16 @@ class Viewer extends Component {
     //console.log(this.renderChart());
   }
 
+  changeAxis() {
+  /*  let max
+        , min = null;
+    max = _.trim($(".max").val()) !== "" ? _.trim($(".max").val()) : null;
+    min = _.trim($(".min").val()) !== "" ? _.trim($(".min").val()) : null;
+    this.setState({yMax: max, yMin: min});
+    */
+    this.setState({yAxisVaule: true});
+  }
+
   render() {
     const {
       data,
@@ -507,9 +523,18 @@ class Viewer extends Component {
             {selectYears}
           </div>
         </div>
+        <div>
+          <label>Y axis max:</label>&nbsp;&nbsp;
+          <input className="inputBox max" id="max" type="text"/>
+        </div>
         <div className="chartContainer">
         {this.renderChart()}
         </div>
+        <div>
+          <label>Y axis min: </label>&nbsp;&nbsp;
+          <input className="inputBox min" id="min" type="text"/>
+        </div>
+        <br />
         <div>
           <Button
             onClick={this.onSave.bind(this)}
@@ -528,6 +553,10 @@ class Viewer extends Component {
             onClick={this.exportCsv.bind(this)}
             bsStyle="primary"
             >Export CSV</Button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button
+              onClick={this.changeAxis.bind(this)}
+              bsStyle="primary"
+              >Set Y Axis</Button>&nbsp;&nbsp;&nbsp;&nbsp;
         </div>
       </div>
     );
