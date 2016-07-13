@@ -16,7 +16,7 @@ const Header = ({actions, user}) => {
         <div className="item" onClick={() => actions.showUploadCSVModal(true)}>
           Upload CSV
         </div>
-        {user && user.username === 'jin' ? cb : ''}
+        {user && (user.username === 'jin' || user.username === 'cunfer' || user.username === 'jarett') ? cb : ''}
       </div>
       <div className="right">
         <div className="item">

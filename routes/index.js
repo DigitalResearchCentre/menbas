@@ -71,7 +71,7 @@ router.get('/newaccount/:uname/:upass', auth, function(req, res) {
 });
 
 router.post('/account', auth, function(req, res) {
-  if(req.user.username === 'jin') {
+  if(req.user.username === 'jin' || req.user.username === 'cunfer' || req.user.username === 'jarett') {
     return createAccount(req.body.username, req.body.password);
   }
   else {
