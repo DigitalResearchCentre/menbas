@@ -461,6 +461,7 @@ class Viewer extends Component {
 
     let sp, sa, sy;
     let hb;
+    let minBoxLabel, maxBoxLabel, minBox, maxBox;
     if (type === 'Location' || type === 'Energy') {
       sp = (
         <Input type="select" label="Place: "
@@ -469,6 +470,16 @@ class Viewer extends Component {
         >
           {placesOptions}
         </Input>
+      )
+    }
+    if(type !== 'Energy') {
+      maxBoxLabel = (<label>Y axis max:</label>)
+      maxBox = (
+        <Input className="inputBox max" id="max" type="text"></Input>
+      )
+      minBoxLabel = (<label>Y axis min: </label>)
+      minBox = (
+        <Input className="inputBox min" id="min" type="text"></Input>
       )
     }
     if (type === 'Indicator') {
@@ -523,16 +534,14 @@ class Viewer extends Component {
             {selectYears}
           </div>
         </div>
-        <div>
-          <label>Y axis max:</label>&nbsp;&nbsp;
-          <input className="inputBox max" id="max" type="text"/>
+        <div className={'axisInputs'}>
+          {maxBoxLabel}&nbsp;&nbsp;{maxBox}
         </div>
         <div className="chartContainer">
         {this.renderChart()}
         </div>
-        <div>
-          <label>Y axis min: </label>&nbsp;&nbsp;
-          <input className="inputBox min" id="min" type="text"/>
+        <div className={'axisInputs'}>
+          {minBoxLabel} {minBox}
         </div>
         <br />
         <div>
