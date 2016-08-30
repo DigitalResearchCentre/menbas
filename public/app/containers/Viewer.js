@@ -541,7 +541,7 @@ class Viewer extends Component {
         {this.renderChart()}
         </div>
         <div className={'axisInputs'}>
-          {minBoxLabel} {minBox}
+          {minBoxLabel}&nbsp;&nbsp;{minBox}
         </div>
         <br />
         <div>
