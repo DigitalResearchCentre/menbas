@@ -8,7 +8,7 @@ var app = require('../app');
 var debug = require('debug')('menbas:server');
 var http = require('http');
 
-var enableHttps = true;
+var enableHttps = false;
 
 /*
 var fs = require('fs');
