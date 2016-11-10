@@ -24,6 +24,7 @@ function loadState(props, state) {
     places: _.isEmpty(places) ? _.keys(data.places) : places,
     years: _.isEmpty(years) ? _.keys(data.years) : years,
     abbrs: _.isEmpty(abbrs) ? _.keys(data.abbrs) : abbrs,
+    place: _.isEmpty(places) ? null : _.first(places),
   };
 }
 /*

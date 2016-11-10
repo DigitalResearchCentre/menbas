@@ -65,18 +65,18 @@ class Sidebar extends Component {
     const {
       selectedFile, selectedConfig = {}
     } = this.props;
-  
+
     let lis = _.map(this.state.items, (item, i) => {
       let fileConfigs = _.map(item.file.configs, (chartConfig, j) => {
           return (
             <li key={j} className={
-              (chartConfig.name === selectedConfig.config.name 
+              (chartConfig.name === selectedConfig.config.name
                && chartConfig.file === selectedConfig.config.file)
                 ? 'selected' : ''
             } >
               <a onClick={()=>this.selectConfig(chartConfig)}>
                 {chartConfig.name}</a>
-              <span 
+              <span
                 onClick={this.editConfig.bind(this, chartConfig)}
                 className="edit-config-icon"
                 aria-hidden="true">
@@ -126,5 +126,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Sidebar);
-
-
